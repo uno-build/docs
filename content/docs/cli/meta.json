@@ -1,0 +1,7 @@
+{
+  "title": "uno/cli",
+  "description": "Comming soon...",
+  "icon": "Terminal",
+  "root": true,
+  "pages": ["index"]
+}

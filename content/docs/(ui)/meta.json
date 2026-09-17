@@ -1,0 +1,7 @@
+{
+  "title": "uno/ui",
+  "description": "",
+  "root": true,
+  "icon": "PanelsTopLeft",
+  "pages": ["index", "..."]
+}
