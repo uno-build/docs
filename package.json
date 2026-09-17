@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "docs:copy": "node scripts/copy-docs.mjs ../ui/docs content/docs/ui",
+    "docs:copy": "node scripts/copy-docs.mjs ../ui/docs 'content/docs/(ui)'",
     "start": "next start",
     "types:check": "next typegen && tsc --noEmit"
   },

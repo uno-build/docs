@@ -1,5 +1,0 @@
-(globalThis["TURBOPACK_CHUNK_LISTS"] || (globalThis["TURBOPACK_CHUNK_LISTS"] = [])).push({
-    script: typeof document === "object" ? document.currentScript : undefined,
-    chunks: ["static/chunks/node_modules_fumadocs-ui_dist_components_dialog_search-default_1949sx5.js","static/chunks/node_modules_0f52rix._.js","static/chunks/[root-of-the-server]__1br6yta._.css","static/chunks/node_modules_04wmol_._.js","static/chunks/node_modules_fumadocs-core_dist_search_client_0vl__6j._.js","static/chunks/node_modules_micromark-core-commonmark_dev_lib_2079wuz._.js","static/chunks/node_modules_parse5_dist_1nrczq8._.js","static/chunks/node_modules_0gg-ws8._.js","static/chunks/node_modules_fumadocs-core_dist_15r9tzx._.js","static/chunks/node_modules_0rokfoc._.js","static/chunks/node_modules_1yd-2gf._.js","static/chunks/node_modules_0o3_mf1._.js","static/chunks/node_modules_1sroegp._.js","static/chunks/node_modules_zbsearch_dist_browser_0g-g04a._.js","static/chunks/node_modules_07lk-4v._.js"],
-    source: "entry"
-});

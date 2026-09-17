@@ -12,13 +12,30 @@ const { rewrite: rewriteSuffix } = rewritePath(
 );
 
 export default function proxy(request: NextRequest) {
-  const result = rewriteSuffix(request.nextUrl.pathname);
+  const pathname = request.nextUrl.pathname;
+
+  if (
+    pathname === docsContentRoute ||
+    pathname.startsWith(`${docsContentRoute}/`) ||
+    pathname === '/llms.txt' ||
+    pathname === '/llms-full.txt' ||
+    pathname === '/api' ||
+    pathname.startsWith('/api/') ||
+    pathname === '/og' ||
+    pathname.startsWith('/og/') ||
+    pathname === '/_next' ||
+    pathname.startsWith('/_next/')
+  ) {
+    return NextResponse.next();
+  }
+
+  const result = rewriteSuffix(pathname);
   if (result) {
     return NextResponse.rewrite(new URL(result, request.nextUrl));
   }
 
   if (isMarkdownPreferred(request)) {
-    const result = rewriteDocs(request.nextUrl.pathname);
+    const result = rewriteDocs(pathname);
 
     if (result) {
       return NextResponse.rewrite(new URL(result, request.nextUrl), {
