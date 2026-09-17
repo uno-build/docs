@@ -1,0 +1,61 @@
+---
+title: First Layout
+# description: Create your first Uno UI layout using a minimal WebGPU setup.
+---
+
+Install the required dependencies:
+
+```sh
+npm install @uno/ui yoga-layout
+```
+
+## Basic example
+
+This example creates a panel and centers it within the canvas.
+
+```js
+import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
+import UIWebGPU from '@uno/ui/UIWebGPU'
+import { loadYoga } from 'yoga-layout/load'
+
+const canvas = document.querySelector('canvas')
+const resources = await ResourcesWebGPU.create({ canvas })
+const { ui } = await UIWebGPU.create({ resources, loadYoga })
+
+ui.root.style('alignItems', 'center')
+ui.root.style('justifyContent', 'center')
+
+const panel = ui.create()
+panel.style('width', '240px')
+panel.style('height', '160px')
+panel.style('backgroundColor', '#8080FD')
+ui.root.add(panel)
+
+function onResize() {
+  const { clientWidth: width, clientHeight: height } = canvas
+  canvas.width = width * window.devicePixelRatio
+  canvas.height = height * window.devicePixelRatio
+  ui.setViewport(width, height)
+  ui.setDevicePixelRatio(window.devicePixelRatio)
+  ui.update()
+}
+window.addEventListener('resize', onResize)
+onResize()
+
+requestAnimationFrame(function render() {
+  ui.draw()
+  requestAnimationFrame(render)
+})
+```
+
+- `ResourcesWebGPU` owns shared WebGPU resources, including the GPU device, canvas context configuration, and image and font atlases. A single instance can be shared by multiple UIs.
+- `ui.root` is the root node of the layout. It behaves like any other node created with `ui.create()`.
+- `ui.update()` applies pending node, style, and layout changes.
+- `ui.draw()` renders the current UI state to the WebGPU canvas.
+- `ui.setViewport(width, height)` sets the viewport dimensions in logical CSS pixels, while the canvas backing-store dimensions are expressed in device pixels.
+- `ui.setDevicePixelRatio(ratio)` defines how logical pixels map to device pixels.
+- Yoga relies on WebAssembly, which is not available in every runtime. To keep `@uno/ui` runtime-agnostic, you must provide the Yoga loader explicitly. In `@uno/runtime`, Yoga support is built in.
+
+## The final result will look like this
+
+example!

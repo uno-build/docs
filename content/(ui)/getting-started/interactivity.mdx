@@ -1,0 +1,58 @@
+---
+title: Interactivity
+# description: Events
+---
+
+Uno UI renders its nodes inside a WebGPU canvas, so they do not receive browser events directly. To make the layout interactive, forward pointer and wheel events from the canvas to the UI, then register listeners on individual nodes.
+
+## Forward platform events
+
+Import `PLATFORM_EVENT_NAMES` and forward each event from the canvas to `ui.dispatchPlatformEvent()`. Uno UI uses these source events to hit-test the layout and produce normalized node events.
+
+```js
+import { PLATFORM_EVENT_NAMES } from '@uno/ui/events'
+
+for (const type of PLATFORM_EVENT_NAMES) {
+  canvas.addEventListener(type, (event) => {
+    ui.dispatchPlatformEvent(event)
+  })
+}
+```
+
+## Listen for node events
+
+Use `node.on()` to register a listener.
+
+```js
+panel.on('pointerover', (event) => {
+  panel.style('opacity', '0.5')
+  ui.update()
+})
+panel.on('pointerout', (event) => {
+  panel.style('opacity', '1')
+  ui.update()
+})
+```
+
+Every node `event` includes:
+
+- `target`: the node where the event originated.
+- `current_target`: the node whose listener is currently running.
+- `source_event`: the original browser event.
+- `stopPropagation()`: stops the event from bubbling through the Uno UI node tree.
+
+## Remove node listeners
+
+To remove a node listener while the node is still active, pass the same function to `node.off()`:
+
+```js
+function onClick() {
+  console.log('Panel clicked')
+}
+panel.on('click', onClick)
+panel.off('click', onClick)
+```
+
+## Example
+
+EXAMPLE!

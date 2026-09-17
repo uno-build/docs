@@ -1,16 +1,16 @@
 ---
-title: "Uno UI documentation"
+title: "Introduction"
 ---
 
-This directory documents the API published by the current `uno-ui` package. Uno UI is an ESM-only UI runtime with DOM and WebGPU renderers, optional React, Solid, and Vue adapters, and world-space integrations for several WebGPU engines.
+This directory documents the API published by the current `uno-ui` package. Uno UI is an ESM-only WebGPU UI runtime with optional React, Solid, and Vue adapters and world-space integrations for several WebGPU engines.
 
 The package has no root export. Import from one of the explicit subpaths below; imports such as `import ... from 'uno-ui'` or `import ... from 'uno-ui/src/...'` are not part of the public API.
 
 ## Start here
 
-- [Getting started](./getting-started.md) — installation and minimal DOM/WebGPU applications
+- [Getting started](./getting-started/first-layout) — installation and minimal WebGPU applications
 - [Core API](./core-api.md) — the inherited `UI` lifecycle and the node API
-- [Resources and rendering](./resources-and-rendering.md) — DOM/WebGPU resources, assets, drawing, and cleanup
+- [Resources and rendering](./resources-and-rendering.md) — WebGPU resources, assets, drawing, and cleanup
 - [Styles](./styles.md) — every supported style property and value family
 - [Events](./events.md) — event forwarding, bubbling, focus, scroll, and custom events
 - [Framework adapters](./frameworks.md) — React, Solid, and Vue
@@ -20,39 +20,37 @@ The package has no root export. Import from one of the explicit subpaths below; 
 
 ## Package entrypoints
 
-| Import | Purpose | Optional peer dependencies |
-| --- | --- | --- |
-| `uno-ui/events` | Event constants, maps, default definitions, and `EventEmitter` | None |
-| `uno-ui/ResourcesWebGPU` | WebGPU device/context and image/font atlases | None |
-| `uno-ui/UIWebGPU` | Screen-space WebGPU UI | None |
-| `uno-ui/ResourcesDom` | DOM image/font metadata | None |
-| `uno-ui/UIDom` | DOM-rendered UI | None |
-| `uno-ui/UIThree` | Three.js world-space UI | `three`, `@types/three` |
-| `uno-ui/UIBabylon` | Babylon.js world-space UI | `@babylonjs/core` |
-| `uno-ui/UIBabylonLite` | Babylon Lite world-space UI | `@babylonjs/lite` |
-| `uno-ui/UIPlayCanvas` | PlayCanvas world-space UI | `playcanvas` |
-| `uno-ui/react` | React components and root driver | `react`, `react-reconciler`, `@types/react` |
-| `uno-ui/solid` | Solid components and renderer runtime | `solid-js`, `@solidjs/universal` |
-| `uno-ui/solid/config` | Solid compiler configuration | Solid build tooling |
-| `uno-ui/vue` | Vue components, root driver, and stylesheet registry | `vue` |
-| `uno-ui/vue/config` | Vue compiler and Vite style plugins | `vue`, `vite` |
+| Import                   | Purpose                                                        | Optional peer dependencies                  |
+| ------------------------ | -------------------------------------------------------------- | ------------------------------------------- |
+| `uno-ui/events`          | Event constants, maps, default definitions, and `EventEmitter` | None                                        |
+| `uno-ui/ResourcesWebGPU` | WebGPU device/context and image/font atlases                   | None                                        |
+| `uno-ui/UIWebGPU`        | Screen-space WebGPU UI                                         | None                                        |
+| `uno-ui/UIThree`         | Three.js world-space UI                                        | `three`, `@types/three`                     |
+| `uno-ui/UIBabylon`       | Babylon.js world-space UI                                      | `@babylonjs/core`                           |
+| `uno-ui/UIBabylonLite`   | Babylon Lite world-space UI                                    | `@babylonjs/lite`                           |
+| `uno-ui/UIPlayCanvas`    | PlayCanvas world-space UI                                      | `playcanvas`                                |
+| `uno-ui/react`           | React components and root driver                               | `react`, `react-reconciler`, `@types/react` |
+| `uno-ui/solid`           | Solid components and renderer runtime                          | `solid-js`, `@solidjs/universal`            |
+| `uno-ui/solid/config`    | Solid compiler configuration                                   | Solid build tooling                         |
+| `uno-ui/vue`             | Vue components, root driver, and stylesheet registry           | `vue`                                       |
+| `uno-ui/vue/config`      | Vue compiler and Vite style plugins                            | `vue`, `vite`                               |
 
 `yoga-layout` and `@webgpu/types` are regular package dependencies. All engine and framework peers are optional, so install only the integrations used by the application.
 
 ## Lifecycle at a glance
 
-Every renderer follows the same ownership model:
+Every UI follows the same ownership model:
 
-1. Create a resource store.
+1. Create a WebGPU resource store.
 2. Create a UI with that store.
 3. Set its logical viewport and device pixel ratio when applicable.
 4. Register assets and build a node tree, directly or through a framework adapter.
 5. Call `ui.update()` to consume pending mutations.
-6. For WebGPU, call `ui.draw()` in the render loop and present the shared context when required.
+6. Call `ui.draw()` in the render loop and present the shared context when required.
 7. Unmount framework roots, destroy UIs, then dispose shared WebGPU resources after their last UI is gone.
 
 Mutations are journaled. Calling `style()`, `text()`, adding nodes, or changing scroll offsets does not immediately run layout or upload all rendering data; `ui.update()` is the commit boundary.
 
 ## What counts as public
 
-The import boundary is the `exports` map in `package.json`. Some important values are returned through public APIs but do not have their own import path. In particular, the base `UI` and `Node` classes are visible through `UIWebGPU`, `UIDom`, world-space UI instances, `ui.root`, `ui.create()`, and framework handles, but cannot be imported from a supported subpath. These docs describe their usable members without suggesting internal `src/` imports.
+The import boundary is the `exports` map in `package.json`. Some important values are returned through public APIs but do not have their own import path. In particular, the base `UI` and `Node` classes are visible through `UIWebGPU`, world-space UI instances, `ui.root`, `ui.create()`, and framework handles, but cannot be imported from a supported subpath. These docs describe their usable members without suggesting internal `src/` imports.
