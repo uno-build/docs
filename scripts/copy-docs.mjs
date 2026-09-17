@@ -27,7 +27,7 @@ if (!sourceArgument || !targetArgument) {
 const sourceDir = path.resolve(projectRoot, sourceArgument);
 const targetDir = path.resolve(projectRoot, targetArgument);
 const sectionTitle = path.basename(targetDir);
-const contentDir = path.resolve(projectRoot, 'content/docs');
+const contentDir = path.resolve(projectRoot, 'content');
 const targetRelative = path.relative(contentDir, targetDir);
 
 if (targetRelative.startsWith('..') || path.isAbsolute(targetRelative)) {
