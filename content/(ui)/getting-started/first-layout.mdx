@@ -6,7 +6,7 @@ title: First Layout
 Install the required dependencies:
 
 ```sh
-npm install @uno/ui yoga-layout
+npm install @uno/ui
 ```
 
 ## Basic example
@@ -15,27 +15,25 @@ This example creates a panel and centers it within the canvas.
 
 ```js
 import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
-import UIWebGPU from '@uno/ui/UIWebGPU'
-import { loadYoga } from 'yoga-layout/load'
+import UI from '@uno/ui/UI'
 
 const canvas = document.querySelector('canvas')
 const resources = await ResourcesWebGPU.create({ canvas })
-const { ui } = await UIWebGPU.create({ resources, loadYoga })
+const { ui } = await UI.create({ resources })
 
 ui.root.style('alignItems', 'center')
 ui.root.style('justifyContent', 'center')
 
 const panel = ui.create()
-panel.style('width', '240px')
-panel.style('height', '160px')
+panel.style('width', '200px')
+panel.style('height', '150px')
 panel.style('backgroundColor', '#8080FD')
 ui.root.add(panel)
 
 function onResize() {
-  const { clientWidth: width, clientHeight: height } = canvas
-  canvas.width = width * window.devicePixelRatio
-  canvas.height = height * window.devicePixelRatio
-  ui.setViewport(width, height)
+  canvas.width = canvas.clientWidth * window.devicePixelRatio
+  canvas.height = canvas.clientHeight * window.devicePixelRatio
+  ui.setViewport(canvas.clientWidth, canvas.clientHeight)
   ui.setDevicePixelRatio(window.devicePixelRatio)
   ui.update()
 }
@@ -54,8 +52,19 @@ requestAnimationFrame(function render() {
 - `ui.draw()` renders the current UI state to the WebGPU canvas.
 - `ui.setViewport(width, height)` sets the viewport dimensions in logical CSS pixels, while the canvas backing-store dimensions are expressed in device pixels.
 - `ui.setDevicePixelRatio(ratio)` defines how logical pixels map to device pixels.
-- Yoga relies on WebAssembly, which is not available in every runtime. To keep `@uno/ui` runtime-agnostic, you must provide the Yoga loader explicitly. In `@uno/runtime`, Yoga support is built in.
 
 ## The final result will look like this
 
-example!
+<iframe
+  src="https://codesandbox.io/embed/x5dj2k?view=preview+%2B+editor&initialpath=%2Ffirst-layout.html&module=%2Ffirst-layout.html&hidenavigation=1&hidedevtools=1"
+  style={{
+    width: '100%',
+    height: '400px',
+    border: 0,
+    borderRadius: '4px',
+    overflow: 'hidden',
+  }}
+  title="uno-docs"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>

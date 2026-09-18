@@ -1,0 +1,37 @@
+---
+title: Images
+---
+
+## Load your first image
+
+Use the `resources` instance created with `ResourcesWebGPU.create()` to register an image before displaying it in your layout.
+
+```js
+const image_url = 'assets/coin.png'
+const response = await fetch(image_url)
+const blob = await response.blob()
+const source = await createImageBitmap(blob)
+resources.registerImage(image_url, { source })
+
+ui.root.style('backgroundImage', image_url)
+ui.root.style('backgroundSize', '32px 32px')
+ui.root.style('backgroundRepeat', 'repeat')
+```
+
+- `resources.registerImage()` requires two parameters. The first is the asset identifier, which is also passed to `backgroundImage`. The second is an object containing the source bitmap.
+
+## Example
+
+<iframe
+  src="https://codesandbox.io/embed/x5dj2k?view=preview+%2B+editor&initialpath=%2Fimages.html&module=%2Fimages.html&hidenavigation=1&hidedevtools=1"
+  style={{
+    width: '100%',
+    height: '400px',
+    border: 0,
+    borderRadius: '4px',
+    overflow: 'hidden',
+  }}
+  title="uno-docs"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
