@@ -1,0 +1,72 @@
+---
+title: React
+---
+
+This tutorial asumes that you have a valid React setup that can transform `.jsx` or `.tsx` format.
+
+## Register the root component
+
+```js
+import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
+import UI from '@uno/ui/UI'
+import { registerRootComponent } from '@uno/ui/react'
+import App from './ReactView.jsx'
+
+const canvas = document.querySelector('canvas')
+const resources = await ResourcesWebGPU.create({ canvas })
+const { ui } = await UI.create({ resources })
+
+// React
+const react = registerRootComponent(App, { ui })
+react.render({})
+```
+
+## Using View
+
+```jsx
+// ReactView.jsx
+import { useState } from 'react'
+import { View } from '@uno/ui/react'
+
+export default function App({}) {
+  const [hovered, setHovered] = useState(false)
+
+  return (
+    <View
+      style={{
+        width: '100%',
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <View
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+        style={{
+          width: '200px',
+          height: '150px',
+          backgroundColor: '#8080FD',
+          opacity: hovered ? '0.5' : '1',
+        }}
+      ></View>
+    </View>
+  )
+}
+```
+
+## Example
+
+<iframe
+  src="https://codesandbox.io/embed/x5dj2k?view=preview&initialpath=%2Freact-view.html&module=%2Freact-view.html&hidenavigation=1&hidedevtools=1"
+  style={{
+    width: '100%',
+    height: '350px',
+    border: 0,
+    borderRadius: '4px',
+    overflow: 'hidden',
+  }}
+  title="uno-docs"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>

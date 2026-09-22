@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas></canvas>
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@19.3.0",
+          "react/jsx-runtime": "https://esm.sh/react@19.3.0/jsx-runtime?external=react",
+          "react-reconciler": "https://esm.sh/react-reconciler@0.34.0?external=react",
+          "react-reconciler/constants.js": "https://esm.sh/react-reconciler@0.34.0/constants.js",
+          "yoga-layout/load": "https://esm.sh/yoga-layout@3.2.1/load",
+          "@uno/ui/react": "./uno-ui/components/react/index.js",
+          "@uno/ui/ResourcesWebGPU": "./uno-ui/renderer/webgpu/ResourcesWebGPU.js",
+          "@uno/ui/UI": "./uno-ui/ui/UI.js"
+        }
+      }
+    </script>
+    <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+    <script type="module">
+      import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
+      import UI from '@uno/ui/UI'
+      import { registerRootComponent } from '@uno/ui/react'
+      import { getReactComponent } from './utils/index.js'
+
+      const canvas = document.querySelector('canvas')
+      const resources = await ResourcesWebGPU.create({ canvas })
+      const { ui } = await UI.create({ resources })
+
+      // React
+      const App = await getReactComponent('ReactView.jsx') // import App from './ReactView.jsx'
+      const react = registerRootComponent(App, { ui })
+      react.render({})
+
+      function onResize() {
+        canvas.width = canvas.clientWidth * window.devicePixelRatio
+        canvas.height = canvas.clientHeight * window.devicePixelRatio
+        ui.setViewport(canvas.clientWidth, canvas.clientHeight)
+        ui.setDevicePixelRatio(window.devicePixelRatio)
+        ui.update()
+      }
+      window.addEventListener('resize', onResize)
+      onResize()
+
+      requestAnimationFrame(function render() {
+        ui.draw()
+        requestAnimationFrame(render)
+      })
+    </script>
+  </body>
+</html>

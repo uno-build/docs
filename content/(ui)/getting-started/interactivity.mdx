@@ -2,20 +2,6 @@
 title: Interactivity
 ---
 
-## Forward platform events
-
-Import `PLATFORM_EVENT_NAMES` and forward each event from the canvas to `ui.dispatchPlatformEvent()`. `uno/ui` uses these source events to hit-test the layout and produce normalized node events.
-
-```js
-import { PLATFORM_EVENT_NAMES } from '@uno/ui/events'
-
-for (const type of PLATFORM_EVENT_NAMES) {
-  canvas.addEventListener(type, (event) => {
-    ui.dispatchPlatformEvent(event)
-  })
-}
-```
-
 ## Listen for node events
 
 Use `node.on()` to register a listener.
@@ -43,20 +29,20 @@ Every node `event` includes:
 To remove a node listener while the node is still active, pass the same function to `node.off()`:
 
 ```js
-function onClick() {
-  console.log('Panel clicked')
+function onPointerOver() {
+  console.log('panel has been hovered')
 }
-panel.on('click', onClick)
-panel.off('click', onClick)
+panel.on('pointerover', onPointerOver)
+panel.off('pointerover', onPointerOver)
 ```
 
 ## Example
 
 <iframe
-  src="https://codesandbox.io/embed/x5dj2k?view=preview+%2B+editor&initialpath=%2Finteractivity.html&module=%2Finteractivity.html&hidenavigation=1&hidedevtools=1"
+  src="https://codesandbox.io/embed/x5dj2k?view=preview&initialpath=%2Finteractivity.html&module=%2Finteractivity.html&hidenavigation=1&hidedevtools=1"
   style={{
     width: '100%',
-    height: '400px',
+    height: '350px',
     border: 0,
     borderRadius: '4px',
     overflow: 'hidden',
