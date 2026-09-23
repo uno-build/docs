@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { View, Text, Image, Input } from "@uno/ui/react";
 
-export default function App() {
+export default function App({backgroundColor="#F5F2EC"}) {
   const dom_input = useRef(null);
   const [name, setName] = useState("React");
   const [hovered, setHovered] = useState(false);
@@ -58,9 +58,8 @@ export default function App() {
         alignItems: "center",
         justifyContent: "center",
         gap: "16px",
-        borderRadius: "12px",
-        backgroundColor: "#F5F2EC",
         fontFamily: "ChangaOne",
+        backgroundColor,
       }}
     >
       <Image src="assets/coin.png" width="64px" />

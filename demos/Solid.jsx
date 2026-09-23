@@ -55,7 +55,6 @@ export default function App() {
         alignItems: 'center',
         justifyContent: 'center',
         gap: '16px',
-        borderRadius: '12px',
         backgroundColor: '#F5F2EC',
         fontFamily: 'ChangaOne',
       }}

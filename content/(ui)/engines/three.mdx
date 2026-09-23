@@ -1,0 +1,155 @@
+---
+title: Three.js
+---
+
+Three.js and Uno UI can draw to the same canvas by sharing a WebGPU device and context. The order of the draw calls determines whether the UI appears in front of or behind the scene.
+
+
+## Shared setup
+
+Use `WebGPURenderer` from `three/webgpu`. Pass it the `canvas`, `device`, and `context` used by Uno UI.
+
+```js
+import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
+import UI from '@uno/ui/UI'
+import * as THREE from 'three/webgpu'
+
+const canvas = document.querySelector('canvas')
+const resources = await ResourcesWebGPU.create({ canvas })
+const { ui } = await UI.create({ resources })
+const { device, context } = resources
+
+const renderer = new THREE.WebGPURenderer({ canvas, device, context })
+renderer.outputColorSpace = THREE.LinearSRGBColorSpace
+renderer.setClearColor(0xffffff, 1)
+await renderer.init()
+
+const scene = new THREE.Scene()
+const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10)
+camera.position.z = 2.5
+
+const cube = new THREE.Mesh(
+  new THREE.BoxGeometry(1, 1, 1),
+  new THREE.MeshNormalMaterial(),
+)
+scene.add(cube)
+```
+
+In `onResize()`, replace the direct `canvas.width` and `canvas.height` assignments with Three.js sizing and camera updates:
+
+```js
+renderer.setPixelRatio(window.devicePixelRatio)
+renderer.setSize(canvas.clientWidth, canvas.clientHeight, false)
+camera.aspect = canvas.clientWidth / canvas.clientHeight
+camera.updateProjectionMatrix()
+```
+
+
+## Control the draw order
+
+Clear the color at the start of each frame, then preserve it in subsequent draws.
+
+### Uno UI: `load_op`
+
+The `load_op` option of `ui.draw()` controls what happens to the existing pixels before drawing the UI:
+
+| Value | Effect |
+| --- | --- |
+| `'load'` (default) | Keeps existing pixels. Used when calling `ui.draw()` without options. |
+| `'clear'` | Clears the target to transparent black. |
+
+`load_op` does not choose which layer is in front. The draw order does that. Using `'clear'` after drawing the scene erases the scene; using `'load'` keeps it visible wherever the UI is transparent.
+
+### Three.js: `autoClearColor`
+
+`renderer.autoClearColor` controls whether Three.js clears the color before rendering the scene:
+
+| Value | Effect |
+| --- | --- |
+| `true` (default) | Clears the existing color. |
+| `false` | Preserves the existing color. |
+
+Keep `renderer.autoClear` at its default value of `true`. Changing only `autoClearColor` lets Three.js continue clearing depth and stencil for each frame.
+
+## UI in front of the cube
+
+Draw the scene first, then draw the UI:
+
+```js
+renderer.autoClearColor = true
+
+requestAnimationFrame(function render(time) {
+  cube.rotation.x = time / 2000
+  cube.rotation.y = time / 1000
+
+  renderer.render(scene, camera)
+  ui.draw() // Equivalent to ui.draw({ load_op: 'load' })
+
+  requestAnimationFrame(render)
+})
+```
+
+Three.js clears to white and draws the cube. Uno UI preserves that image and draws the panel over it.
+
+## UI behind the cube
+
+Draw the UI first with `load_op: 'clear'`, then render the scene with `autoClearColor = false`:
+
+```js
+renderer.autoClearColor = false
+
+// Uno UI now paints the background, since Three.js will not clear the color.
+ui.root.style('backgroundColor', '#ffffff')
+ui.update()
+
+requestAnimationFrame(function render(time) {
+  cube.rotation.x = time / 2000
+  cube.rotation.y = time / 1000
+
+  ui.draw({ load_op: 'clear' })
+  renderer.render(scene, camera)
+
+  requestAnimationFrame(render)
+})
+```
+
+Uno UI clears the canvas and draws the white background and panel. Three.js keeps those pixels and draws the cube over them. Leaving `autoClearColor = true` would erase the UI before drawing the cube.
+
+Keep `scene.background` at its default value of `null` when Uno UI supplies the background. A background texture or skybox drawn by Three.js can cover the UI even when color clearing is disabled.
+
+## UI behind and in front
+
+For separate background and foreground layouts, create two UI instances using the same resources:
+
+```js
+const { ui: background_ui } = await UI.create({ resources })
+const { ui: foreground_ui } = await UI.create({ resources })
+```
+
+Apply the layout and viewport setup to each UI. Set `renderer.autoClearColor = false`, then use this order inside the render loop:
+
+```js
+background_ui.draw({ load_op: 'clear' })
+renderer.render(scene, camera)
+foreground_ui.draw()
+```
+
+The background UI starts the frame, Three.js draws over it, and the foreground UI draws last. Keep the foreground layout transparent wherever the scene should remain visible.
+
+
+## Demo
+
+This demo uses two UI instances: one for the background and one for the foreground. The foreground UI reuses the React component from the [React demo](../../components/react).
+<iframe
+  src="https://codesandbox.io/embed/x5dj2k?view=preview&initialpath=%2Fthree.html&module=%2Fthree.html&hidenavigation=1&hidedevtools=1"
+  style={{
+    width: '100%',
+    height: '350px',
+    border: 0,
+    borderRadius: '4px',
+    overflow: 'hidden',
+  }}
+  title="uno-docs"
+  allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+  sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
