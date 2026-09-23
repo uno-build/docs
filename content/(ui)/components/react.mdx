@@ -19,7 +19,7 @@ const react = registerRootComponent(App, { ui })
 react.render({})
 ```
 
-React commits call `ui.update()` automatically. Keep the viewport setup and render loop from [First Layout](./first-layout.mdx) to draw the UI with `ui.draw()`.
+React commits call `ui.update()` automatically. Keep the viewport setup and render loop from [First Layout](../getting-started/first-layout.mdx) to draw the UI with `ui.draw()`.
 
 ## Components
 
@@ -66,7 +66,7 @@ export default function App({}) {
 
 ### `<Text>`
 
-Use `Text` for all text content. Follow [Texts & Fonts](./texts-fonts.mdx) to load and register a font before rendering the examples below.
+Use `Text` for all text content. Follow [Texts & Fonts](../getting-started/texts-fonts.mdx) to load and register a font before rendering the examples below.
 
 ```jsx
 import { useState } from 'react'
@@ -87,7 +87,7 @@ A string directly inside `View`, such as `<View>Hello</View>`, is invalid. `Text
 
 ### `<Image>`
 
-`Image` displays a registered image resource. It does not download the image from `src`. Follow [Images](./images.mdx) to load and register the asset before calling `react.render({})`.
+`Image` displays a registered image resource. It does not download the image from `src`. Follow [Images](../getting-started/images.mdx) to load and register the asset before calling `react.render({})`.
 
 | Property          | Value                                         | Default  | Usage                                                                                                          |
 | ----------------- | --------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------- |
@@ -215,7 +215,7 @@ Handlers receive Uno events rather than React DOM synthetic events. Each event i
 | `source_event`      | The original platform event, or `null` for a programmatic event without a source. |
 | `stopPropagation()` | Stops the event from continuing to ancestor nodes.                                |
 
-Events bubble through the Uno node tree, so a component's handler can receive events from its descendants. Event-specific data, such as pointer coordinates, wheel deltas, scroll offsets, and focus transitions, is documented in [Interactivity](./interactivity.mdx).
+Events bubble through the Uno node tree, so a component's handler can receive events from its descendants. Event-specific data, such as pointer coordinates, wheel deltas, scroll offsets, and focus transitions, is documented in [Interactivity](../getting-started/interactivity.mdx).
 
 
 

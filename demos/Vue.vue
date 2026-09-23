@@ -64,10 +64,10 @@ function blurInput() {
 
     <View
       @click="name = ''"
-      @pointer-over="name && (hovered = true)"
-      @pointer-out="hovered = false"
+      @pointerover="name && (hovered = true)"
+      @pointerout="hovered = false"
       class="button"
-      :style="{ backgroundColor: name ? (hovered ? '#3DB17E' : '#42B883') : '#B7C5BF' }"
+      :style="{ backgroundColor: name ? (hovered ? '#6ed4a6' : '#3DB17E') : '#B7C5BF' }"
     >
       <Text class="button-text">Clear</Text>
     </View>
