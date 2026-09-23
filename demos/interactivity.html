@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas></canvas>
+    <script type="importmap">
+      {
+        "imports": {
+          "yoga-layout/load": "https://esm.sh/yoga-layout@3.2.1/load",
+          "@uno/ui/ResourcesWebGPU": "./uno-ui/renderer/webgpu/ResourcesWebGPU.js",
+          "@uno/ui/UI": "./uno-ui/ui/UI.js"
+        }
+      }
+    </script>
+    <script type="module">
+      import ResourcesWebGPU from "@uno/ui/ResourcesWebGPU";
+      import UI from "@uno/ui/UI";
+
+      const canvas = document.querySelector("canvas");
+      const resources = await ResourcesWebGPU.create({ canvas });
+      const { ui } = await UI.create({ resources });
+
+      ui.root.style("alignItems", "center");
+      ui.root.style("justifyContent", "center");
+
+      const panel = ui.create();
+      panel.style("width", "200px");
+      panel.style("height", "150px");
+      panel.style("backgroundColor", "#FD8080");
+      panel.on("pointerover", (event) => {
+        panel.style("opacity", "0.5");
+        ui.update();
+      });
+      panel.on("pointerout", (event) => {
+        panel.style("opacity", "1");
+        ui.update();
+      });
+      ui.root.add(panel);
+
+      function onResize() {
+        canvas.width = canvas.clientWidth * window.devicePixelRatio;
+        canvas.height = canvas.clientHeight * window.devicePixelRatio;
+        ui.setViewport(canvas.clientWidth, canvas.clientHeight);
+        ui.setDevicePixelRatio(window.devicePixelRatio);
+        ui.update();
+      }
+      window.addEventListener("resize", onResize);
+      onResize();
+
+      requestAnimationFrame(function render() {
+        ui.draw();
+        requestAnimationFrame(render);
+      });
+    </script>
+  </body>
+</html>
