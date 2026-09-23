@@ -154,12 +154,12 @@ Set `horizontal` to arrange the content in a row and enable horizontal scrolling
 </ScrollView>
 ```
 
-The `style` prop applies to the viewport. Use `onScroll` to respond to scrolling.
+The `style` prop applies to the viewport. Use `onScroll` event to respond to scrolling.
 
 
 ### `<Input>`
 
-`Input` is a visual component controlled by `value`. It displays text, a placeholder, and a blinking caret while focused. It has no `onChange` event and does not collect keyboard input.
+`Input` is a visual component controlled by `value`. It displays text, a placeholder, and a blinking caret while focused.
 
 | Property               | Value                     | Default     | Usage                                                                                   |
 | ---------------------- | ------------------------- | ----------- | --------------------------------------------------------------------------------------- |
@@ -184,8 +184,6 @@ export default function App({ value = '' }) {
 ```
 
 The component forwards `onFocus`, `onBlur`, and `onPointerDown`; it calls `preventDefault()` on the source pointer event before your `onPointerDown` callback.
-
-In TypeScript, import `InputHandle` from `@uno/ui/react` and create the ref with `useRef<InputHandle>(null)`.
 
 `focus()` and `blur()` do not open a platform keyboard. `Input` does not create a DOM input or handle IME, selection, or clipboard input. To support typing in a browser, connect a native `<input>` outside the Uno component tree and synchronize its value with React state. Other hosts need an equivalent platform text-input bridge.
 
