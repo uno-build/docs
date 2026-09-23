@@ -4,6 +4,8 @@ title: Three.js
 
 Three.js and Uno UI can draw to the same canvas by sharing a WebGPU device and context. The order of the draw calls determines whether the UI appears in front of or behind the scene.
 
+The examples below assume you are familiar with the basics of Uno UI covered in the [First Layout](../getting-started/first-layout.mdx) section.
+
 
 ## Shared setup
 
@@ -44,7 +46,6 @@ camera.aspect = canvas.clientWidth / canvas.clientHeight
 camera.updateProjectionMatrix()
 ```
 
-
 ## Control the draw order
 
 Clear the color at the start of each frame, then preserve it in subsequent draws.
@@ -83,7 +84,7 @@ requestAnimationFrame(function render(time) {
   cube.rotation.y = time / 1000
 
   renderer.render(scene, camera)
-  ui.draw() // Equivalent to ui.draw({ load_op: 'load' })
+  ui.draw()
 
   requestAnimationFrame(render)
 })
@@ -126,20 +127,40 @@ const { ui: background_ui } = await UI.create({ resources })
 const { ui: foreground_ui } = await UI.create({ resources })
 ```
 
-Apply the layout and viewport setup to each UI. Set `renderer.autoClearColor = false`, then use this order inside the render loop:
+Apply the layout and viewport setup to each UI, then draw the background UI, the scene, and the foreground UI in that order:
 
 ```js
-background_ui.draw({ load_op: 'clear' })
-renderer.render(scene, camera)
-foreground_ui.draw()
+renderer.autoClearColor = false
+
+requestAnimationFrame(function render(time) {
+  cube.rotation.x = time / 2000
+  cube.rotation.y = time / 1000
+
+  background_ui.draw({ load_op: 'clear' })
+  renderer.render(scene, camera)
+  foreground_ui.draw()
+
+  requestAnimationFrame(render)
+})
 ```
 
 The background UI starts the frame, Three.js draws over it, and the foreground UI draws last. Keep the foreground layout transparent wherever the scene should remain visible.
+
+## Why `LinearSRGBColorSpace` is required
+
+**Keep `renderer.outputColorSpace = THREE.LinearSRGBColorSpace` for this direct canvas composition, especially when drawing UI behind the scene.**
+
+By default, Three.js uses `SRGBColorSpace`. `WebGPURenderer` renders the scene into an intermediate texture, then converts its colors in a fullscreen output pass. That texture does not contain the UI already drawn to the canvas, so the output pass overwrites it. `autoClearColor = false` prevents clearing, but does not prevent this fullscreen draw.
+
+`LinearSRGBColorSpace` matches Three.js's working color space. With the default `NoToneMapping`, Three.js skips the intermediate conversion pass and draws directly onto the canvas, preserving the background UI when `autoClearColor = false`. Enabling tone mapping can introduce the intermediate pass again. See [Three.js output conversion](https://threejs.org/docs/pages/Renderer.html#needsFrameBufferTarget).
+
+This setup omits the usual linear-to-sRGB output conversion, so the scene's colors may appear darker than with standard sRGB output. Keeping that conversion requires coordinating the final composition between Three.js and Uno UI.
 
 
 ## Demo
 
 This demo uses two UI instances: one for the background and one for the foreground. The foreground UI reuses the React component from the [React demo](../../components/react).
+
 <iframe
   src="https://codesandbox.io/embed/x5dj2k?view=preview&initialpath=%2Fthree.html&module=%2Fthree.html&hidenavigation=1&hidedevtools=1"
   style={{
