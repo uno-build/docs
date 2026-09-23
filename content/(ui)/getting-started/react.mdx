@@ -2,15 +2,13 @@
 title: React
 ---
 
-This tutorial asumes that you have a valid React setup that can transform `.jsx` or `.tsx` format.
-
 ## Register the root component
 
 ```js
 import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
 import UI from '@uno/ui/UI'
 import { registerRootComponent } from '@uno/ui/react'
-import App from './ReactView.jsx'
+import App from './App.jsx'
 
 const canvas = document.querySelector('canvas')
 const resources = await ResourcesWebGPU.create({ canvas })
@@ -21,7 +19,17 @@ const react = registerRootComponent(App, { ui })
 react.render({})
 ```
 
-## Using View
+React commits call `ui.update()` automatically. Keep the viewport setup and render loop from [First Layout](./first-layout.mdx) to draw the UI with `ui.draw()`.
+
+## Components
+
+`@uno/ui/react` exports five components: `View`, `Text`, `Image`, `ScrollView`, and `Input`. They render Uno nodes and share the properties and event props below. Each component's section describes its additional props and behavior.
+
+
+### `<View>`
+
+`View` is a container for layout, backgrounds, and child components. Rendering a `View` creates an Uno node, equivalent to calling `ui.create()` in the imperative API. React adds the node to its parent and manages its updates and removal. Use React state to update its styles in response to events.
+
 
 ```jsx
 // ReactView.jsx
@@ -55,10 +63,189 @@ export default function App({}) {
 }
 ```
 
-## Example
+
+### `<Text>`
+
+Use `Text` for all text content. Follow [Texts & Fonts](./texts-fonts.mdx) to load and register a font before rendering the examples below.
+
+```jsx
+import { useState } from 'react'
+import { View, Text } from '@uno/ui/react'
+
+export default function App() {
+
+  return (
+    <View style={{ padding: '16px', gap: '8px' }}>
+      <Text style={{ color: '#ffffff' }}>Click the counter to update it.</Text>
+    </View>
+  )
+}
+```
+
+A string directly inside `View`, such as `<View>Hello</View>`, is invalid. `Text` is a leaf node: it cannot contain elements, components, or React fragments. To use different styles within a line, place sibling `Text` components inside a `View` with `flexDirection: 'row'`.
+
+
+### `<Image>`
+
+`Image` displays a registered image resource. It does not download the image from `src`. Follow [Images](./images.mdx) to load and register the asset before calling `react.render({})`.
+
+| Property          | Value                                         | Default  | Usage                                                                                                          |
+| ----------------- | --------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------- |
+| `src`             | String                                        | Required | The registered image resource identifier.                                                                      |
+| `width`           | String                                        | Not set  | Width with units, such as `'128px'`. If only this dimension is set, the registered aspect ratio is preserved.  |
+| `height`          | String                                        | Not set  | Height with units, such as `'100px'`. If only this dimension is set, the registered aspect ratio is preserved. |
+| `style.objectFit` | `'fill'`, `'contain'`, `'cover'`, or `'none'` | `'fill'` | Controls how the image fits within the component's dimensions. Set it inside `style`.                          |
+
+With neither dimension set, the component uses the registered image size. Dimensions in `style` take precedence over the `width` and `height` props.
+
+Use the same identifier as the component's `src`:
+
+```jsx
+import { Image, View } from '@uno/ui/react'
+
+export default function App() {
+  return (
+    <View style={{ flexDirection: 'row', gap: '16px' }}>
+      <Image src="assets/coin.png" width="128px" />
+      <Image src="assets/coin.png" width="160px" height="100px" style={{ objectFit: 'contain' }} />
+    </View>
+  )
+}
+```
+
+
+### `<ScrollView>`
+
+`ScrollView` clips its children and provides vertical scrolling by default.
+
+| Property     | Value   | Default | Usage                                                                       |
+| ------------ | ------- | ------- | --------------------------------------------------------------------------- |
+| `horizontal` | Boolean | `false` | Arranges the content in a row and enables horizontal scrolling when `true`. |
+
+Give it a limited height so that content can overflow the viewport:
+
+```jsx
+import { ScrollView, Text, View } from '@uno/ui/react'
+
+const ITEMS = Array.from({ length: 20 }, (_, index) => index + 1)
+
+export default function App() {
+  return (
+    <ScrollView style={{ width: '240px', height: '200px' }}>
+      {ITEMS.map((item) => (
+        <View key={item} style={{ padding: '12px', flexShrink: '0', backgroundColor: '#8080FD' }}>
+          <Text style={{ color: '#ffffff' }}>Item {item}</Text>
+        </View>
+      ))}
+    </ScrollView>
+  )
+}
+```
+
+Set `horizontal` to arrange the content in a row and enable horizontal scrolling:
+
+```jsx
+<ScrollView horizontal style={{ width: '240px', height: '80px' }}>
+  {ITEMS.map((item) => (
+    <View key={item} style={{ width: '120px', padding: '12px', flexShrink: '0' }}>
+      <Text style={{ color: '#ffffff' }}>Item {item}</Text>
+    </View>
+  ))}
+</ScrollView>
+```
+
+The `style` prop applies to the viewport. Use `onScroll` to respond to scrolling.
+
+
+### `<Input>`
+
+`Input` is a visual component controlled by `value`. It displays text, a placeholder, and a blinking caret while focused. It has no `onChange` event and does not collect keyboard input.
+
+| Property               | Value                     | Default     | Usage                                                                                   |
+| ---------------------- | ------------------------- | ----------- | --------------------------------------------------------------------------------------- |
+| `value`                | String, number, or `null` | `undefined` | The displayed input value. An empty string, `null`, or `undefined` is treated as empty. |
+| `placeholder`          | String, number, or `null` | `undefined` | Text displayed only when `value` is empty and the input is unfocused.                   |
+| `placeholderTextColor` | Color string              | `'#777777'` | The color used for the placeholder text.                                                |
+
+Pass the displayed text through `value`:
+
+```jsx
+import { Input } from '@uno/ui/react'
+
+export default function App({ value = '' }) {
+  return (
+    <Input
+      value={value}
+      placeholder="Your name"
+      style={{ width: '240px', height: '40px', padding: '8px', color: '#111827' }}
+    />
+  )
+}
+```
+
+The component forwards `onFocus`, `onBlur`, and `onPointerDown`; it calls `preventDefault()` on the source pointer event before your `onPointerDown` callback.
+
+In TypeScript, import `InputHandle` from `@uno/ui/react` and create the ref with `useRef<InputHandle>(null)`.
+
+`focus()` and `blur()` do not open a platform keyboard. `Input` does not create a DOM input or handle IME, selection, or clipboard input. To support typing in a browser, connect a native `<input>` outside the Uno component tree and synchronize its value with React state. Other hosts need an equivalent platform text-input bridge.
+
+
+
+## Event props
+
+All five components accept the following event props. Pass a handler function to subscribe; omit the prop or set it to `null` or `undefined` to remove your handler. React manages the listener registration and cleanup.
+
+| Prop              | Uno event       | When it fires                                                        |
+| ----------------- | --------------- | -------------------------------------------------------------------- |
+| `onPointerDown`   | `pointerdown`   | A pointer is pressed on a node.                                      |
+| `onPointerMove`   | `pointermove`   | A pointer moves over the UI or during an active pointer interaction. |
+| `onPointerUp`     | `pointerup`     | An active pointer is released.                                       |
+| `onPointerCancel` | `pointercancel` | The platform cancels an active pointer interaction.                  |
+| `onPointerOver`   | `pointerover`   | A node becomes the pointer's hover target.                           |
+| `onPointerOut`    | `pointerout`    | A node stops being the pointer's hover target.                       |
+| `onClick`         | `click`         | A node is activated by a completed click or tap.                     |
+| `onWheel`         | `wheel`         | Wheel or trackpad input occurs over a node.                          |
+| `onScroll`        | `scroll`        | A scroll container's offset changes through scrolling.               |
+| `onFocus`         | `focus`         | A node gains Uno focus.                                              |
+| `onBlur`          | `blur`          | A node loses Uno focus.                                              |
+
+Handlers receive Uno events rather than React DOM synthetic events. Each event includes these common members:
+
+| Member              | Meaning                                                                           |
+| ------------------- | --------------------------------------------------------------------------------- |
+| `type`              | The Uno event name, such as `'pointerdown'`.                                      |
+| `target`            | The Uno node where the event originated.                                          |
+| `current_target`    | The Uno node whose handler is currently running.                                  |
+| `source_event`      | The original platform event, or `null` for a programmatic event without a source. |
+| `stopPropagation()` | Stops the event from continuing to ancestor nodes.                                |
+
+Events bubble through the Uno node tree, so a component's handler can receive events from its descendants. Event-specific data, such as pointer coordinates, wheel deltas, scroll offsets, and focus transitions, is documented in [Interactivity](./interactivity.mdx).
+
+
+
+## `useUI()`
+
+`useUI()` returns the UI passed to `registerRootComponent`. Call it only inside that registered component tree. For example, a component can read the original dimensions of the registered `assets/coin.png` image:
+
+```jsx
+import { Text, useUI } from '@uno/ui/react'
+
+export function ImageSize() {
+  const ui = useUI()
+  const { width, height } = ui.resources.getImageSize('assets/coin.png')
+
+  return (
+    <Text style={{ color: '#ffffff' }}>
+      Image size: {width} × {height}
+    </Text>
+  )
+}
+```
+
+## Demo
 
 <iframe
-  src="https://codesandbox.io/embed/x5dj2k?view=preview&initialpath=%2Freact-view.html&module=%2Freact-view.html&hidenavigation=1&hidedevtools=1"
+  src="https://codesandbox.io/embed/x5dj2k?view=preview&module=%2FReact.jsx&initialpath=%2Freact.html&hidenavigation=1&hidedevtools=1"
   style={{
     width: '100%',
     height: '350px',

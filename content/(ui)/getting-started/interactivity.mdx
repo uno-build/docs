@@ -4,39 +4,165 @@ title: Interactivity
 
 ## Listen for node events
 
-Use `node.on()` to register a listener.
-
 ```js
-panel.on('pointerover', (event) => {
-  panel.style('opacity', '0.5')
+node.on('pointerover', (event) => {
+  node.style('opacity', '0.5')
   ui.update()
 })
-panel.on('pointerout', (event) => {
-  panel.style('opacity', '1')
+
+node.on('pointerout', (event) => {
+  node.style('opacity', '1')
   ui.update()
 })
 ```
 
-Every node `event` includes:
-
-- `target`: the node where the event originated.
-- `current_target`: the node whose listener is currently running.
-- `source_event`: the original browser event.
-- `stopPropagation()`: stops the event from bubbling through the `uno/ui` node tree.
+Call `ui.update()` after changing node styles in an event handler.
 
 ## Remove node listeners
 
-To remove a node listener while the node is still active, pass the same function to `node.off()`:
+To remove a node listener while the node is still active, pass the same function to `node.off()`. Destroying a node removes its listeners automatically:
 
 ```js
 function onPointerOver() {
-  console.log('panel has been hovered')
+  console.log('node has been hovered')
 }
-panel.on('pointerover', onPointerOver)
-panel.off('pointerover', onPointerOver)
+
+node.on('pointerover', onPointerOver)
+node.off('pointerover', onPointerOver)
 ```
 
-## Example
+## Supported events
+
+| Event           | When it fires                                                        |
+| --------------- | -------------------------------------------------------------------- |
+| `pointerdown`   | A pointer is pressed on a node.                                      |
+| `pointermove`   | A pointer moves over the UI or during an active pointer interaction. |
+| `pointerup`     | An active pointer is released.                                       |
+| `pointercancel` | The platform cancels an active pointer interaction.                  |
+| `pointerover`   | A node becomes the pointer's hover target.                           |
+| `pointerout`    | A node stops being the pointer's hover target.                       |
+| `click`         | A node is activated by a completed click or tap.                     |
+| `wheel`         | A wheel or trackpad event occurs over a node.                        |
+| `scroll`        | A scroll container's offset changes through scrolling.               |
+| `focus`         | A node gains Uno focus.                                              |
+| `blur`          | A node loses Uno focus.                                              |
+
+- **Pointer and click behavior:** In WebGPU-backed UIs, pointer interactions stay with the pressed node until release or cancellation; a click requires pressing and releasing on the same node without a scrolling gesture.
+- **Wheel and scroll:** `wheel` reports wheel input, while `scroll` reports changes to a container's scroll position; WebGPU scrolling requires scrollable overflow and content larger than the viewport.
+- **Focus and blur:** Each UI has one focused node at a time; `pointerdown` or `node.focus()` moves focus to a node, and `node.blur()` clears its focus.
+
+## Event data
+
+Every node event includes:
+
+- `type`: the Uno event name, such as `'click'`.
+- `target`: the node where the event originated.
+- `current_target`: the node whose listener is currently running.
+- `source_event`: the original platform event, or `null` for a programmatic event without a source, such as `node.focus()`.
+- `stopPropagation()`: stops the event from continuing to ancestor nodes.
+
+Additional fields depend on the event:
+
+| Events                                                              | Additional fields                                                  |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `pointerdown`, `pointermove`, `pointerup`, `pointercancel`, `click` | `x`, `y`, and optional `distance_to_camera`.                       |
+| `pointerover`, `pointerout`                                         | `x`, `y`, optional `distance_to_camera`, and `related_target`.     |
+| `wheel`                                                             | `x`, `y`, optional `distance_to_camera`, `delta_x`, and `delta_y`. |
+| `scroll`                                                            | `scroll_left` and `scroll_top`.                                    |
+| `focus`, `blur`                                                     | `related_target`.                                                  |
+
+`x` and `y` are coordinates in the UI's logical coordinate space, not offsets relative to `current_target`. World-space integrations can also supply `distance_to_camera`.
+
+For pointer events, read properties such as `pointerId`, `pointerType`, and `button` from `source_event`:
+
+```js
+node.on('pointerdown', (event) => {
+  console.log(event.x, event.y)
+  console.log(event.source_event.pointerId, event.source_event.pointerType)
+})
+```
+
+
+## Event propagation
+
+All built-in node events bubble from `target` through its ancestors, including `focus`, `blur`, `scroll`, `pointerover`, and `pointerout`. `target` stays the same during propagation, while `current_target` changes at each node. There is no capture phase.
+
+```js
+node.on('click', (event) => {
+  event.stopPropagation()
+})
+
+ui.root.on('click', (event) => {
+  console.log('A click reached the root:', event.target)
+})
+```
+
+In this example, clicks that reach `node` do not continue to `ui.root`. Other listeners on `node` still run. `stopPropagation()` only affects Uno node propagation; it does not cancel the source event's browser behavior or Uno's built-in focus, click, and scroll processing.
+
+To prevent a source event's browser default action, call `event.source_event?.preventDefault()`. Uno events do not expose their own `preventDefault()` method.
+
+
+
+{/*
+## Pointer and click behavior
+
+With the WebGPU-backed `UI`, `pointerdown` captures the target inside Uno. Subsequent `pointermove`, `pointerup`, and `pointercancel` events received for that pointer are delivered to the original target, even when the pointer moves over another node. `pointerup` and `pointercancel` end this interaction.
+
+Hover tracking follows the node currently under the pointer, independently of that captured target. On `pointerover`, `related_target` is the previous hover target. On `pointerout`, it is the next hover target. It is `null` when there is no other target. A touch release or pointer cancellation also ends hover.
+
+`click` requires the pointer to be pressed and released on the same hit-tested node. A cancelled pointer does not produce a click. A non-mouse drag exceeding 10 logical pixels along either axis in a scrollable container marks it as scrolling and suppresses the click.
+
+`UIDom` adapts native pointer, click, and scroll events into the same node event fields; the browser controls its pointer targeting, click detection, and scrolling.
+*/}
+
+{/*
+## Wheel and scroll
+
+`wheel` reports wheel input over the hit-tested node, whether or not anything scrolls. Its `delta_x` and `delta_y` come from the source event's `deltaX` and `deltaY`. Line-mode deltas are multiplied by 16; other delta modes are passed through unchanged. These values are not the resulting scroll offsets.
+
+`scroll` targets the container that actually scrolled. `scroll_left` and `scroll_top` are its current horizontal and vertical offsets:
+
+```js
+node.on('wheel', (event) => {
+  console.log('Wheel input:', event.delta_x, event.delta_y)
+})
+
+node.on('scroll', (event) => {
+  console.log('Scroll position:', event.scroll_left, event.scroll_top)
+})
+```
+
+For WebGPU-backed UIs, enable scrolling with `overflowX: 'scroll'` or `overflowY: 'scroll'` and content larger than the viewport. Uno scrolls through wheel input and non-mouse pointer dragging. Wheel input finds the nearest ancestor that can scroll in the requested direction, continuing to an outer container when the inner one reaches its limit.
+
+Assigning `node.scrollLeft` or `node.scrollTop` directly in a WebGPU-backed UI queues a position update but does not emit a `scroll` event. Call `ui.update()` to apply that change.
+*/}
+
+{/*
+## Focus and blur
+
+Uno maintains one focused node per UI. A `pointerdown` moves focus to its target. You can also call `node.focus()` and `node.blur()`:
+
+```js
+node.on('focus', (event) => {
+  node.style('backgroundColor', '#8080FD')
+  ui.update()
+})
+
+node.on('blur', (event) => {
+  node.style('backgroundColor', '#777777')
+  ui.update()
+})
+
+node.focus()
+node.blur()
+```
+
+On `focus`, `related_target` is the previously focused node. On `blur`, it is the node receiving focus, or `null` when focus is cleared. Moving focus between nodes emits `blur` on the old node before `focus` on the new one. Focusing an already focused node or blurring an unfocused node emits nothing.
+
+Both methods accept an optional source event. Without one, their events have `source_event: null`. Uno focus does not open a platform keyboard or provide text input.
+*/}
+
+## Demo
 
 <iframe
   src="https://codesandbox.io/embed/x5dj2k?view=preview&initialpath=%2Finteractivity.html&module=%2Finteractivity.html&hidenavigation=1&hidedevtools=1"

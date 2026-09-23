@@ -39,7 +39,6 @@
       import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
       import UI from '@uno/ui/UI'
       import { registerRootComponent } from '@uno/ui/react'
-      import { getReactComponent } from './utils/index.js'
 
       const canvas = document.querySelector('canvas')
       const resources = await ResourcesWebGPU.create({ canvas })
@@ -62,11 +61,9 @@
       resources.registerImage(image_url, { image: coin })
 
       // React
-      const App = await getReactComponent('App.jsx') // import App from './App.jsx'
+      const App = await getReactComponent('React.jsx') // import App from './React.jsx'
       const react = registerRootComponent(App, { ui })
       react.render({})
-
-      ui.root.style('padding', '20px')
 
       function onResize() {
         canvas.width = canvas.clientWidth * window.devicePixelRatio
@@ -82,6 +79,18 @@
         ui.draw()
         requestAnimationFrame(render)
       })
+
+      async function getReactComponent(filename) {
+        const source = await fetch(`/${filename}`).then((response) => response.text())
+        const { code } = Babel.transform(source, {
+          filename: filename,
+          presets: [['react', { runtime: 'automatic' }]],
+        })
+        const module_url = URL.createObjectURL(new Blob([code], { type: 'text/javascript' }))
+        const { default: Component } = await import(module_url)
+        URL.revokeObjectURL(module_url)
+        return Component
+      }
     </script>
   </body>
 </html>
