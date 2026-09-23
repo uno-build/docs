@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas></canvas>
+    <script type="importmap">
+      {
+        "imports": {
+          "solid-js": "https://esm.sh/solid-js@2.0.0-rc.8",
+          "@solidjs/universal": "https://esm.sh/@solidjs/universal@2.0.0-rc.8?external=solid-js",
+          "@dom-expressions/babel-plugin-jsx": "https://esm.sh/@dom-expressions/babel-plugin-jsx@0.50.0-next.44?bundle",
+          "yoga-layout/load": "https://esm.sh/yoga-layout@3.2.1/load",
+          "@uno/ui/solid": "./uno-ui/components/solid/index.js",
+          "uno-ui/solid": "./uno-ui/components/solid/index.js",
+          "@uno/ui/solid/config": "./uno-ui/components/solid/config.js",
+          "@uno/ui/ResourcesWebGPU": "./uno-ui/renderer/webgpu/ResourcesWebGPU.js",
+          "@uno/ui/UI": "./uno-ui/ui/UI.js"
+        }
+      }
+    </script>
+    <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+    <script type="module">
+      import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
+      import UI from '@uno/ui/UI'
+      import { registerRootComponent } from '@uno/ui/solid'
+      import { compilerConfig } from '@uno/ui/solid/config'
+      import solidJsx from '@dom-expressions/babel-plugin-jsx'
+
+      const canvas = document.querySelector('canvas')
+      const resources = await ResourcesWebGPU.create({ canvas })
+      const { ui } = await UI.create({ resources })
+
+      // Font
+      const font_name = 'ChangaOne'
+      const response_image = await fetch(`assets/${font_name}.png`)
+      const blob = await response_image.blob()
+      const image = await createImageBitmap(blob)
+      const response_data = await fetch(`assets/${font_name}.json`)
+      const data = await response_data.json()
+      resources.registerFont(font_name, { image, data })
+
+      // Image
+      const image_url = 'assets/coin.png'
+      const response = await fetch(image_url)
+      const coin_blob = await response.blob()
+      const coin = await createImageBitmap(coin_blob)
+      resources.registerImage(image_url, { image: coin })
+
+      // Solid
+      const App = await getSolidComponent('Solid.jsx') // import App from './Solid.jsx'
+      const solid = registerRootComponent(App, { ui })
+      solid.render({})
+
+      function onResize() {
+        canvas.width = canvas.clientWidth * window.devicePixelRatio
+        canvas.height = canvas.clientHeight * window.devicePixelRatio
+        ui.setViewport(canvas.clientWidth, canvas.clientHeight)
+        ui.setDevicePixelRatio(window.devicePixelRatio)
+        ui.update()
+      }
+      window.addEventListener('resize', onResize)
+      onResize()
+
+      requestAnimationFrame(function render() {
+        ui.draw()
+        requestAnimationFrame(render)
+      })
+
+      async function getSolidComponent(filename) {
+        const response = await fetch(new URL(filename, document.baseURI))
+        if (!response.ok) throw new Error(`Failed to load ${filename}: ${response.status}`)
+        const source = await response.text()
+        const { code } = Babel.transform(source, {
+          filename,
+          plugins: [[solidJsx, compilerConfig.solid]],
+        })
+        const module_url = URL.createObjectURL(new Blob([code], { type: 'text/javascript' }))
+        try {
+          const { default: Component } = await import(module_url)
+          return Component
+        } finally {
+          URL.revokeObjectURL(module_url)
+        }
+      }
+    </script>
+  </body>
+</html>
