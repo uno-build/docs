@@ -55,7 +55,7 @@
       renderer.autoClearColor = false;
       await renderer.init();
 
-      // Load the font and images used by React.jsx and the background.
+      // Load the font and images used by components/React.jsx and the background.
       const font_name = "ChangaOne";
       const response_image = await fetch(`assets/${font_name}.png`);
       const blob = await response_image.blob();
@@ -76,7 +76,7 @@
       background_ui.root.style("backgroundRepeat", "repeat");
 
       // Mount the same React component with a transparent background.
-      const App = await getReactComponent("React.jsx");
+      const App = await getReactComponent("components/React.jsx");
       const react = registerRootComponent(App, { ui: foreground_ui });
       react.render({ backgroundColor: '#F5F2EC99' });
 
@@ -127,15 +127,20 @@
       });
 
       async function getReactComponent(filename) {
-        const source = await fetch(filename).then((response) => response.text());
+        const response = await fetch(new URL(filename, document.baseURI))
+        if (!response.ok) throw new Error(`Failed to load ${filename}: ${response.status}`)
+        const source = await response.text()
         const { code } = Babel.transform(source, {
           filename,
-          presets: [["react", { runtime: "automatic" }]],
-        });
-        const module_url = URL.createObjectURL(new Blob([code], { type: "text/javascript" }));
-        const { default: Component } = await import(module_url);
-        URL.revokeObjectURL(module_url);
-        return Component;
+          presets: [['react', { runtime: 'automatic' }]],
+        })
+        const module_url = URL.createObjectURL(new Blob([code], { type: 'text/javascript' }))
+        try {
+          const { default: Component } = await import(module_url)
+          return Component
+        } finally {
+          URL.revokeObjectURL(module_url)
+        }
       }
     </script>
   </body>

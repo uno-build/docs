@@ -61,7 +61,7 @@
       resources.registerImage(image_url, { image: coin })
 
       // Vue
-      const App = await getVueComponent('Vue.vue') // import App from './Vue.vue'
+      const App = await getVueComponent('components/Vue.vue') // import App from './components/Vue.vue'
       const vue = registerRootComponent(App, { ui })
       vue.render({})
 
