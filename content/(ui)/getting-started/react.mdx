@@ -183,9 +183,7 @@ export default function App({ value = '' }) {
 }
 ```
 
-The component forwards `onFocus`, `onBlur`, and `onPointerDown`; it calls `preventDefault()` on the source pointer event before your `onPointerDown` callback.
-
-`focus()` and `blur()` do not open a platform keyboard. `Input` does not create a DOM input or handle IME, selection, or clipboard input. To support typing in a browser, connect a native `<input>` outside the Uno component tree and synchronize its value with React state. Other hosts need an equivalent platform text-input bridge.
+`Input` does not create a DOM input or handle IME, selection, or clipboard input. To support typing in a browser, connect a native `<input>` outside the Uno component tree, synchronize its value with React state, and manage its focus through `onFocus` and `onBlur`. See the [demo below](#demo) for a complete example.
 
 
 
@@ -223,7 +221,7 @@ Events bubble through the Uno node tree, so a component's handler can receive ev
 
 ## `useUI()`
 
-`useUI()` returns the UI passed to `registerRootComponent`. Call it only inside that registered component tree. For example, a component can read the original dimensions of the registered `assets/coin.png` image:
+`useUI()` is a React hook that returns the UI passed to `registerRootComponent`. Call it only inside that registered component tree. For example, a component can read the original dimensions of the registered `assets/coin.png` image:
 
 ```jsx
 import { Text, useUI } from '@uno/ui/react'

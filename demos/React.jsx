@@ -2,23 +2,23 @@ import { useEffect, useRef, useState } from "react";
 import { View, Text, Image, Input } from "@uno/ui/react";
 
 export default function App() {
-  const domInput = useRef(null);
+  const dom_input = useRef(null);
   const [name, setName] = useState("React");
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
 
   useEffect(() => {
-    if (domInput.current && domInput.current.value !== name) {
-      domInput.current.value = name;
+    if (dom_input.current && dom_input.current.value !== name) {
+      dom_input.current.value = name;
     }
   }, [name]);
 
   useEffect(
     () => () => {
-      if (domInput.current) {
-        domInput.current.onblur = null;
-        domInput.current.remove();
-        domInput.current = null;
+      if (dom_input.current) {
+        dom_input.current.onblur = null;
+        dom_input.current.remove();
+        dom_input.current = null;
       }
     },
     []
@@ -28,20 +28,17 @@ export default function App() {
     setFocused(true);
     if (typeof document === "undefined") return;
 
-    if (!domInput.current) {
+    if (!dom_input.current) {
       // The DOM input captures typing, paste, and IME for the Uno input.
       const input = document.createElement("input");
-      input.type = "text";
       input.tabIndex = -1;
-      input.setAttribute("aria-label", "Your name");
-      input.style.cssText =
-        "position: fixed; left: 0; bottom: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none;";
+      input.style.cssText = "position: fixed; left: 0; bottom: 0; width: 0px; height: 0px; opacity: 0; pointer-events: none;";
       input.oninput = () => setName(input.value);
       document.body.appendChild(input);
-      domInput.current = input;
+      dom_input.current = input;
     }
 
-    const input = domInput.current;
+    const input = dom_input.current;
     input.value = name;
     input.onblur = () => event.target.blur();
     input.focus({ preventScroll: true });
@@ -49,7 +46,7 @@ export default function App() {
 
   function blurInput() {
     setFocused(false);
-    domInput.current?.blur();
+    dom_input.current?.blur();
   }
 
   return (
