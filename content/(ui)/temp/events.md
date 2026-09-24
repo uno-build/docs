@@ -2,7 +2,7 @@
 title: "Events"
 ---
 
-Uno normalizes pointer, click, wheel, scroll, focus, and blur behavior across its DOM and WebGPU renderers. Node events bubble from the hit target through its ancestors.
+Uno normalizes pointer, click, wheel, scroll, focus, and blur behavior in its WebGPU renderer. Node events bubble from the hit target through its ancestors.
 
 ```ts
 node.on('click', (event) => {
@@ -73,8 +73,6 @@ canvas.addEventListener('pointermove', (source_event) => {
 })
 ```
 
-`UIDom` installs listeners on its root element during creation, so do not forward the same events manually in DOM mode.
-
 ## WebGPU dispatch behavior
 
 - A pointer target is captured on `pointerdown`; move/up/cancel continue to that target until the pointer ends.
@@ -84,8 +82,6 @@ canvas.addEventListener('pointermove', (source_event) => {
 - An eligible non-mouse pointer drag updates scrolling on each move. Once either movement axis exceeds 10 pixels, Uno marks the gesture as scrolling and suppresses click synthesis. Mouse dragging is not used for scrolling.
 - Wheel line deltas are normalized to 16 pixels. Scrolling selects the first scrollable ancestor that can move in the requested direction.
 - `pointerEvents: 'none'` excludes a WebGPU node from hit testing.
-
-`UIDom` instead delegates pointer targeting, hover, click, and scroll detection to native DOM events, then presents them through the same Uno payloads and bubbling API.
 
 ## Imperative listeners
 

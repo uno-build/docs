@@ -1,0 +1,46 @@
+---
+title: 'Node'
+---
+
+`Node` has no public import path. Obtain instances through [`ui.create()`](./ui.md#methods); `ui.root` is also a node. `TElement` depends on the renderer.
+
+## Properties
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `id` | `number` | Identifier within the UI. |
+| `ui` | `UI \| null` | Owning UI; `null` after destruction. |
+| `element` | `TElement \| null` | Renderer element; `null` after destruction. |
+| `parent` | `Node<TElement> \| null` | Parent node. |
+| `children` | `Node<TElement>[]` | Child nodes. |
+| `path` | `number[]` | Child-index path from the root. |
+| `layout` | `NodeLayout` | Last computed layout. |
+| `text_content` | `string \| undefined` | Text set through `text()`. |
+| `styles` | `Partial<Record<StyleName \| (string & {}), ResolvedStyle>>` | Resolved styles. |
+| `order` | `number` | Painting order. |
+| `scrollTop` | `number` | Read/write vertical scroll offset. |
+| `scrollLeft` | `number` | Read/write horizontal scroll offset. |
+| `scrollHeight`, `scrollWidth` | `number` | Scrollable content dimensions. |
+| `clientHeight`, `clientWidth` | `number` | Visible content dimensions. |
+| `scrolling` | `boolean` | Scroll gesture state. |
+| `scroll_top`, `scroll_left` | `number` | Backing fields; use `scrollTop` and `scrollLeft`. |
+
+## Methods
+
+| Method | Returns | Description |
+| --- | --- | --- |
+| `add(child: Node, before_node: Node \| null = null)` | `void` | Inserts a detached child; `null` appends. |
+| `remove(child: Node)` | `void` | Destroys a direct child and its subtree. |
+| `detach()` | `void` | Detaches this subtree for reuse. |
+| `destroy()` | `void` | Destroys this subtree; the root destroys the UI. |
+| `style(name: StyleName \| (string & {}), value: string)` | `void` | Sets a [style](./styles.md). |
+| `text(value: string)` | `void` | Sets text; text nodes cannot have children. |
+| `isTextNode()` | `boolean` | Whether `text()` has initialized this node. |
+| `hasTextContent()` | `boolean` | Whether this node has non-empty text. |
+| `on<TName extends string>(type: TName, listener: (event: EventPayload<TName>) => void)` | `void` | Adds an event listener. |
+| `off<TName extends string>(type: TName, listener: (event: EventPayload<TName>) => void)` | `void` | Removes an event listener. |
+| `destroyEvents()` | `void` | Removes all listeners on this node. |
+| `focus(source_event: EventSource \| null = null)` | `void` | Focuses this node. |
+| `blur(source_event: EventSource \| null = null)` | `void` | Clears focus if this node owns it. |
+
+Event names and payloads are listed in [Interactivity](../getting-started/interactivity.mdx).

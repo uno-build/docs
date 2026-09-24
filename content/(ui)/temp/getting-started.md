@@ -33,38 +33,6 @@ npm install playcanvas
 
 The exact supported peer ranges are recorded in `package.json`. WebGPU also requires a browser context where WebGPU is available, normally HTTPS or localhost.
 
-## DOM quick start
-
-`UIDom` uses the supplied `HTMLElement` as the root element. It installs its DOM event listeners during creation, and framework-free mutations become visible when `ui.update()` runs. `draw()` is not needed for this renderer.
-
-```ts
-import ResourcesDom from 'uno-ui/ResourcesDom'
-import UIDom from 'uno-ui/UIDom'
-
-const host = document.querySelector<HTMLElement>('#ui')!
-const resources = ResourcesDom.create({ canvas: host })
-const { ui } = await UIDom.create({ resources })
-
-ui.root!.style('width', '100%')
-ui.root!.style('height', '100%')
-ui.root!.style('display', 'flex')
-ui.root!.style('alignItems', 'center')
-ui.root!.style('justifyContent', 'center')
-
-const label = ui.create()!
-label.style('fontSize', '24px')
-label.style('color', '#16324f')
-label.text('Hello from Uno UI')
-ui.root!.add(label)
-
-ui.update()
-
-// When the host is no longer used:
-// ui.destroy()
-```
-
-Use `ResourcesDom.registerImage()` before applying an image resource, and register font metrics when Uno needs a custom line height. The browser must still load the actual CSS font.
-
 ## WebGPU quick start
 
 `ResourcesWebGPU.create()` can acquire and configure the adapter, device, and canvas context. `UIWebGPU.create()` additionally needs Yoga's async loader. The viewport is expressed in logical CSS pixels; the canvas backing size is expressed in device pixels.
@@ -147,4 +115,4 @@ Do not pass `device_pixel_ratio` to `UIWebGPU.create()`; it is not a creation op
 - Register images and MTSDF fonts in [Resources and rendering](./resources-and-rendering.md).
 - Build the same tree with React, Solid, or Vue in [Framework adapters](./frameworks.md).
 - Render a UI onto a scene plane in [World-space integrations](./world-space.md).
-- Review supported property values in [Styles](./styles.md) before treating the style object as general CSS.
+- Review supported property values in [Styles](../api/styles.md) before treating the style object as general CSS.

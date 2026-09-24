@@ -1,0 +1,157 @@
+---
+title: 'Styles'
+---
+
+Uno implements a strict CSS-like subset. Style names accept both camelCase and kebab-case. The TypeScript type `StyleName` only includes camelCase names. Every value must be a string, including numbers.
+
+```ts
+node.style('backgroundColor', '#1f6fb2')
+node.style('padding', '12px 16px')
+node.style('flex-grow', '1')
+
+// Invalid: numeric values are not accepted.
+node.style('opacity', 0.5) // Throws an error
+```
+
+## Units and common values
+
+| Value family      | Accepted values                                            |
+| ----------------- | ---------------------------------------------------------- |
+| Length            | `px`, `rem`, `vw`, or `vh`                                 |
+| Percentage length | The length units above plus `%`                            |
+| Color             | Hex only: `#RGB`, `#RGBA`, `#RRGGBB`, or `#RRGGBBAA`       |
+| Number            | A number encoded as a string, for example `'1'` or `'0.5'` |
+| Integer           | An integer encoded as a string                             |
+
+In WebGPU, `rem` uses the value set by `ui.setRootSize()` (`16` by default), while `vw` and `vh` use the last values supplied to `ui.setViewport()`.
+
+CSS-wide keywords other than `unset`, CSS functions such as `calc()` and `var()`, named colors, `rgb()`, `em`, and arbitrary CSS declarations are not supported.
+
+## Resetting styles with `unset`
+
+All properties accept `'unset'`. Use it to clear a previously applied value:
+
+```ts
+node.style('opacity', '0.5')
+node.style('opacity', 'unset')
+```
+
+For shorthands, `'unset'` clears all the properties they expand into. For example, it clears padding on all four sides:
+
+```ts
+node.style('padding', '12px 16px')
+node.style('padding', 'unset')
+```
+
+Framework adapters automatically apply `'unset'` when a previously applied property is removed from the `style` object. In this React example, changing `dimmed` from `true` to `false` removes `opacity` and clears its previous value:
+
+```tsx
+function Example({ dimmed }: { dimmed: boolean }) {
+  return <View style={dimmed ? { opacity: '0.5' } : {}} />
+}
+```
+
+## Style properties
+
+| Property                  | Type          | Accepted values / expansion                                                                                                                      |
+| ------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `display`                 | `yoga-layout` | `flex`, `none`, `contents`                                                                                                                       |
+| `position`                | `yoga-layout` | `static`, `relative`, `absolute`                                                                                                                 |
+| `top`                     | `yoga-layout` | Signed percentage length or `auto`                                                                                                               |
+| `right`                   | `yoga-layout` | Signed percentage length or `auto`                                                                                                               |
+| `bottom`                  | `yoga-layout` | Signed percentage length or `auto`                                                                                                               |
+| `left`                    | `yoga-layout` | Signed percentage length or `auto`                                                                                                               |
+| `width`                   | `yoga-layout` | Non-negative percentage length or `auto`                                                                                                         |
+| `height`                  | `yoga-layout` | Non-negative percentage length or `auto`                                                                                                         |
+| `minWidth`                | `yoga-layout` | Non-negative percentage length                                                                                                                   |
+| `minHeight`               | `yoga-layout` | Non-negative percentage length                                                                                                                   |
+| `maxWidth`                | `yoga-layout` | Non-negative percentage length                                                                                                                   |
+| `maxHeight`               | `yoga-layout` | Non-negative percentage length                                                                                                                   |
+| `boxSizing`               | `yoga-layout` | `border-box`, `content-box`                                                                                                                      |
+| `aspectRatio`             | `yoga-layout` | Non-negative number                                                                                                                              |
+| `flexDirection`           | `yoga-layout` | `column`, `column-reverse`, `row`, `row-reverse`                                                                                                 |
+| `flexWrap`                | `yoga-layout` | `nowrap`, `wrap`, `wrap-reverse`                                                                                                                 |
+| `flexGrow`                | `yoga-layout` | Non-negative number                                                                                                                              |
+| `flexShrink`              | `yoga-layout` | Non-negative number                                                                                                                              |
+| `flexBasis`               | `yoga-layout` | Non-negative percentage length or `auto`                                                                                                         |
+| `justifyContent`          | `yoga-layout` | `flex-start`, `center`, `flex-end`, `space-between`, `space-around`, `space-evenly`                                                              |
+| `alignContent`            | `yoga-layout` | Values above plus `stretch`, `baseline`                                                                                                          |
+| `alignItems`              | `yoga-layout` | `normal`, `flex-start`, `center`, `flex-end`, `stretch`, `baseline`                                                                              |
+| `alignSelf`               | `yoga-layout` | `auto`, `normal`, `flex-start`, `center`, `flex-end`, `stretch`, `baseline`                                                                      |
+| `marginTop`               | `yoga-layout` | Signed percentage length or `auto`                                                                                                               |
+| `marginRight`             | `yoga-layout` | Signed percentage length or `auto`                                                                                                               |
+| `marginBottom`            | `yoga-layout` | Signed percentage length or `auto`                                                                                                               |
+| `marginLeft`              | `yoga-layout` | Signed percentage length or `auto`                                                                                                               |
+| `paddingTop`              | `yoga-layout` | Non-negative percentage length                                                                                                                   |
+| `paddingRight`            | `yoga-layout` | Non-negative percentage length                                                                                                                   |
+| `paddingBottom`           | `yoga-layout` | Non-negative percentage length                                                                                                                   |
+| `paddingLeft`             | `yoga-layout` | Non-negative percentage length                                                                                                                   |
+| `gap`                     | `yoga-layout` | Non-negative percentage length                                                                                                                   |
+| `rowGap`                  | `yoga-layout` | Non-negative percentage length                                                                                                                   |
+| `columnGap`               | `yoga-layout` | Non-negative percentage length                                                                                                                   |
+| `overflowX`               | `yoga-layout` | `visible`, `hidden`, `scroll`                                                                                                                    |
+| `overflowY`               | `yoga-layout` | `visible`, `hidden`, `scroll`                                                                                                                    |
+| `direction`               | `yoga-layout` | `inherit`, `ltr`, `rtl`                                                                                                                          |
+| `backgroundColor`         | `painting`    | Hex color                                                                                                                                        |
+| `backgroundImage`         | `painting`    | A key registered in the UI's resource store                                                                                                      |
+| `backgroundSizeWidth`     | `painting`    | Non-negative percentage length, `cover`, or `contain`                                                                                            |
+| `backgroundSizeHeight`    | `painting`    | Non-negative percentage length, `cover`, or `contain`                                                                                            |
+| `backgroundPositionX`     | `painting`    | Signed percentage length                                                                                                                         |
+| `backgroundPositionY`     | `painting`    | Signed percentage length                                                                                                                         |
+| `backgroundRepeat`        | `painting`    | `no-repeat`, `repeat`, `repeat-x`, `repeat-y`                                                                                                    |
+| `borderTopWidth`          | `painting`    | Non-negative length (no `%`)                                                                                                                     |
+| `borderRightWidth`        | `painting`    | Non-negative length (no `%`)                                                                                                                     |
+| `borderBottomWidth`       | `painting`    | Non-negative length (no `%`)                                                                                                                     |
+| `borderLeftWidth`         | `painting`    | Non-negative length (no `%`)                                                                                                                     |
+| `borderTopStyle`          | `painting`    | `none`, `solid`                                                                                                                                  |
+| `borderRightStyle`        | `painting`    | `none`, `solid`                                                                                                                                  |
+| `borderBottomStyle`       | `painting`    | `none`, `solid`                                                                                                                                  |
+| `borderLeftStyle`         | `painting`    | `none`, `solid`                                                                                                                                  |
+| `borderTopColor`          | `painting`    | Hex color                                                                                                                                        |
+| `borderRightColor`        | `painting`    | Hex color                                                                                                                                        |
+| `borderBottomColor`       | `painting`    | Hex color                                                                                                                                        |
+| `borderLeftColor`         | `painting`    | Hex color                                                                                                                                        |
+| `borderTopLeftRadius`     | `painting`    | Non-negative percentage length                                                                                                                   |
+| `borderTopRightRadius`    | `painting`    | Non-negative percentage length                                                                                                                   |
+| `borderBottomRightRadius` | `painting`    | Non-negative percentage length                                                                                                                   |
+| `borderBottomLeftRadius`  | `painting`    | Non-negative percentage length                                                                                                                   |
+| `boxShadow`               | `painting`    | `offset-x offset-y blur spread [color]`; length units only, non-negative blur, black default color                                               |
+| `opacity`                 | `painting`    | Number from `0` through `1`                                                                                                                      |
+| `zIndex`                  | `painting`    | Integer                                                                                                                                          |
+| `pointerEvents`           | `painting`    | `all`, `none`                                                                                                                                    |
+| `color`                   | `text`        | Hex color                                                                                                                                        |
+| `fontFamily`              | `text`        | Font name; case is preserved. WebGPU requires a registered font. |
+| `fontSize`                | `text`        | Non-negative length (no `%`)                                                                                                                     |
+| `lineHeight`              | `text`        | Non-negative unitless number or non-negative length                                                                                              |
+| `letterSpacing`           | `text`        | Signed length                                                                                                                                    |
+| `textAlign`               | `text`        | `left`, `right`, `center`, `justify`                                                                                                             |
+| `whiteSpace`              | `text`        | `normal`, `nowrap`, `pre-wrap`                                                                                                                   |
+| `textShadow`              | `text`        | `offset-x offset-y blur [color]`; length units only, non-negative blur, black default color                                                      |
+| `textStroke`              | `text`        | `width color`; non-negative length and a hex color                                                                                               |
+| `overflow`                | `shorthands`  | `overflowX`, `overflowY`                                                                                                                         |
+| `border`                  | `shorthands`  | Width, style, and color for all four sides                                                                                                       |
+| `borderRadius`            | `shorthands`  | One to four corner radii                                                                                                                         |
+| `backgroundSize`          | `shorthands`  | One or two dimensions, or `cover`/`contain` alone                                                                                                |
+| `backgroundPosition`      | `shorthands`  | X and optional Y; Y defaults to `50%`                                                                                                            |
+| `margin`                  | `shorthands`  | One to four edge values                                                                                                                          |
+| `padding`                 | `shorthands`  | One to four edge values                                                                                                                          |
+| `flex`                    | `shorthands`  | CSS-like one-, two-, or three-value expansion to grow/shrink/basis; `auto` is supported, `none` is not                                           |
+
+`pointerEvents: 'none'` removes a node from WebGPU hit testing.
+
+The WebGPU renderer uses MTSDF alpha distance for strokes and shadows and the RGB distance field for the glyph fill. See [Current limitations](../temp/limitations.md) for renderer differences.
+
+Longhands are also public style names. For example, `backgroundSizeWidth`, `backgroundPositionY`, and every side-specific border property can be assigned directly.
+
+## Images and `objectFit`
+
+`objectFit` is not a core style name. It is an `Image` component option implemented by the framework adapters:
+
+| `objectFit`      | Applied background size |
+| ---------------- | ----------------------- |
+| `fill` (default) | `100% 100%`             |
+| `contain`        | `contain`               |
+| `cover`          | `cover`                 |
+| `none`           | `unset`                 |
+
+When neither dimension is supplied, `Image` uses the registered resource dimensions. When only one is supplied, it derives `aspectRatio`. Values inside `style` take precedence over the component's `width` and `height` props.

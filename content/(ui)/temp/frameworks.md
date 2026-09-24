@@ -2,7 +2,7 @@
 title: "Framework adapters"
 ---
 
-Uno UI provides custom renderers for React, Solid, and Vue. They render the same Uno node tree and can be used with any initialized UI, including `UIWebGPU`, `UIDom`, and the world-space integrations.
+Uno UI provides custom renderers for React, Solid, and Vue. They render the same Uno node tree and can be used with any initialized UI, including `UIWebGPU` and the world-space integrations.
 
 Use only the published entrypoints:
 

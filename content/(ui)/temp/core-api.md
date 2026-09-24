@@ -2,7 +2,7 @@
 title: "Core API"
 ---
 
-Every exported UI class inherits the same UI and node behavior. The base `UI` and `Node` classes do not have public import paths; use the instances returned by `UIWebGPU.create()`, `UIDom.create()`, a world-space `create()` method, `ui.root`, `ui.create()`, or a framework handle.
+Every exported UI class inherits the same UI and node behavior. The base `UI` and `Node` classes do not have public import paths; use the instances returned by `UIWebGPU.create()`, a world-space `create()` method, `ui.root`, `ui.create()`, or a framework handle.
 
 ## UI lifecycle
 
@@ -30,10 +30,10 @@ ui.draw()
 | --- | --- |
 | `create()` | Creates a live, detached node. Returns `undefined` after the UI has been destroyed. |
 | `update()` | Captures pending mutations, updates order/styles/layout/render data, and consumes the captured journal. |
-| `draw(options?)` | Delegates to the renderer. WebGPU returns its command encoder and target view; DOM has no drawing work. Returns `undefined` after destruction. |
-| `setViewport(width, height)` | Sets the WebGPU logical viewport used for layout and `vw`/`vh` resolution. DOM layout uses the native element/browser viewport. Repeated identical values do nothing. |
-| `setDevicePixelRatio(ratio)` | Sets WebGPU raster density. It has no rendering effect in the DOM backend. Repeated identical values do nothing. |
-| `setRootSize(size)` | Sets the WebGPU pixel size used to resolve `rem` (`16` by default). DOM mode writes the document root font size. |
+| `draw(options?)` | Delegates to the renderer. WebGPU returns its command encoder and target view. Returns `undefined` after destruction. |
+| `setViewport(width, height)` | Sets the WebGPU logical viewport used for layout and `vw`/`vh` resolution. Repeated identical values do nothing. |
+| `setDevicePixelRatio(ratio)` | Sets WebGPU raster density. Repeated identical values do nothing. |
+| `setRootSize(size)` | Sets the WebGPU pixel size used to resolve `rem` (`16` by default). |
 | `destroy()` | Destroys the renderer, nodes, UI event definitions, and listeners. It is safe to call repeatedly and does not dispose a shared resource store. Screen-space UIs expose the base method's first-call `true`/later-call `false`; world-space overrides return `void`. |
 | `addChild(parent, child, before_node)` | Low-level equivalent of `parent.add(child, before_node)`. |
 | `detachNode(node)` | Low-level equivalent of `node.detach()`. |
@@ -96,7 +96,7 @@ Calling mutation methods on a destroyed node is a no-op because its `ui` referen
 | --- | --- |
 | `id` | UI-local numeric identifier. |
 | `ui` | Owning UI, or `null` after destruction. |
-| `element` | Renderer-specific element; an `HTMLElement` for DOM and `undefined` for the current WebGPU renderer. Becomes `null` after destruction. |
+| `element` | Renderer-specific element; `undefined` for the current WebGPU renderer. Becomes `null` after destruction. |
 | `parent`, `children` | Current tree relationships. |
 | `path` | Child-index path from the root. Updated on insertion, removal, and reordering. |
 | `layout` | Last computed layout. Read it after `ui.update()`. |

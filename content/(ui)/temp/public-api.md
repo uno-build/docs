@@ -10,13 +10,11 @@ The package is ESM-only and has no root entrypoint. Every supported import is on
 | --- | --- | --- |
 | `uno-ui/events` | `DEFINED_EVENTS`, `EVENT`, `EventEmitter`, `PLATFORM_EVENT_NAMES` | `NodeEventMap`, `UIEventMap` |
 | `uno-ui/ResourcesWebGPU` | default `ResourcesWebGPU` | None |
-| `uno-ui/ResourcesDom` | default `ResourcesDom` | `DomImage`, `FontMetrics`, `ResourcesDomOptions` |
 | `uno-ui/UIWebGPU` | default `UIWebGPU` | `DefinedEvent`, `UIWebGPUOptions` |
 | `uno-ui/UIThree` | default `UIThree` | `UIThreeMaterial`, `UIThreeOptions` |
 | `uno-ui/UIBabylon` | default `UIBabylon` | `UIBabylonMaterial`, `UIBabylonOptions`, `WebGPUHardwareTexture` |
 | `uno-ui/UIBabylonLite` | default `UIBabylonLite` | `MaterialPlugin`, `Texture2D`, `UIBabylonLiteMaterial`, `UIBabylonLiteOptions` |
 | `uno-ui/UIPlayCanvas` | default `UIPlayCanvas` | `UIPlayCanvasMaterial`, `UIPlayCanvasOptions` |
-| `uno-ui/UIDom` | default `UIDom` | `UIDomOptions` |
 | `uno-ui/react` | `Image`, `Input`, `ScrollView`, `Text`, `View`, `registerRootComponent`, `useUI` | `ComponentProps`, `ImageProps`, `InputHandle`, `InputProps`, `NodeHandle`, `ScrollViewHandle`, `ScrollViewProps`, `StyleName`, `StyleProps`, `TextChildren`, `TextProps` |
 | `uno-ui/solid` | `Image`, `Input`, `ScrollView`, `Text`, `View`, `applyRef`, `createComponent`, `createElement`, `createTextNode`, `effect`, `insert`, `insertNode`, `memo`, `mergeProps`, `ref`, `registerRootComponent`, `setProp`, `spread`, `useUI` | `ComponentProps`, `ImageProps`, `InputHandle`, `InputProps`, `NodeHandle`, `ScrollViewHandle`, `ScrollViewProps`, `StyleName`, `StyleProps` |
 | `uno-ui/solid/config` | `compilerConfig` | None |
@@ -125,7 +123,7 @@ type InputHandle = {
 }
 ```
 
-`StyleName` is the union of supported style names. `StyleProps`, `NodeHandle`, `ScrollViewHandle`, and `InputHandle` are separately re-exported by `uno-ui/react`, `uno-ui/solid`, and `uno-ui/vue`. See [Styles](./styles.md) for the complete property and value reference.
+`StyleName` is the union of supported style names. `StyleProps`, `NodeHandle`, `ScrollViewHandle`, and `InputHandle` are separately re-exported by `uno-ui/react`, `uno-ui/solid`, and `uno-ui/vue`. See [Styles](../api/styles.md) for the complete property and value reference.
 
 ## `uno-ui/events`
 
@@ -298,62 +296,6 @@ The atlas sizes default to `2048`. When no device is supplied, creation requests
 ### Type-only exports
 
 None.
-
-## `uno-ui/ResourcesDom`
-
-```ts
-import ResourcesDom from 'uno-ui/ResourcesDom'
-import type {
-  DomImage,
-  FontMetrics,
-  ResourcesDomOptions,
-} from 'uno-ui/ResourcesDom'
-```
-
-### Value export
-
-```ts
-class ResourcesDom {
-  static create(options: ResourcesDomOptions): ResourcesDom
-
-  canvas: HTMLElement
-  events: EventEmitter<Record<string, any>>
-
-  observeFonts(): () => void
-  registerImage(src: string, image: DomImage): void
-  disposeImage(src: string): void
-  getImage(src: string): DomImage | undefined
-  getImageSize(src: string): { width: number; height: number } | undefined
-  registerFont(name: string, image: unknown, json: { metrics: FontMetrics }): void
-  disposeFont(name: string): void
-  getFont(name: string): FontMetrics | undefined
-}
-```
-
-`observeFonts()` starts shared `document.fonts` observation and returns an idempotent stop function. Registration and disposal emit `image` or `font` resource events. Duplicate image and font keys throw until the previous value is disposed.
-
-### Type-only exports
-
-```ts
-type ResourcesDomOptions = {
-  canvas: HTMLElement
-}
-
-type DomImage = {
-  width: number
-  height: number
-  src?: string
-}
-
-type FontMetrics = {
-  lineHeight: number
-  emSize?: number
-  ascender?: number
-  descender?: number
-  underlineY?: number
-  underlineThickness?: number
-}
-```
 
 ## `uno-ui/UIWebGPU`
 
@@ -630,32 +572,6 @@ type UIPlayCanvasOptions<
   },
 > = UIWorldSpaceOptions<Texture, TMaterial, TPlane, UIPlayCanvas> & {
   app: AppBase
-}
-```
-
-## `uno-ui/UIDom`
-
-```ts
-import UIDom from 'uno-ui/UIDom'
-import type { UIDomOptions } from 'uno-ui/UIDom'
-```
-
-### Value export
-
-```ts
-class UIDom {
-  static create(options: UIDomOptions): Promise<{ ui: UIDom }>
-}
-```
-
-`UIDom` installs DOM pointer, wheel, scroll, click, and focus adapters automatically. It uses the `ResourcesDom.canvas` element as its root element. Its inherited `draw()` has no rendering work.
-
-### Type-only export
-
-```ts
-type UIDomOptions = {
-  resources: ResourcesDom
-  defined_events?: Array<(options: { ui: UIDom }) => DefinedEvent>
 }
 ```
 

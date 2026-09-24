@@ -6,7 +6,6 @@ Renderer choice and framework choice are independent:
 
 | Mode | Resources | UI | Rendering |
 | --- | --- | --- | --- |
-| DOM | `ResourcesDom` | `UIDom` | Native DOM layout and paint; events are wired automatically |
 | WebGPU overlay | `ResourcesWebGPU` | `UIWebGPU` | Yoga layout, explicit `update()` and `draw()`, manual platform-event forwarding |
 | WebGPU world space | `ResourcesWebGPU` | `UIThree`, `UIBabylon`, `UIBabylonLite`, or `UIPlayCanvas` | UI draws to a texture displayed by an engine plane |
 
@@ -197,67 +196,6 @@ ui.draw({
 
 `dispatchPlatformEvent(source_event)` converts client coordinates from the event's `currentTarget` into the logical UI viewport and feeds Uno's built-in pointer/wheel definitions. Register the event names exported by `uno-ui/events`; see [Events](./events.md).
 
-## DOM resources
-
-`ResourcesDom.create()` is synchronous:
-
-```ts
-import ResourcesDom from 'uno-ui/ResourcesDom'
-
-const resources = ResourcesDom.create({ canvas: host_element })
-```
-
-The module also exports these types:
-
-```ts
-type ResourcesDomOptions = { canvas: HTMLElement }
-type DomImage = { width: number; height: number; src?: string }
-type FontMetrics = {
-    lineHeight: number
-    emSize?: number
-    ascender?: number
-    descender?: number
-    underlineY?: number
-    underlineThickness?: number
-}
-```
-
-For a visible DOM background, supply `src` as well as dimensions:
-
-```ts
-resources.registerImage('icon', {
-    src: '/assets/icon.png',
-    width: 64,
-    height: 64,
-})
-```
-
-Methods are `registerImage`, `disposeImage`, `getImage`, `getImageSize`, `registerFont`, `disposeFont`, `getFont`, and `observeFonts`. Duplicate image/font keys throw. `observeFonts()` returns a cleanup callback and is managed automatically by `UIDom`.
-
-DOM font registration stores metrics only:
-
-```ts
-resources.registerFont('Inter', undefined, {
-    metrics: { lineHeight: 1.2 },
-})
-```
-
-Load the actual font through `@font-face`, the FontFace API, or the page's existing CSS. The DOM renderer watches `document.fonts` and schedules an update when loading completes.
-
-## `UIDom`
-
-```ts
-import UIDom from 'uno-ui/UIDom'
-
-const { ui } = await UIDom.create({ resources })
-```
-
-Options are `{ resources, defined_events? }`. The renderer uses `resources.canvas` as the root node, installs pointer/wheel/click/scroll/focus adapters, and reads layout from the DOM. `ui.update()` commits mutations and refreshes layout; `ui.draw()` has no useful work.
-
-Calling `ui.setRootSize(value)` in DOM mode writes the root font size to `document.documentElement`, so it affects the surrounding page as well as Uno's `rem` values.
-
-Destroying a DOM UI removes created descendants and listeners but preserves the external root element supplied by the application.
-
 ## Shared ownership
 
 One resource store can back multiple UIs. Destroy UIs before the shared store:
@@ -267,5 +205,3 @@ first_ui.destroy()
 second_ui.destroy()
 resources.dispose()
 ```
-
-`ResourcesDom` has no store-level `dispose()` method. Destroying each `UIDom` stops its font observer and removes its created nodes.

@@ -11,7 +11,7 @@ The package has no root export. Import from one of the explicit subpaths below; 
 - [Getting started](./getting-started/first-layout) — installation and minimal WebGPU applications
 - [Core API](./core-api.md) — the inherited `UI` lifecycle and the node API
 - [Resources and rendering](./resources-and-rendering.md) — WebGPU resources, assets, drawing, and cleanup
-- [Styles](./styles.md) — every supported style property and value family
+- [Styles](./api/styles.md) — every supported style property and value family
 - [Events](./events.md) — event forwarding, bubbling, focus, scroll, and custom events
 - [Framework adapters](./frameworks.md) — React, Solid, and Vue
 - [World-space integrations](./world-space.md) — Three.js, Babylon.js, Babylon Lite, and PlayCanvas

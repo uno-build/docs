@@ -15,7 +15,7 @@ This page records behavior visible in the current public API. It is not a roadma
 
 ### Opacity is per drawable
 
-WebGPU accumulates ancestor opacity and applies it to each drawable rectangle. It does not first composite a subtree into an offscreen surface as CSS group opacity does. Overlapping descendants can therefore look different from DOM when an ancestor has `opacity < 1`.
+WebGPU accumulates ancestor opacity and applies it to each drawable rectangle. It does not first composite a subtree into an offscreen surface as CSS group opacity does. Overlapping descendants can therefore look different from CSS group opacity when an ancestor has `opacity < 1`.
 
 ### Rounded overflow clips are rectangular
 
@@ -33,18 +33,11 @@ Images share an atlas. Magnifying a small image or sampling its edge with linear
 
 When sharing a command encoder or texture view with an engine, call `draw({ submit: false, ... })` and let the engine submit. World-space UIs always target and clear their own texture.
 
-## DOM renderer
-
-- `setRootSize()` updates `document.documentElement.style.fontSize`, which is global page state.
-- `ResourcesDom.registerFont()` stores metrics but does not load a font. The application must install the corresponding browser font.
-- Text is intended to be plain text. The current DOM backend writes node text through `innerHTML`; do not pass untrusted content without escaping it.
-- DOM layout/paint and WebGPU layout/paint are close but not identical, particularly for the WebGPU clipping and opacity cases above.
-
 ## Components and framework adapters
 
 - Text must be inside `Text`. Text directly under `View`, or element/component children inside `Text`, throws.
 - `Input` is a controlled visual component with focus, placeholder, and caret behavior. It does not collect keyboard input, edit its value, or emit an `onChange`; applications must bridge their own keyboard/text-input source and pass the updated `value`.
-- `id` is accepted by shared component prop types but is not materialized as a DOM id or GPU attribute by the current drivers.
+- `id` is accepted by shared component prop types but is not materialized as a GPU attribute by the current drivers.
 - No adapter exposes an SSR or hydration entrypoint. The React driver explicitly disables hydration and does not provide dedicated portal, Suspense, or Activity integration.
 - Framework commits call or schedule `ui.update()`, but WebGPU applications still own the `draw()` loop.
 - Vue `<style>` support is a strict subset: class selectors only, with no descendant/pseudo selectors, at-rules, `!important`, CSS variables, modules, external blocks, preprocessors, or CSS `v-bind()`.
