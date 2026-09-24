@@ -1,4 +1,4 @@
 {
   "title": "Engines",
-  "pages": ["three", "three-worldspace", "babylon", "babylon-worldspace", "babylonlite", "babylonlite-worldspace", "playcanvas", "playcanvas-worldspace"]
+  "pages": ["three", "three-worldspace", "pixi", "babylon", "babylon-worldspace", "babylonlite", "babylonlite-worldspace", "playcanvas", "playcanvas-worldspace"]
 }
