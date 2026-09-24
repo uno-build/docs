@@ -2,7 +2,7 @@
 title: 'Node'
 ---
 
-`Node` has no public import path. Obtain instances through [`ui.create()`](./ui.md#methods); `ui.root` is also a node. `TElement` depends on the renderer.
+`Node` has no public import path. Obtain instances through [`ui.create()`](./ui.mdx#methods); `ui.root` is also a node. `TElement` depends on the renderer.
 
 ## Properties
 
@@ -33,7 +33,7 @@ title: 'Node'
 | `remove(child: Node)` | `void` | Destroys a direct child and its subtree. |
 | `detach()` | `void` | Detaches this subtree for reuse. |
 | `destroy()` | `void` | Destroys this subtree; the root destroys the UI. |
-| `style(name: StyleName \| (string & {}), value: string)` | `void` | Sets a [style](./styles.md). |
+| `style(name: StyleName \| (string & {}), value: string)` | `void` | Sets a [style](./styles.mdx). |
 | `text(value: string)` | `void` | Sets text; text nodes cannot have children. |
 | `isTextNode()` | `boolean` | Whether `text()` has initialized this node. |
 | `hasTextContent()` | `boolean` | Whether this node has non-empty text. |

@@ -2,7 +2,7 @@
 title: 'UIWorldSpace'
 ---
 
-Shared reference for [UIThree](#uithree), [UIBabylon](#uibabylon), [UIBabylonLite](#uibabylonlite), and [UIPlayCanvas](#uiplaycanvas). These classes share the [UI instance API](./ui.md#methods), with the additions and overrides below. `UIWorldSpace` is their abstract base and has no public import path.
+Shared reference for [UIThree](#uithree), [UIBabylon](#uibabylon), [UIBabylonLite](#uibabylonlite), and [UIPlayCanvas](#uiplaycanvas). These classes share the [UI instance API](./ui.mdx#methods), with the additions and overrides below. `UIWorldSpace` is their abstract base and has no public import path.
 
 ## Methods
 
@@ -12,11 +12,11 @@ Shared reference for [UIThree](#uithree), [UIBabylon](#uibabylon), [UIBabylonLit
 | `draw(options?: WorldSpaceDrawOptions)` | `WebGPUDrawResult \| undefined` | Draws into the UI texture, clearing it first. |
 | `destroy()` | `boolean \| void` | Also releases the UI's GPU texture. |
 
-`WorldSpaceDrawOptions` accepts only `submit?` and `command_encoder?` from [WebGPU draw options](./ui.md#draw-options).
+`WorldSpaceDrawOptions` accepts only `submit?` and `command_encoder?` from [WebGPU draw options](./ui.mdx#draw-options).
 
 ## Additional creation options
 
-Engine factories accept [UI creation options](./ui.md#creation-options) plus:
+Engine factories accept [UI creation options](./ui.mdx#creation-options) plus:
 
 | Option | Type | Default |
 | --- | --- | --- |

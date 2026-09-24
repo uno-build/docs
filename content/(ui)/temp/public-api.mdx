@@ -92,7 +92,7 @@ scrollTop: number
 scrollLeft: number
 ```
 
-`remove()` destroys a child; `detach()` preserves it for reinsertion. A text node cannot contain child nodes. See [Core API](./core-api.md) for lifecycle and ownership details.
+`remove()` destroys a child; `detach()` preserves it for reinsertion. A text node cannot contain child nodes. See [Core API](./core-api.mdx) for lifecycle and ownership details.
 
 ### Shared framework types
 
@@ -123,7 +123,7 @@ type InputHandle = {
 }
 ```
 
-`StyleName` is the union of supported style names. `StyleProps`, `NodeHandle`, `ScrollViewHandle`, and `InputHandle` are separately re-exported by `uno-ui/react`, `uno-ui/solid`, and `uno-ui/vue`. See [Styles](../api/styles.md) for the complete property and value reference.
+`StyleName` is the union of supported style names. `StyleProps`, `NodeHandle`, `ScrollViewHandle`, and `InputHandle` are separately re-exported by `uno-ui/react`, `uno-ui/solid`, and `uno-ui/vue`. See [Styles](../api/styles.mdx) for the complete property and value reference.
 
 ## `uno-ui/events`
 
@@ -980,7 +980,7 @@ function compileStyles(
 function stylesPlugin(): Plugin[]
 ```
 
-`compilerConfig` disables Vue asset URL transforms and static hoisting for Uno component trees. `compileStyles()` converts supported SFC class rules into `StyleRule` objects. `stylesPlugin()` returns the source and post-transform Vite plugins that compile, register, hot-reload, and remove those rules. See [Framework adapters](./frameworks.md) for the supported CSS subset.
+`compilerConfig` disables Vue asset URL transforms and static hoisting for Uno component trees. `compileStyles()` converts supported SFC class rules into `StyleRule` objects. `stylesPlugin()` returns the source and post-transform Vite plugins that compile, register, hot-reload, and remove those rules. See [Framework adapters](./frameworks.mdx) for the supported CSS subset.
 
 ### Type-only exports
 

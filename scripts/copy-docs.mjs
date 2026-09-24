@@ -45,6 +45,7 @@ function titleFromPath(filePath) {
 }
 
 function prepareMarkdown(markdown, filePath) {
+  markdown = markdown.replace(/(\]\([^\s)]+)\.md(?=[#)])/g, '$1.mdx');
   const frontmatter = markdown.match(
     /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/,
   );
@@ -78,8 +79,8 @@ async function copyDirectory(fromDir, toDir, relativeDir = '') {
     const extension = path.extname(entry.name).toLowerCase();
     if (extension === '.md' || extension === '.mdx') {
       const outputName = /^readme\.(md|mdx)$/i.test(entry.name)
-        ? `index${extension}`
-        : entry.name;
+        ? 'index.mdx'
+        : `${path.basename(entry.name, path.extname(entry.name))}.mdx`;
       const markdown = await readFile(sourcePath, 'utf8');
       await writeFile(
         path.join(toDir, outputName),

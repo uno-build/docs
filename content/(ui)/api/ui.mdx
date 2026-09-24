@@ -2,7 +2,7 @@
 title: 'UI'
 ---
 
-UI for rendering to a WebGPU canvas. Import from `@uno/ui/UI`. For engine surfaces, see [UIWorldSpace](./ui-world-space.md).
+UI for rendering to a WebGPU canvas. Import from `@uno/ui/UI`. For engine surfaces, see [UIWorldSpace](./ui-world-space.mdx).
 
 ## Properties
 
@@ -10,7 +10,7 @@ UI for rendering to a WebGPU canvas. Import from `@uno/ui/UI`. For engine surfac
 | --- | --- | --- |
 | `root` | `Node \| null` | Root node. |
 | `renderer` | `RendererWebGPU \| null` | Renderer instance. |
-| `resources` | `ResourcesWebGPU \| null` | [Resource store](./resources-webgpu.md). |
+| `resources` | `ResourcesWebGPU \| null` | [Resource store](./resources-webgpu.mdx). |
 | `defined_events` | `DefinedEvent[]` | Installed event definitions. |
 | `events` | `EventEmitter<UIEventMap>` | Normalized UI events. |
 | `events_source` | `EventEmitter<CoreEventMap>` | Source and lifecycle events. |
@@ -21,7 +21,7 @@ UI for rendering to a WebGPU canvas. Import from `@uno/ui/UI`. For engine surfac
 | Method | Returns | Description |
 | --- | --- | --- |
 | `static create(options: UIOptions)` | `Promise<{ ui: UI }>` | Creates and initializes a UI. |
-| `create()` | `Node \| undefined` | Creates a detached [Node](./node.md). |
+| `create()` | `Node \| undefined` | Creates a detached [Node](./node.mdx). |
 | `update()` | `void` | Applies pending changes. |
 | `draw(options?: WebGPUDrawOptions)` | `WebGPUDrawResult \| undefined` | Draws the current UI state. |
 | `setViewport(width: number, height: number)` | `void` | Sets logical viewport dimensions. |
