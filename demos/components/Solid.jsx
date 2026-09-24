@@ -29,7 +29,7 @@ export default function App() {
       // The DOM input captures typing, paste, and IME for the Uno input.
       const input = document.createElement('input')
       input.tabIndex = -1
-      input.style.cssText = 'position: fixed; left: 0; bottom: 0; width: 0px; height: 0px; opacity: 0; pointer-events: none;'
+      input.style.cssText = 'position: fixed; left: 0; bottom: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none;'
       input.oninput = () => setName(input.value)
       document.body.appendChild(input)
       dom_input = input

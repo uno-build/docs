@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PlayCanvas Cube + React + Uno UI</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas></canvas>
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@19.3.0",
+          "react/jsx-runtime": "https://esm.sh/react@19.3.0/jsx-runtime?external=react",
+          "react-reconciler": "https://esm.sh/react-reconciler@0.34.0?external=react",
+          "react-reconciler/constants.js": "https://esm.sh/react-reconciler@0.34.0/constants.js",
+          "playcanvas": "https://esm.sh/playcanvas@2.22.2",
+          "yoga-layout/load": "https://esm.sh/yoga-layout@3.2.1/load",
+          "@uno/ui/react": "./uno-ui/components/react/index.js",
+          "@uno/ui/ResourcesWebGPU": "./uno-ui/renderer/webgpu/ResourcesWebGPU.js",
+          "@uno/ui/UI": "./uno-ui/ui/UI.js"
+        }
+      }
+    </script>
+    <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+    <script type="module">
+      import * as PC from "playcanvas";
+      import ResourcesWebGPU from "@uno/ui/ResourcesWebGPU";
+      import UI from "@uno/ui/UI";
+      import { registerRootComponent } from "@uno/ui/react";
+      import { getReactComponent } from "./components/loaders.js";
+
+      // PlayCanvas and Uno UI share the same canvas and WebGPU device.
+      const canvas = document.querySelector("canvas");
+      const graphics_device = await PC.createGraphicsDevice(canvas, {
+        deviceTypes: ["webgpu"],
+        // Render directly to the shared canvas so the Uno background is preserved.
+        antialias: false,
+        alpha: true,
+      });
+      const resources = await ResourcesWebGPU.create({
+        canvas,
+        device: graphics_device.wgpu,
+        context: graphics_device.gpuContext,
+        format: graphics_device.canvasConfig.format,
+      });
+      const { ui: background_ui } = await UI.create({ resources });
+      const { ui: foreground_ui } = await UI.create({ resources });
+
+      const app_options = new PC.AppOptions();
+      app_options.graphicsDevice = graphics_device;
+      app_options.componentSystems = [PC.RenderComponentSystem, PC.CameraComponentSystem];
+      app_options.resourceHandlers = [PC.TextureHandler, PC.ContainerHandler];
+      const app = new PC.AppBase(canvas);
+      app.init(app_options);
+      app.setCanvasFillMode(PC.FILLMODE_FILL_WINDOW);
+      app.setCanvasResolution(PC.RESOLUTION_AUTO);
+
+      const camera = new PC.Entity("camera", app);
+      camera.addComponent("camera", {
+        clearColorBuffer: false,
+        clearDepthBuffer: true,
+        fov: 60,
+        nearClip: 0.1,
+        farClip: 10,
+      });
+      camera.setPosition(0, 0, 2.5);
+      app.root.addChild(camera);
+
+      // Match the view-space normal colors of Three.js MeshNormalMaterial.
+      const material = new PC.ShaderMaterial({
+        uniqueName: "view-space-normals",
+        attributes: {
+          aPosition: PC.SEMANTIC_POSITION,
+          aNormal: PC.SEMANTIC_NORMAL,
+        },
+        vertexWGSL: `
+          attribute aPosition: vec3f;
+          attribute aNormal: vec3f;
+          uniform matrix_model: mat4x4f;
+          uniform matrix_view: mat4x4f;
+          uniform matrix_viewProjection: mat4x4f;
+          uniform matrix_normal: mat3x3f;
+          varying vNormal: vec3f;
+          @vertex
+          fn vertexMain(input: VertexInput) -> VertexOutput {
+            var output: VertexOutput;
+            output.vNormal = (uniform.matrix_view * vec4f(uniform.matrix_normal * aNormal, 0.0)).xyz;
+            output.position = uniform.matrix_viewProjection * uniform.matrix_model * vec4f(aPosition, 1.0);
+            return output;
+          }
+        `,
+        fragmentWGSL: `
+          varying vNormal: vec3f;
+          @fragment
+          fn fragmentMain(input: FragmentInput) -> FragmentOutput {
+            var output: FragmentOutput;
+            output.color = vec4f(normalize(vNormal) * 0.5 + vec3f(0.5), 1.0);
+            return output;
+          }
+        `,
+      });
+      const cube = new PC.Entity("cube", app);
+      cube.addComponent("render", { type: "box", material });
+      app.root.addChild(cube);
+      const rotation_x = new PC.Quat();
+      const rotation_y = new PC.Quat();
+      const rotation = new PC.Quat();
+
+      // Load the font and images used by components/React.jsx and the background.
+      const font_name = "ChangaOne";
+      const response_image = await fetch(`assets/${font_name}.png`);
+      const blob = await response_image.blob();
+      const image = await createImageBitmap(blob);
+      const response_data = await fetch(`assets/${font_name}.json`);
+      const data = await response_data.json();
+      resources.registerFont(font_name, { image, data });
+
+      const image_url = "assets/coin.png";
+      const response = await fetch(image_url);
+      const coin_blob = await response.blob();
+      const coin = await createImageBitmap(coin_blob);
+      resources.registerImage(image_url, { image: coin });
+
+      background_ui.root.style("backgroundImage", image_url);
+      background_ui.root.style("backgroundSize", "32px 32px");
+      background_ui.root.style("backgroundRepeat", "repeat");
+
+      // Mount the same React component used earlier as the foreground UI.
+      const App = await getReactComponent("components/React.jsx");
+      const react = registerRootComponent(App, { ui: foreground_ui });
+      react.render({ backgroundColor: '#F5F2EC99', defaultName: 'PlayCanvas' });
+
+      function onResize() {
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+        graphics_device.maxPixelRatio = window.devicePixelRatio;
+        app.resizeCanvas();
+        for (const ui of [background_ui, foreground_ui]) {
+          ui.setViewport(width, height);
+          ui.setDevicePixelRatio(window.devicePixelRatio);
+          ui.update();
+        }
+      }
+      window.addEventListener("resize", onResize);
+      onResize();
+
+      let bgposition = 0;
+      app.on("update", () => {
+        bgposition += 0.25;
+        background_ui.root.style("backgroundPosition", `${bgposition}px ${-bgposition}px`);
+        background_ui.update();
+
+        // Match Three.js XYZ rotation order; PlayCanvas angles are in degrees.
+        const time = performance.now();
+        rotation_x.setFromAxisAngle(PC.Vec3.RIGHT, time / 2000 * 180 / Math.PI);
+        rotation_y.setFromAxisAngle(PC.Vec3.UP, time / 1000 * 180 / Math.PI);
+        cube.setLocalRotation(rotation.mul2(rotation_x, rotation_y));
+      });
+      // Encode background, cube, and foreground in order; PlayCanvas submits the frame.
+      app.on("prerender", () => {
+        background_ui.draw({
+          load_op: "clear",
+          submit: false,
+          command_encoder: graphics_device.getCommandEncoder(),
+        });
+      });
+      app.on("postrender", () => {
+        foreground_ui.draw({
+          submit: false,
+          command_encoder: graphics_device.getCommandEncoder(),
+        });
+      });
+      app.on("frameend", () => resources.present());
+      app.start();
+    </script>
+  </body>
+</html>
