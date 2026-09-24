@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Babylon.js Cube + React + Uno UI</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas></canvas>
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@19.3.0",
+          "react/jsx-runtime": "https://esm.sh/react@19.3.0/jsx-runtime?external=react",
+          "react-reconciler": "https://esm.sh/react-reconciler@0.34.0?external=react",
+          "react-reconciler/constants.js": "https://esm.sh/react-reconciler@0.34.0/constants.js",
+          "@babylonjs/core/": "https://cdn.jsdelivr.net/npm/@babylonjs/core@9.26.1/",
+          "yoga-layout/load": "https://esm.sh/yoga-layout@3.2.1/load",
+          "@uno/ui/react": "./uno-ui/components/react/index.js",
+          "@uno/ui/ResourcesWebGPU": "./uno-ui/renderer/webgpu/ResourcesWebGPU.js",
+          "@uno/ui/UI": "./uno-ui/ui/UI.js"
+        }
+      }
+    </script>
+    <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+    <script type="module">
+      import { FreeCamera } from "@babylonjs/core/Cameras/freeCamera.js";
+      import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine.js";
+      import { ShaderMaterial } from "@babylonjs/core/Materials/shaderMaterial.js";
+      import { Vector3 } from "@babylonjs/core/Maths/math.vector.js";
+      import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder.js";
+      import { Scene } from "@babylonjs/core/scene.js";
+      import ResourcesWebGPU from "@uno/ui/ResourcesWebGPU";
+      import UI from "@uno/ui/UI";
+      import { registerRootComponent } from "@uno/ui/react";
+      import { getReactComponent } from "./components/loaders.js";
+
+      // Babylon.js and Uno UI share the same canvas and WebGPU device.
+      const canvas = document.querySelector("canvas");
+      const context = canvas.getContext("webgpu");
+      const format = navigator.gpu.getPreferredCanvasFormat();
+      const engine = new WebGPUEngine(canvas, {
+        antialias: false,
+        audioEngine: false,
+        premultipliedAlpha: true,
+        doNotHandleTouchAction: true,
+        swapChainFormat: format,
+      });
+      await engine.initAsync();
+      const resources = await ResourcesWebGPU.create({
+        canvas,
+        device: engine._device,
+        context,
+        format,
+      });
+      const { ui: background_ui } = await UI.create({ resources });
+      const { ui: foreground_ui } = await UI.create({ resources });
+
+      const scene = new Scene(engine);
+      scene.useRightHandedSystem = true;
+      scene.preventDefaultOnPointerDown = false;
+      scene.preventDefaultOnPointerUp = false;
+      // Preserve the Uno background while clearing depth for each frame.
+      scene.autoClear = false;
+      scene.autoClearDepthAndStencil = true;
+      scene.imageProcessingConfiguration.isEnabled = false;
+      const camera = new FreeCamera("camera", new Vector3(0, 0, 2.5), scene);
+      camera.fov = Math.PI / 3;
+      camera.minZ = 0.1;
+      camera.maxZ = 10;
+      camera.setTarget(Vector3.Zero());
+      const cube = MeshBuilder.CreateBox("cube", { size: 1 }, scene);
+      // Match the view-space normal colors of Three.js MeshNormalMaterial.
+      cube.material = new ShaderMaterial("normal-material", scene, {
+        vertexSource: `
+          precision highp float;
+          attribute vec3 position;
+          attribute vec3 normal;
+          uniform mat4 worldView;
+          uniform mat4 worldViewProjection;
+          varying vec3 vNormal;
+          void main() {
+            vNormal = mat3(worldView) * normal;
+            gl_Position = worldViewProjection * vec4(position, 1.0);
+          }
+        `,
+        fragmentSource: `
+          precision highp float;
+          varying vec3 vNormal;
+          void main() {
+            gl_FragColor = vec4(normalize(vNormal) * 0.5 + 0.5, 1.0);
+          }
+        `,
+      }, {
+        attributes: ["position", "normal"],
+        uniforms: ["worldView", "worldViewProjection"],
+      });
+
+      // Load the font and images used by components/React.jsx and the background.
+      const font_name = "ChangaOne";
+      const response_image = await fetch(`assets/${font_name}.png`);
+      const blob = await response_image.blob();
+      const image = await createImageBitmap(blob);
+      const response_data = await fetch(`assets/${font_name}.json`);
+      const data = await response_data.json();
+      resources.registerFont(font_name, { image, data });
+
+      const image_url = "assets/coin.png";
+      const response = await fetch(image_url);
+      const coin_blob = await response.blob();
+      const coin = await createImageBitmap(coin_blob);
+      resources.registerImage(image_url, { image: coin });
+
+      background_ui.root.style("backgroundImage", image_url);
+      background_ui.root.style("backgroundSize", "32px 32px");
+      background_ui.root.style("backgroundRepeat", "repeat");
+
+      // Mount the same React component used earlier as the foreground UI.
+      const App = await getReactComponent("components/React.jsx");
+      const react = registerRootComponent(App, { ui: foreground_ui });
+      react.render({ backgroundColor: "#F5F2EC99" });
+
+      function onResize() {
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+        engine.setHardwareScalingLevel(1 / window.devicePixelRatio);
+        engine.resize();
+        for (const ui of [background_ui, foreground_ui]) {
+          ui.setViewport(width, height);
+          ui.setDevicePixelRatio(window.devicePixelRatio);
+          ui.update();
+        }
+      }
+      window.addEventListener("resize", onResize);
+      onResize();
+
+      let bgposition = 0;
+      engine.runRenderLoop(() => {
+        const time = performance.now();
+        // Update background.
+        bgposition += 0.25;
+        background_ui.root.style("backgroundPosition", `${bgposition}px ${-bgposition}px`);
+        background_ui.update();
+
+        // Rotate the cube using elapsed time in milliseconds.
+        cube.rotation.x = time / 2000;
+        cube.rotation.y = time / 1000;
+
+        // Draw the background repeating coins, then the Babylon.js cube, then React on top.
+        background_ui.draw({ load_op: "clear" });
+        scene.render();
+        // Submit Babylon's commands before Uno submits the foreground pass.
+        engine.flushFramebuffer();
+        foreground_ui.draw(); // Equivalent to foreground_ui.draw({ load_op: 'load' })
+      });
+    </script>
+  </body>
+</html>
