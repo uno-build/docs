@@ -46,7 +46,7 @@ Every UI follows the same ownership model:
 3. Set its logical viewport and device pixel ratio when applicable.
 4. Register assets and build a node tree, directly or through a framework adapter.
 5. Call `ui.update()` to consume pending mutations.
-6. Call `ui.draw()` in the render loop and present the shared context when required.
+6. Call `ui.draw()` in the render loop.
 7. Unmount framework roots, destroy UIs, then dispose shared WebGPU resources after their last UI is gone.
 
 Mutations are journaled. Calling `style()`, `text()`, adding nodes, or changing scroll offsets does not immediately run layout or upload all rendering data; `ui.update()` is the commit boundary.

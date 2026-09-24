@@ -169,7 +169,6 @@
         ui.update()
         ui.draw({ submit: false, command_encoder: graphics_device.getCommandEncoder() })
       })
-      app.on('frameend', () => resources.present())
       app.start()
     </script>
   </body>

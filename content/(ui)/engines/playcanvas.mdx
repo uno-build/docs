@@ -49,8 +49,6 @@ camera.addComponent('camera', {
 })
 camera.setPosition(0, 0, 2.5)
 app.root.addChild(camera)
-
-app.on('frameend', () => resources.present())
 ```
 
 Keep `antialias: false` for this direct canvas composition so PlayCanvas draws into the shared canvas texture without resolving a separate multisampled color buffer over the background UI.
@@ -81,7 +79,7 @@ The `load_op` option of `ui.draw()` controls what happens to the existing pixels
 
 Keep `camera.camera.clearDepthBuffer` at its default value of `true`. Changing only `clearColorBuffer` lets PlayCanvas continue clearing depth for each frame.
 
-PlayCanvas fires `prerender` before drawing the scene and `postrender` after it, then submits its WebGPU commands. Pass `submit: false` and `command_encoder: graphics_device.getCommandEncoder()` to Uno UI so its draws use the same command encoder and are submitted in order with the scene. The `frameend` handler above presents the completed frame on contexts that require explicit presentation.
+PlayCanvas fires `prerender` before drawing the scene and `postrender` after it, then submits its WebGPU commands. Pass `submit: false` and `command_encoder: graphics_device.getCommandEncoder()` to Uno UI so its draws use the same command encoder and are submitted in order with the scene.
 
 Use one of the following rendering setups after applying the UI layout and viewport setup.
 

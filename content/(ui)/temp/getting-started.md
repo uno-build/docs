@@ -120,7 +120,6 @@ let frame_id = 0
 function frame() {
     ui.update()
     ui.draw({ load_op: 'clear' })
-    resources.present()
     frame_id = requestAnimationFrame(frame)
 }
 
@@ -138,8 +137,6 @@ function destroy() {
     resources.dispose()
 }
 ```
-
-`resources.present()` is a no-op for standard browser `GPUCanvasContext` implementations and calls `context.present()` for hosts that expose it.
 
 Give the canvas a non-zero CSS width and height; its CSS size defines the logical viewport used by `resize()`, while `canvas.width` and `canvas.height` define the physical backing size. The `touch-action` assignment lets Uno own touch dragging on the canvas. Call `destroy()` when this example is unmounted.
 

@@ -67,8 +67,6 @@ The `clear` option of `renderer.render()` controls whether Pixi.js clears the co
 
 If `clear` is omitted, Pixi.js uses `clearBeforeRender`, which defaults to `true` but is set to `false` in the setup above. `backgroundAlpha: 0` makes the background transparent; it does not prevent clearing pixels already drawn by Uno UI.
 
-Call `resources.present()` after the last draw of each frame, as in the demo. It presents the completed frame on contexts that require explicit presentation.
-
 ## UI in front of the scene
 
 Draw the scene first with `clear: true`, then draw the UI:
@@ -79,7 +77,6 @@ requestAnimationFrame(function render(time) {
 
   renderer.render({ container: stage, clear: true })
   ui.draw()
-  resources.present()
 
   requestAnimationFrame(render)
 })
@@ -101,7 +98,6 @@ requestAnimationFrame(function render(time) {
 
   ui.draw({ load_op: 'clear' })
   renderer.render({ container: stage, clear: false })
-  resources.present()
 
   requestAnimationFrame(render)
 })

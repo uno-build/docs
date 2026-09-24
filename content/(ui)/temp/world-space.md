@@ -184,7 +184,6 @@ let frame_id = 0
 function renderFrame() {
     ui.draw()
     renderer.render(scene, camera)
-    resources.present()
     frame_id = requestAnimationFrame(renderFrame)
 }
 
@@ -231,8 +230,6 @@ ui.draw({
 ```
 
 The engine must submit that encoder later. Do not pass `texture_view` or `load_op`; world-space adapters intentionally control both. Draw before the engine pass that samples the texture. A static UI only needs another draw after its rendered content changes, while animated or continuously changing UIs normally draw every frame.
-
-Call `resources.present()` at the end of the complete frame when the shared context exposes an explicit `present()` method. It is a no-op on browser contexts without that method.
 
 ## Events and picking
 
