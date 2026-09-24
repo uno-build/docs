@@ -59,6 +59,7 @@ export default function App({backgroundColor="#F5F2EC"}) {
         justifyContent: "center",
         gap: "16px",
         fontFamily: "ChangaOne",
+        borderRadius: "12px",
         backgroundColor,
       }}
     >

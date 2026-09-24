@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "next dev",
-    "docs:copy": "node scripts/copy-docs.mjs ../ui/docs 'content/(ui)'",
     "start": "next start",
+    "dev": "next dev",
+    "demos": "serve demos",
+    "docs:copy": "node scripts/copy-docs.mjs ../ui/docs 'content/(ui)'",
     "types:check": "next typegen && tsc --noEmit"
   },
   "dependencies": {
@@ -27,6 +28,7 @@
     "@types/react-dom": "^19.2.7",
     "postcss": "^8.5.28",
     "tailwindcss": "^4.3.3",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "serve": "^14.2.6"
   }
 }

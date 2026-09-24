@@ -24,11 +24,11 @@
     <script type="importmap">
       {
         "imports": {
-          "three/webgpu": "https://esm.sh/three@0.186.0/webgpu",
           "react": "https://esm.sh/react@19.3.0",
           "react/jsx-runtime": "https://esm.sh/react@19.3.0/jsx-runtime?external=react",
           "react-reconciler": "https://esm.sh/react-reconciler@0.34.0?external=react",
           "react-reconciler/constants.js": "https://esm.sh/react-reconciler@0.34.0/constants.js",
+          "three/webgpu": "https://esm.sh/three@0.186.0/webgpu",
           "yoga-layout/load": "https://esm.sh/yoga-layout@3.2.1/load",
           "@uno/ui/react": "./uno-ui/components/react/index.js",
           "@uno/ui/ResourcesWebGPU": "./uno-ui/renderer/webgpu/ResourcesWebGPU.js",
@@ -43,17 +43,24 @@
       import UI from "@uno/ui/UI";
       import { registerRootComponent } from "@uno/ui/react";
 
-      // Three.js and Uno UI share the same canvas and WebGPU device.
+      // Uno UI share the same canvas and WebGPU device.
       const canvas = document.querySelector("canvas");
       const resources = await ResourcesWebGPU.create({ canvas });
       const { device, context } = resources;
+      
       const { ui: background_ui } = await UI.create({ resources });
       const { ui: foreground_ui } = await UI.create({ resources });
 
+      // Three.js 
       const renderer = new THREE.WebGPURenderer({ canvas, device, context });
       renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
       renderer.autoClearColor = false;
       await renderer.init();
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10);
+      camera.position.z = 2.5;
+      const cube = new THREE.Mesh( new THREE.BoxGeometry(1, 1, 1), new THREE.MeshNormalMaterial());
+      scene.add(cube);
 
       // Load the font and images used by components/React.jsx and the background.
       const font_name = "ChangaOne";
@@ -70,26 +77,14 @@
       const coin = await createImageBitmap(coin_blob);
       resources.registerImage(image_url, { image: coin });
 
-      // Repeat the coins behind the cube, just like in images.html.
       background_ui.root.style("backgroundImage", image_url);
       background_ui.root.style("backgroundSize", "32px 32px");
       background_ui.root.style("backgroundRepeat", "repeat");
 
-      // Mount the same React component with a transparent background.
+      // Mount the same React component used earlier as the foreground UI.
       const App = await getReactComponent("components/React.jsx");
       const react = registerRootComponent(App, { ui: foreground_ui });
       react.render({ backgroundColor: '#F5F2EC99' });
-
-      // A cube with colored faces, without lights or textures.
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10);
-      camera.position.z = 2.5;
-
-      const cube = new THREE.Mesh(
-        new THREE.BoxGeometry(1, 1, 1),
-        new THREE.MeshNormalMaterial(),
-      );
-      scene.add(cube);
 
       function onResize() {
         const width = canvas.clientWidth;
@@ -118,7 +113,7 @@
         cube.rotation.x = time / 2000;
         cube.rotation.y = time / 1000;
 
-        // Draw the coins, then the cube, then React on top.
+        // Draw the background repeating coins, then the Three.js cube, then React on top.
         background_ui.draw({ load_op: "clear" });
         renderer.render(scene, camera);
         foreground_ui.draw(); // Equivalent to foreground_ui.draw({ load_op: 'load' })
