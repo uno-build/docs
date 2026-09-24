@@ -2,55 +2,57 @@
 title: "Introduction"
 ---
 
-This directory documents the API published by the current `uno-ui` package. Uno UI is an ESM-only WebGPU UI runtime with optional React, Solid, and Vue adapters and world-space integrations for several WebGPU engines.
+Build high-performance and pixel-perfect user interfaces for WebGPU. Use the rendering engine and UI framework of your choice.
 
-The package has no root export. Import from one of the explicit subpaths below; imports such as `import ... from 'uno-ui'` or `import ... from 'uno-ui/src/...'` are not part of the public API.
+## Motivation
 
-## Start here
+When you build a video game's UI with a library such as Three.js, you typically use HTML and CSS for the layout. This approach has two drawbacks. First, it ties your game to the web, so you must ship it for browsers, Electron, or another environment with a WebView. Second, it separates your UI from your game because they live in two different worlds.
 
-- [Getting started](./getting-started/first-layout) — installation and minimal WebGPU applications
-- [Core API](./temp/core-api.mdx) — the inherited `UI` lifecycle and the node API
-- [Resources and rendering](./temp/resources-and-rendering.mdx) — WebGPU resources, assets, drawing, and cleanup
-- [Styles](./api/styles.mdx) — every supported style property and value family
-- [Events](./temp/events.mdx) — event forwarding, bubbling, focus, scroll, and custom events
-- [Framework adapters](./temp/frameworks.mdx) — React, Solid, and Vue
-- [World-space integrations](./temp/world-space.mdx) — Three.js, Babylon.js, Babylon Lite, and PlayCanvas
-- [Public exports](./temp/public-api.mdx) — exact exports for every package subpath
-- [Current limitations](./temp/limitations.mdx) — renderer and adapter behavior that differs from the web platform
+`uno/ui` solves both problems by rendering the UI directly through the game's rendering pipeline, without relying on HTML or the DOM. This lets your game run in non-web environments while keeping the UI and game in the same rendering system.
 
-## Package entrypoints
+## Key Features
 
-| Import                   | Purpose                                                        | Optional peer dependencies                  |
-| ------------------------ | -------------------------------------------------------------- | ------------------------------------------- |
-| `uno-ui/events`          | Event constants, maps, default definitions, and `EventEmitter` | None                                        |
-| `uno-ui/ResourcesWebGPU` | WebGPU device/context and image/font atlases                   | None                                        |
-| `uno-ui/UIWebGPU`        | Screen-space WebGPU UI                                         | None                                        |
-| `uno-ui/UIThree`         | Three.js world-space UI                                        | `three`, `@types/three`                     |
-| `uno-ui/UIBabylon`       | Babylon.js world-space UI                                      | `@babylonjs/core`                           |
-| `uno-ui/UIBabylonLite`   | Babylon Lite world-space UI                                    | `@babylonjs/lite`                           |
-| `uno-ui/UIPlayCanvas`    | PlayCanvas world-space UI                                      | `playcanvas`                                |
-| `uno-ui/react`           | React components and root driver                               | `react`, `react-reconciler`, `@types/react` |
-| `uno-ui/solid`           | Solid components and renderer runtime                          | `solid-js`, `@solidjs/universal`            |
-| `uno-ui/solid/config`    | Solid compiler configuration                                   | Solid build tooling                         |
-| `uno-ui/vue`             | Vue components, root driver, and stylesheet registry           | `vue`                                       |
-| `uno-ui/vue/config`      | Vue compiler and Vite style plugins                            | `vue`, `vite`                               |
+- Works with any WebGPU rendering engine
+- Use it standalone or with [React](https://uno.build/examples/react/), [Vue](https://uno.build/examples/vue/) or [SolidJS](https://uno.build/examples/solid/)
+- World-space integrations for [Three.js](https://uno.build/examples/engines/three-worldspace.html), [Babylon.js](https://uno.build/examples/engines/babylon-worldspace.html), [Babylon Lite](https://uno.build/examples/engines/babylonlite-worldspace.html) and [PlayCanvas](https://uno.build/examples/engines/playcanvas-worldspace.html)
+- [Pixel-perfect parity with DOM rendering](https://uno.build/examples/layouts/)
+- High-quality text rendering with strokes and shadows using [MTSDF](https://github.com/Chlumsky/msdf-atlas-gen)
+- Accurate text measurement and layout powered by [Pretext](https://github.com/chenglou/pretext)
+- Flexbox layout powered by [Yoga](https://www.yogalayout.dev/)
+- Fine-grained updates for efficient rendering
+- Lightweight, basic setup is around 280kb (93kb gzip)
 
-`yoga-layout` and `@webgpu/types` are regular package dependencies. All engine and framework peers are optional, so install only the integrations used by the application.
+## Getting Started
 
-## Lifecycle at a glance
+- [First Layout](./getting-started/first-layout.mdx): installation and your first WebGPU layout.
+- [Interactivity](./getting-started/interactivity.mdx): node events, event data, and propagation.
+- [Images](./getting-started/images.mdx): loading and displaying image resources.
+- [Texts & Fonts](./getting-started/texts-fonts.mdx): generating font atlases and rendering text.
+- [Destroy](./getting-started/destroy.mdx): cleaning up nodes, UIs, and shared resources.
 
-Every UI follows the same ownership model:
+## Components
 
-1. Create a WebGPU resource store.
-2. Create a UI with that store.
-3. Set its logical viewport and device pixel ratio when applicable.
-4. Register assets and build a node tree, directly or through a framework adapter.
-5. Call `ui.update()` to consume pending mutations.
-6. Call `ui.draw()` in the render loop.
-7. Unmount framework roots, destroy UIs, then dispose shared WebGPU resources after their last UI is gone.
+- [React](./components/react.mdx): components, event props, and UI access with React.
+- [Vue](./components/vue.mdx): components, styles, and event bindings with Vue.
+- [Solid](./components/solid.mdx): components, reactive updates, and compiler setup with Solid.
 
-Mutations are journaled. Calling `style()`, `text()`, adding nodes, or changing scroll offsets does not immediately run layout or upload all rendering data; `ui.update()` is the commit boundary.
+## Engines
 
-## What counts as public
+- [Three.js](./engines/three.mdx): background and foreground UI with Three.js.
+- [Three.js World Space](./engines/three-worldspace.mdx): interactive UI on Three.js meshes.
+- [Pixi.js](./engines/pixi.mdx): background and foreground UI with Pixi.js.
+- [Babylon.js](./engines/babylon.mdx): background and foreground UI with Babylon.js.
+- [Babylon.js World Space](./engines/babylon-worldspace.mdx): interactive UI on Babylon.js meshes.
+- [Babylon Lite](./engines/babylonlite.mdx): UI composition using Babylon Lite render tasks.
+- [Babylon Lite World Space](./engines/babylonlite-worldspace.mdx): interactive UI on Babylon Lite meshes.
+- [PlayCanvas](./engines/playcanvas.mdx): background and foreground UI with PlayCanvas.
+- [PlayCanvas World Space](./engines/playcanvas-worldspace.mdx): interactive UI on PlayCanvas entities.
+- [TypeGPU](./engines/typegpu.mdx): UI composition with shared WebGPU command encoders.
 
-The import boundary is the `exports` map in `package.json`. Some important values are returned through public APIs but do not have their own import path. In particular, the base `UI` and `Node` classes are visible through `UIWebGPU`, world-space UI instances, `ui.root`, `ui.create()`, and framework handles, but cannot be imported from a supported subpath. These docs describe their usable members without suggesting internal `src/` imports.
+## API reference
+
+- [UI](./api/ui.mdx): creation, viewport, events, updates, and drawing.
+- [Node](./api/node.mdx): tree operations, styles, text, layout, and listeners.
+- [ResourcesWebGPU](./api/resources-webgpu.mdx): shared WebGPU resources and image and font registration.
+- [UIWorldSpace](./api/ui-world-space.mdx): engine factories, cameras, materials, and custom meshes.
+- [Styles](./api/styles.mdx): supported style properties and values.
