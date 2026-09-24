@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { View, Text, Image, Input } from "@uno/ui/react";
 
-export default function App({backgroundColor="#F5F2EC"}) {
+export default function App({ backgroundColor = "#F5F2EC", defaultName = "React" }) {
   const dom_input = useRef(null);
-  const [name, setName] = useState("React");
+  const [name, setName] = useState(defaultName);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
 

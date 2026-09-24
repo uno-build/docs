@@ -64,7 +64,7 @@
       // React
       const App = await getReactComponent('components/React.jsx') // import App from './components/React.jsx'
       const react = registerRootComponent(App, { ui })
-      react.render({})
+      react.render({ defaultName: 'React' })
 
       function onResize() {
         canvas.width = canvas.clientWidth * window.devicePixelRatio

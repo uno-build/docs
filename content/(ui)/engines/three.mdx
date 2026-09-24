@@ -54,7 +54,7 @@ The `load_op` option of `ui.draw()` controls what happens to the existing pixels
 
 Keep `renderer.autoClear` at its default value of `true`. Changing only `autoClearColor` lets Three.js continue clearing depth and stencil for each frame.
 
-## UI in front of the cube
+## UI in front of the scene
 
 Draw the scene first, then draw the UI:
 
@@ -74,7 +74,7 @@ requestAnimationFrame(function render(time) {
 
 Three.js clears to white and draws the cube. Uno UI preserves that image and draws the panel over it.
 
-## UI behind the cube
+## UI behind the scene
 
 Draw the UI first with `load_op: 'clear'`, then render the scene with `autoClearColor = false`:
 

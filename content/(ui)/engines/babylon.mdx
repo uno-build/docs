@@ -74,7 +74,7 @@ Keep `scene.autoClearDepthAndStencil` at its default value of `true`. Changing o
 
 Babylon.js normally submits its WebGPU commands at the end of each frame, after the callback passed to `engine.runRenderLoop()` returns. When drawing Uno UI after `scene.render()`, call `engine.flushFramebuffer()` between them to submit the scene before the UI.
 
-## UI in front of the cube
+## UI in front of the scene
 
 Draw the scene first, submit its commands, then draw the UI:
 
@@ -94,7 +94,7 @@ engine.runRenderLoop(() => {
 
 Babylon.js clears to white and draws the cube. Uno UI preserves that image and draws the panel over it.
 
-## UI behind the cube
+## UI behind the scene
 
 Draw the UI first with `load_op: 'clear'`, then render the scene with `autoClear = false`:
 

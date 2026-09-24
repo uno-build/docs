@@ -54,7 +54,7 @@ const scene = new THREE.Scene()
 scene.add(plane)
 ```
 
-## Customize the mesh and hit mapping
+## Customize the plane and hit mapping
 
 Use the optional `createPlane()` callback to display the UI on a different `THREE.Mesh`, such as a box, sphere, or cylinder. It receives the configured UI `material` and the requested `world_width` and `world_height`. Return the mesh as `plane`; additional resources such as `geometry` and `body_material` are also returned by `UIThree.create()`.
 
