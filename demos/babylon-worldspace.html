@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Babylon.js World Space + React + Uno UI</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas></canvas>
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@19.3.0",
+          "react/jsx-runtime": "https://esm.sh/react@19.3.0/jsx-runtime?external=react",
+          "react-reconciler": "https://esm.sh/react-reconciler@0.34.0?external=react",
+          "react-reconciler/constants.js": "https://esm.sh/react-reconciler@0.34.0/constants.js",
+          "@babylonjs/core/": "https://cdn.jsdelivr.net/npm/@babylonjs/core@9.26.1/",
+          "yoga-layout/load": "https://esm.sh/yoga-layout@3.2.1/load",
+          "@uno/ui/react": "./uno-ui/components/react/index.js",
+          "@uno/ui/ResourcesWebGPU": "./uno-ui/renderer/webgpu/ResourcesWebGPU.js",
+          "@uno/ui/UIBabylon": "./uno-ui/ui/UIBabylon.js"
+        }
+      }
+    </script>
+    <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+    <script type="module">
+      import { FreeCamera } from '@babylonjs/core/Cameras/freeCamera.js'
+      import { WebGPUEngine } from '@babylonjs/core/Engines/webgpuEngine.js'
+      import { MultiMaterial } from '@babylonjs/core/Materials/multiMaterial.js'
+      import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial.js'
+      import { Color3, Color4 } from '@babylonjs/core/Maths/math.color.js'
+      import { Vector3 } from '@babylonjs/core/Maths/math.vector.js'
+      import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder.js'
+      import { SubMesh } from '@babylonjs/core/Meshes/subMesh.js'
+      import { Scene } from '@babylonjs/core/scene.js'
+      import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
+      import UIBabylon from '@uno/ui/UIBabylon'
+      import { registerRootComponent } from '@uno/ui/react'
+      import { getReactComponent } from './components/loaders.js'
+
+      // Babylon.js and Uno UI share the same canvas and WebGPU device.
+      const canvas = document.querySelector('canvas')
+      const context = canvas.getContext('webgpu')
+      const format = navigator.gpu.getPreferredCanvasFormat()
+      const engine = new WebGPUEngine(canvas, {
+        antialias: false,
+        audioEngine: false,
+        premultipliedAlpha: true,
+        doNotHandleTouchAction: true,
+        swapChainFormat: format,
+      })
+      await engine.initAsync()
+
+      const scene = new Scene(engine)
+      scene.preventDefaultOnPointerDown = false
+      scene.preventDefaultOnPointerUp = false
+      scene.clearColor = Color4.FromHexString('#111827FF')
+      scene.imageProcessingConfiguration.isEnabled = false
+      const resources = await ResourcesWebGPU.create({
+        canvas,
+        device: engine._device,
+        context,
+        format,
+      })
+
+      const UI_SIZE = 400
+      const device_pixel_ratio = window.devicePixelRatio
+      const { ui, plane } = await UIBabylon.create({
+        scene,
+        resources,
+        device_pixel_ratio,
+        texture_width: Math.round(UI_SIZE * device_pixel_ratio),
+        texture_height: Math.round(UI_SIZE * device_pixel_ratio),
+        world_width: 1,
+        world_height: 1,
+        createMaterial() {
+          const material = new StandardMaterial('ui-material', scene)
+          material.disableLighting = true
+          material.emissiveColor = Color3.White()
+          return material
+        },
+        // createPlane({ material, world_width, world_height }) {
+        //   const plane = MeshBuilder.CreateBox('ui-box', {
+        //     width: world_width,
+        //     height: world_height,
+        //     depth: world_width,
+        //   }, scene)
+        //   const body_material = new StandardMaterial('body-material', scene)
+        //   body_material.disableLighting = true
+        //   body_material.emissiveColor = Color3.FromHexString('#F5F2EC')
+
+        //   const box_material = new MultiMaterial('box-material', scene)
+        //   box_material.subMaterials = [
+        //     body_material,
+        //     material,
+        //     body_material,
+        //     body_material,
+        //     body_material,
+        //     body_material,
+        //   ]
+        //   plane.material = box_material
+        //   plane.releaseSubMeshes()
+        //   for (let face = 0; face < 6; face++) {
+        //     new SubMesh(face, face * 4, 4, face * 6, 6, plane)
+        //   }
+
+        //   return {
+        //     plane,
+        //     geometry: plane.geometry,
+        //     body_material,
+        //     box_material,
+        //     mapIntersection(intersection) {
+        //       // The -Z face faces the camera and uses the UI material.
+        //       return intersection.subMeshId === 1
+        //         ? intersection.getTextureCoordinates()
+        //         : null
+        //     },
+        //   }
+        // },
+      })
+      ui.setViewport(UI_SIZE, UI_SIZE)
+
+      const camera = new FreeCamera('camera', new Vector3(0, 0, -3), scene)
+      camera.fov = Math.PI / 3
+      camera.minZ = 0.1
+      camera.maxZ = 100
+      camera.setTarget(Vector3.Zero())
+      ui.setCamera(camera)
+
+      // Load the font and image used by components/React.jsx.
+      const font_name = 'ChangaOne'
+      const response_image = await fetch(`assets/${font_name}.png`)
+      const blob = await response_image.blob()
+      const image = await createImageBitmap(blob)
+      const response_data = await fetch(`assets/${font_name}.json`)
+      const data = await response_data.json()
+      resources.registerFont(font_name, { image, data })
+
+      const image_url = 'assets/coin.png'
+      const response = await fetch(image_url)
+      const coin_blob = await response.blob()
+      const coin = await createImageBitmap(coin_blob)
+      resources.registerImage(image_url, { image: coin })
+
+      // Mount the same React component used earlier.
+      const App = await getReactComponent('components/React.jsx')
+      const react = registerRootComponent(App, { ui })
+      react.render({})
+
+      function onResize() {
+        const width = canvas.clientWidth
+        const height = canvas.clientHeight
+        engine.setHardwareScalingLevel(1 / window.devicePixelRatio)
+        engine.resize()
+        camera.position.z = -3 / Math.min(width / height, 1)
+      }
+      window.addEventListener('resize', onResize)
+      onResize()
+
+      engine.runRenderLoop(() => {
+        plane.rotation.y = Math.sin(performance.now() / 2000) * 0.8
+
+        ui.draw()
+        scene.render()
+      })
+    </script>
+  </body>
+</html>

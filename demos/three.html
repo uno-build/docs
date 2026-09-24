@@ -42,6 +42,7 @@
       import ResourcesWebGPU from "@uno/ui/ResourcesWebGPU";
       import UI from "@uno/ui/UI";
       import { registerRootComponent } from "@uno/ui/react";
+      import { getReactComponent } from "./components/loaders.js";
 
       // Uno UI share the same canvas and WebGPU device.
       const canvas = document.querySelector("canvas");
@@ -120,23 +121,6 @@
 
         requestAnimationFrame(render);
       });
-
-      async function getReactComponent(filename) {
-        const response = await fetch(new URL(filename, document.baseURI))
-        if (!response.ok) throw new Error(`Failed to load ${filename}: ${response.status}`)
-        const source = await response.text()
-        const { code } = Babel.transform(source, {
-          filename,
-          presets: [['react', { runtime: 'automatic' }]],
-        })
-        const module_url = URL.createObjectURL(new Blob([code], { type: 'text/javascript' }))
-        try {
-          const { default: Component } = await import(module_url)
-          return Component
-        } finally {
-          URL.revokeObjectURL(module_url)
-        }
-      }
     </script>
   </body>
 </html>

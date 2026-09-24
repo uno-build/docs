@@ -36,9 +36,8 @@
     <script type="module">
       import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
       import UI from '@uno/ui/UI'
-      import { registerRootComponent, registerStyleSheet } from '@uno/ui/vue'
-      import { compilerConfig, compileStyles } from '@uno/ui/vue/config'
-      import { parse, compileScript } from 'vue/compiler-sfc'
+      import { registerRootComponent } from '@uno/ui/vue'
+      import { getVueComponent } from './components/loaders.js'
 
       const canvas = document.querySelector('canvas')
       const resources = await ResourcesWebGPU.create({ canvas })
@@ -79,34 +78,6 @@
         ui.draw()
         requestAnimationFrame(render)
       })
-
-      // Loads one JavaScript <script setup> SFC; its imports must resolve through the import map or absolute URLs.
-      async function getVueComponent(filename) {
-        const source_url = new URL(filename, document.baseURI)
-        const response = await fetch(source_url)
-        if (!response.ok) throw new Error(`Failed to load ${filename}: ${response.status}`)
-        const source = await response.text()
-        const { descriptor, errors } = parse(source, { filename })
-        if (errors.length > 0) throw new Error(String(errors[0]))
-
-        const scope_id = `data-v-${crypto.randomUUID()}`
-        const rules = await compileStyles(descriptor, scope_id)
-        const { content: code } = compileScript(descriptor, {
-          id: scope_id,
-          inlineTemplate: true,
-          templateOptions: compilerConfig.template,
-        })
-
-        const module_url = URL.createObjectURL(new Blob([code], { type: 'text/javascript' }))
-        try {
-          const { default: Component } = await import(module_url)
-          if (descriptor.styles.some((block) => block.scoped)) Component.__scopeId = scope_id
-          registerStyleSheet(source_url.href, rules)
-          return Component
-        } finally {
-          URL.revokeObjectURL(module_url)
-        }
-      }
     </script>
   </body>
 </html>
