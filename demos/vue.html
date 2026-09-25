@@ -62,7 +62,7 @@
       // Vue
       const App = await getVueComponent('components/Vue.vue') // import App from './components/Vue.vue'
       const vue = registerRootComponent(App, { ui })
-      vue.render({})
+      vue.mount({})
 
       function onResize() {
         canvas.width = canvas.clientWidth * window.devicePixelRatio

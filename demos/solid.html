@@ -65,7 +65,7 @@
       // Solid
       const App = await getSolidComponent('components/Solid.jsx') // import App from './components/Solid.jsx'
       const solid = registerRootComponent(App, { ui })
-      solid.render({})
+      solid.mount({})
 
       function onResize() {
         canvas.width = canvas.clientWidth * window.devicePixelRatio

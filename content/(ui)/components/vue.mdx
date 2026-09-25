@@ -16,12 +16,12 @@ const { ui } = await UI.create({ resources })
 
 // Vue
 const vue = registerRootComponent(App, { ui })
-vue.render({})
+vue.mount({})
 ```
 
 Vue updates call `ui.update()` automatically after rendering changes. Keep the viewport setup and render loop from [First Layout](../getting-started/first-layout.mdx) to draw the UI with `ui.draw()`.
 
-Use one registered root per UI. Call `vue.render(props)` again to update the root component's props while preserving its state.
+Use one registered root per UI. Call `vue.mount(props)` again to update the root component's props while preserving its state.
 
 Call `vue.unmount()` to remove the component tree and run its cleanup before destroying the UI. It does not destroy the UI or dispose shared resources; see [Destroy](../getting-started/destroy.mdx).
 
@@ -109,7 +109,7 @@ A string directly inside `View`, such as `<View>Hello</View>`, is invalid. `Text
 
 ### `<Image>`
 
-`Image` displays a registered image resource. It does not download the image from `src`. Follow [Images](../getting-started/images.mdx) to load and register the asset before calling `vue.render({})`.
+`Image` displays a registered image resource. It does not download the image from `src`. Follow [Images](../getting-started/images.mdx) to load and register the asset before calling `vue.mount({})`.
 
 | Property          | Value                                      | Default  | Usage                                                                                                     |
 | ----------------- | ------------------------------------------ | -------- | --------------------------------------------------------------------------------------------------------- |

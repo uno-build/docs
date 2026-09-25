@@ -134,7 +134,7 @@
       // Mount the same React component used earlier as the foreground UI.
       const App = await getReactComponent("components/React.jsx");
       const react = registerRootComponent(App, { ui: foreground_ui });
-      react.render({ backgroundColor: "#F5F2EC99", defaultName: "Babylon Lite" });
+      react.mount({ backgroundColor: "#F5F2EC99", defaultName: "Babylon Lite" });
 
       function onResize() {
         const width = canvas.clientWidth;

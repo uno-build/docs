@@ -152,7 +152,7 @@
       // Mount the same React component used earlier.
       const App = await getReactComponent('components/React.jsx')
       const react = registerRootComponent(App, { ui })
-      react.render({ defaultName: 'PlayCanvas' })
+      react.mount({ defaultName: 'PlayCanvas' })
 
       function onResize() {
         graphics_device.maxPixelRatio = window.devicePixelRatio

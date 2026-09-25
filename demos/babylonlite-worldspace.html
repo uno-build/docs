@@ -162,7 +162,7 @@
       // Mount the same React component used earlier.
       const App = await getReactComponent('components/React.jsx')
       const react = registerRootComponent(App, { ui })
-      react.render({ defaultName: 'Babylon Lite' })
+      react.mount({ defaultName: 'Babylon Lite' })
 
       function onResize() {
         resizeEngine(engine)

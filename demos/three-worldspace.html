@@ -114,7 +114,7 @@
       // Mount the same React component used earlier.
       const App = await getReactComponent('components/React.jsx')
       const react = registerRootComponent(App, { ui })
-      react.render({ defaultName: 'Three.js' })
+      react.mount({ defaultName: 'Three.js' })
 
       function onResize() {
         const width = canvas.clientWidth
