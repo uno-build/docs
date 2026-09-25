@@ -16,7 +16,7 @@ import UIPlayCanvas from '@uno/ui/UIPlayCanvas'
 const UI_SIZE = 400
 const device_pixel_ratio = window.devicePixelRatio
 
-const { ui, plane, material } = await UIPlayCanvas.create({
+const { ui, plane, material, texture } = await UIPlayCanvas.create({
   app,
   resources,
   device_pixel_ratio,
@@ -143,7 +143,32 @@ The box's UVs have `V = 0` at the top, while Uno's hit mapper expects `y = 0` at
 
 ## Cleanup
 
-`ui.destroy()` releases Uno's offscreen texture and UI state. Remove the plane and release its engine resources as described in [Destroy: PlayCanvas](../getting-started/destroy.mdx#playcanvas). Dispose shared resources only after the last UI using them has been destroyed.
+World-space UIs have resources owned by Uno and resources managed by the rendering engine. `ui.destroy()` releases the Uno nodes, listeners, renderer allocations, and offscreen GPU texture. It does not remove the plane from the scene or dispose the engine objects returned by `create()`.
+
+Before cleanup, stop this UI's draw callbacks and remove any event listeners added by your application. If a framework manages the layout, call its root's `unmount()` while the UI is still alive.
+
+Keep the `material` and `texture` returned by `UIPlayCanvas.create()`, as shown above. Destroy the entity, then the material and texture:
+
+```js
+plane.destroy()
+material.destroy()
+texture.destroy()
+ui.destroy()
+```
+
+Destroying the default entity removes its render component and mesh instances, releasing the mesh when it has no remaining references. There is no need to destroy that mesh a second time.
+
+Uno releases the backing GPU texture in `ui.destroy()`; do not call `gpu_texture.destroy()` separately.
+
+This example assumes the default plane resources and a material used only by this UI. If `createPlane()` or `createMaterial()` creates additional resources, release those too. Keep shared materials and geometries alive until their last user is removed.
+
+After the last overlay or world-space UI using the shared image and font atlases has been destroyed, dispose the resource store:
+
+```js
+resources.dispose()
+```
+
+This does not destroy the GPU device or canvas context. Dispose the scene, renderer, application, or engine separately when shutting down the application; keep them alive when removing only one UI panel.
 
 ## Demo
 
