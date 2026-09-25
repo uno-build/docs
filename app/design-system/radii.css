@@ -1,0 +1,14 @@
+/* Radii — generous, matching the ratio of the logotype's grid squares.
+   Borders live here too: one hairline, one emphasis weight. */
+:root{
+  --radius-xs:1px;   
+  --radius-sm:2px;    
+  --radius-md:3px;  
+  --radius-lg:4px;   
+  --radius-xl:5px;  
+  --radius-2xl:6px;  
+  --radius-full:9999px;
+
+  --border-width:1px;
+  --border-width-thick:2px;
+}

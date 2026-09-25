@@ -3,5 +3,5 @@
   "description": "",
   "root": true,
   "icon": "PanelsTopLeft",
-  "pages": ["index", "getting-started", "components", "engines", "api", "..."]
+  "pages": ["index", "examples", "getting-started", "components", "engines", "api", "..."]
 }

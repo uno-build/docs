@@ -1,0 +1,61 @@
+/* ==========================================================================
+   BRAND PATTERN
+   The rounded-square grid lifted straight from the logo: 48px tiles separated
+   by a hairline gap whose rounded corners open into the logo's four-pointed
+   star at every intersection. Same DNA, no logo repetition.
+
+   .uno-grid            the texture, radially faded — hero, empty state,
+                        skeleton field (the three sanctioned framed uses)
+   .uno-grid--flat      same texture, no fade
+   .uno-grid--page      full-viewport backdrop layer for a whole page. Put it
+                        on one aria-hidden element as the first child of body:
+                        <span class="uno-grid uno-grid--page" aria-hidden="true"></span>
+                        It is fixed, pointer-transparent and sits at z-index 0,
+                        so page content needs position:relative above it.
+   --uno-grid-size      cell size (default 48px; data-grid-scale="sm" 24px,
+                        data-grid-scale="lg" 96px on the element or an ancestor)
+   Colour is currentColor. Keep it under 8% opacity behind text.
+   ========================================================================== */
+:root{
+  --uno-grid-size:48px; /* @kind spacing */
+  /* One tile: the gap between four rounded squares, drawn as a frame with
+     concave corners. Half-thickness per edge so tiled edges add up to 1.5px. */
+  --uno-grid-tile:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cpath fill='%23000' fill-rule='evenodd' d='M0 0h48v48H0Z M9.75 .75H38.25A9 9 0 0 1 47.25 9.75V38.25A9 9 0 0 1 38.25 47.25H9.75A9 9 0 0 1 .75 38.25V9.75A9 9 0 0 1 9.75 .75Z'/%3E%3C/svg%3E"); /* @kind other */
+}
+.uno-grid{
+  background-color:currentColor;
+  color:var(--border-subtle);
+  -webkit-mask-image:var(--uno-grid-tile),radial-gradient(ellipse at center,#000 20%,transparent 75%);
+  mask-image:var(--uno-grid-tile),radial-gradient(ellipse at center,#000 20%,transparent 75%);
+  -webkit-mask-size:var(--uno-grid-size) var(--uno-grid-size),100% 100%;
+  mask-size:var(--uno-grid-size) var(--uno-grid-size),100% 100%;
+  -webkit-mask-repeat:repeat,no-repeat;
+  mask-repeat:repeat,no-repeat;
+  -webkit-mask-composite:source-in;
+  mask-composite:intersect;
+}
+.uno-grid--flat{
+  -webkit-mask-image:var(--uno-grid-tile);
+  mask-image:var(--uno-grid-tile);
+  -webkit-mask-size:var(--uno-grid-size) var(--uno-grid-size);
+  mask-size:var(--uno-grid-size) var(--uno-grid-size);
+  -webkit-mask-repeat:repeat;
+  mask-repeat:repeat;
+}
+.uno-grid--page{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  color:color-mix(in srgb,var(--text-primary) 6%,transparent);
+  -webkit-mask-image:var(--uno-grid-tile);
+  mask-image:var(--uno-grid-tile);
+  -webkit-mask-size:var(--uno-grid-size) var(--uno-grid-size);
+  mask-size:var(--uno-grid-size) var(--uno-grid-size);
+  -webkit-mask-position:50% 0;
+  mask-position:50% 0;
+  -webkit-mask-repeat:repeat;
+  mask-repeat:repeat;
+}
+[data-grid-scale="sm"]{--uno-grid-size:24px;}
+[data-grid-scale="lg"]{--uno-grid-size:96px;}
+
+/* Display type clipped to the brand gradient. One line per page, at most. */
+.uno-gradient-text{background:var(--gradient-brand);-webkit-background-clip:text;background-clip:text;color:transparent}

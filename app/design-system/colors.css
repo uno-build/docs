@@ -1,0 +1,65 @@
+/* ==========================================================================
+   PRIMITIVES — palette. Never referenced directly by components; components
+   use the semantic aliases in semantic-light.css / semantic-dark.css.
+   ========================================================================== */
+:root{
+  /* Brand — built outward from #8080FD, the visual average of the logo gradient */
+  --uno-brand-50:#F0F0FF;
+  --uno-brand-100:#E4E4FF;
+  --uno-brand-200:#CDCDFE;
+  --uno-brand-300:#B0B0FE;
+  --uno-brand-400:#9898FD;
+  --uno-brand-500:#8080FD; /* brand colour of record */
+  --uno-brand-600:#6A5AF0;
+  --uno-brand-700:#5340D9;
+  --uno-brand-800:#4230AB;
+  --uno-brand-900:#372A85;
+  --uno-brand-950:#221A55;
+
+  /* Ink — neutrals carry the blue cast of #12121C so greys never look muddy
+     next to the brand colour */
+  --uno-ink-0:#FFFFFF;
+  --uno-ink-50:#F4F4F8;
+  --uno-ink-100:#E4E4EC;
+  --uno-ink-200:#C4C4D4;
+  --uno-ink-300:#9494AC;
+  --uno-ink-400:#6E6E8A;
+  --uno-ink-500:#4E4E68;
+  --uno-ink-600:#35354A;
+  --uno-ink-700:#252533;
+  --uno-ink-800:#1A1A26;
+  --uno-ink-900:#12121C; /* brand dark of record */
+  --uno-ink-950:#0B0B12;
+
+  /* Spectrum — the four corners of the logo. Data-vis, illustration and the
+     brand gradient only. Not UI colours. */
+  --uno-cyan:#21E5FE;
+  --uno-electric:#2321FF;
+  --uno-magenta:#E420FF;
+  --uno-mist:#E3E4FD;
+
+  /* Status — hue-shifted cool so they belong to this palette rather than
+     arriving from a generic stoplight kit */
+  --uno-success-500:#1BC47D;
+  --uno-success-700:#0E8E58;
+  --uno-success-100:#D6F7E8;
+  --uno-warning-500:#F5A524;
+  --uno-warning-700:#B26A00;
+  --uno-warning-100:#FDF0D5;
+  --uno-danger-500:#FF4D6A;
+  --uno-danger-700:#C41D42;
+  --uno-danger-100:#FFE0E6;
+  --uno-info-500:#16B8E8;
+  --uno-info-700:#0B7DA3;
+  --uno-info-100:#D4F2FB;
+
+  /* Chart series — ordered so adjacent series never share a hue. Every series
+     also needs a dash pattern or marker: no colour-only meaning. */
+  --chart-1:#8080FD;
+  --chart-2:#21E5FE;
+  --chart-3:#E420FF;
+  --chart-4:#1BC47D;
+  --chart-5:#F5A524;
+  --chart-6:#2321FF;
+  --chart-7:#9494AC;
+}

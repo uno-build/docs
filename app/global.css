@@ -1,11 +1,20 @@
 @import 'tailwindcss';
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
+@import './design-system/colors.css';
+@import './design-system/typography.css';
+@import './design-system/spacing.css';
+@import './design-system/radii.css';
+@import './design-system/motion.css';
+@import './design-system/layout.css';
+@import './design-system/gradient.css';
+@import './design-system/semantic-light.css';
+@import './design-system/elevation.css';
+@import './design-system/semantic-dark.css';
+@import './design-system/pattern.css';
+@import './design-system/docs.css';
 
-html {
-  scrollbar-gutter: stable;
-}
-
+html { scrollbar-gutter: stable; }
 html > body[data-scroll-locked] {
   margin-right: 0px !important;
   --removed-body-scroll-bar-size: 0px !important;

@@ -1,0 +1,117 @@
+/* ==========================================================================
+   SEMANTIC — DARK. Light and dark are equals here, not a theme and its
+   afterthought. Every component is designed in both before it is called done.
+   ========================================================================== */
+[data-theme="dark"]{
+  color-scheme:dark;
+
+  --bg-page:var(--uno-ink-900);
+  --bg-subtle:var(--uno-ink-800);
+  --bg-inset:var(--uno-ink-950);
+  --bg-raised:var(--uno-ink-800);
+  --bg-overlay:#22222F;
+  --bg-scrim:rgba(5,5,10,0.7);
+  --bg-brand-subtle:rgba(128,128,253,0.12);
+
+  --border-subtle:#1F1F2C;
+  --border-default:#2A2A3A;
+  --border-strong:#3A3A4E;
+  --border-brand:rgba(128,128,253,0.5);
+
+  --text-primary:var(--uno-ink-50);
+  --text-secondary:#A8A8BE;
+  --text-tertiary:#7C7C94;
+  --text-disabled:#55556B;
+  --text-inverse:var(--uno-ink-900);
+
+  /* On dark, #8080FD finally gets to be the button — with a DARK label. White
+     on #8080FD is the same failing 3.27:1; ink-950 on it clears 5.6:1. */
+  --brand-text:var(--uno-brand-400);
+  --brand-solid:var(--uno-brand-500);
+  --brand-solid-hover:var(--uno-brand-400);
+  --brand-solid-active:var(--uno-brand-300);
+  --brand-on-solid:var(--uno-ink-950);
+  --brand-accent:var(--uno-brand-500);
+  --brand-ring:var(--uno-brand-400);
+
+  --success-bg:rgba(27,196,125,0.15);
+  --success-fg:#5BE0A6;
+  --success-border:rgba(27,196,125,0.4);
+  --warning-bg:rgba(245,165,36,0.15);
+  --warning-fg:#FBC366;
+  --warning-border:rgba(245,165,36,0.4);
+  --danger-bg:rgba(255,77,106,0.15);
+  --danger-fg:#FF8A9E;
+  --danger-border:rgba(255,77,106,0.4);
+  --info-bg:rgba(22,184,232,0.15);
+  --info-fg:#6BD5F5;
+  --info-border:rgba(22,184,232,0.4);
+
+  /* Shadows barely register on a #12121C page. They stay defined so nothing
+     breaks, but depth in dark mode comes from --bg-raised and --border-*. */
+  --shadow-xs:0 1px 2px rgba(0,0,0,0.4);
+  --shadow-sm:0 2px 4px rgba(0,0,0,0.45);
+  --shadow-md:0 8px 16px -4px rgba(0,0,0,0.5);
+  --shadow-lg:0 20px 32px -8px rgba(0,0,0,0.55);
+  --shadow-xl:0 32px 64px -16px rgba(0,0,0,0.6);
+  --shadow-focus:0 0 0 3px rgba(128,128,253,0.45);
+}
+
+/* data-theme="system" follows the OS. Set it on <html> when you want the OS
+   preference to win; otherwise set "light" or "dark" explicitly. */
+@media (prefers-color-scheme:dark){
+  [data-theme="system"]{
+    color-scheme:dark;
+
+  --bg-page:var(--uno-ink-900);
+  --bg-subtle:var(--uno-ink-800);
+  --bg-inset:var(--uno-ink-950);
+  --bg-raised:var(--uno-ink-800);
+  --bg-overlay:#22222F;
+  --bg-scrim:rgba(5,5,10,0.7);
+  --bg-brand-subtle:rgba(128,128,253,0.12);
+
+  --border-subtle:#1F1F2C;
+  --border-default:#2A2A3A;
+  --border-strong:#3A3A4E;
+  --border-brand:rgba(128,128,253,0.5);
+
+  --text-primary:var(--uno-ink-50);
+  --text-secondary:#A8A8BE;
+  --text-tertiary:#7C7C94;
+  --text-disabled:#55556B;
+  --text-inverse:var(--uno-ink-900);
+
+  /* On dark, #8080FD finally gets to be the button — with a DARK label. White
+     on #8080FD is the same failing 3.27:1; ink-950 on it clears 5.6:1. */
+  --brand-text:var(--uno-brand-400);
+  --brand-solid:var(--uno-brand-500);
+  --brand-solid-hover:var(--uno-brand-400);
+  --brand-solid-active:var(--uno-brand-300);
+  --brand-on-solid:var(--uno-ink-950);
+  --brand-accent:var(--uno-brand-500);
+  --brand-ring:var(--uno-brand-400);
+
+  --success-bg:rgba(27,196,125,0.15);
+  --success-fg:#5BE0A6;
+  --success-border:rgba(27,196,125,0.4);
+  --warning-bg:rgba(245,165,36,0.15);
+  --warning-fg:#FBC366;
+  --warning-border:rgba(245,165,36,0.4);
+  --danger-bg:rgba(255,77,106,0.15);
+  --danger-fg:#FF8A9E;
+  --danger-border:rgba(255,77,106,0.4);
+  --info-bg:rgba(22,184,232,0.15);
+  --info-fg:#6BD5F5;
+  --info-border:rgba(22,184,232,0.4);
+
+  /* Shadows barely register on a #12121C page. They stay defined so nothing
+     breaks, but depth in dark mode comes from --bg-raised and --border-*. */
+  --shadow-xs:0 1px 2px rgba(0,0,0,0.4);
+  --shadow-sm:0 2px 4px rgba(0,0,0,0.45);
+  --shadow-md:0 8px 16px -4px rgba(0,0,0,0.5);
+  --shadow-lg:0 20px 32px -8px rgba(0,0,0,0.55);
+  --shadow-xl:0 32px 64px -16px rgba(0,0,0,0.6);
+  --shadow-focus:0 0 0 3px rgba(128,128,253,0.45);
+  }
+}

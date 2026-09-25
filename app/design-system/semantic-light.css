@@ -1,0 +1,49 @@
+/* ==========================================================================
+   SEMANTIC — LIGHT. What components actually reference.
+   ========================================================================== */
+:root,[data-theme="light"]{
+  color-scheme:light;
+
+  --bg-page:var(--uno-ink-0);
+  --bg-subtle:var(--uno-ink-50);
+  --bg-inset:#EDEDF3;
+  --bg-raised:var(--uno-ink-0);
+  --bg-overlay:var(--uno-ink-0);
+  --bg-scrim:rgba(18,18,28,0.5);
+  --bg-brand-subtle:var(--uno-brand-50);
+
+  --border-subtle:var(--uno-ink-100);
+  --border-default:#D5D5E0;
+  --border-strong:var(--uno-ink-200);
+  --border-brand:var(--uno-brand-300);
+
+  --text-primary:var(--uno-ink-900);
+  --text-secondary:var(--uno-ink-500);
+  --text-tertiary:var(--uno-ink-400);
+  --text-disabled:var(--uno-ink-300);
+  --text-inverse:var(--uno-ink-0);
+
+  /* #8080FD reaches only 3.27:1 on white, so it cannot carry text or act as a
+     solid fill in light mode. The 700 step does both jobs at 6.8:1. The 500
+     survives as ring, border, chart series and large display accent. */
+  --brand-text:var(--uno-brand-700);
+  --brand-solid:var(--uno-brand-700);
+  --brand-solid-hover:var(--uno-brand-800);
+  --brand-solid-active:var(--uno-brand-900);
+  --brand-on-solid:var(--uno-ink-0);
+  --brand-accent:var(--uno-brand-500);
+  --brand-ring:var(--uno-brand-500);
+
+  --success-bg:var(--uno-success-100);
+  --success-fg:var(--uno-success-700);
+  --success-border:#8FE3BE;
+  --warning-bg:var(--uno-warning-100);
+  --warning-fg:var(--uno-warning-700);
+  --warning-border:#F2CE88;
+  --danger-bg:var(--uno-danger-100);
+  --danger-fg:var(--uno-danger-700);
+  --danger-border:#FFA8B8;
+  --info-bg:var(--uno-info-100);
+  --info-fg:var(--uno-info-700);
+  --info-border:#93DDF2;
+}

@@ -5,7 +5,12 @@ export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
       // JSX supported
-      title: appName,
+      title: (
+        <span className="uno-docs-brand" aria-label={appName}>
+          <img src="/brand/logo.png" alt="" width={32} height={32} />
+          <span>Docs</span>
+        </span>
+      ),
     },
     githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
   };

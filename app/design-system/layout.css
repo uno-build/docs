@@ -1,0 +1,15 @@
+/* Layout containers and stacking order */
+:root{
+  --container-prose:68ch; /* @kind spacing */  /* keeps line length under 80 characters */
+  --container-app:1280px; /* @kind spacing */
+  --container-site:1200px; /* @kind spacing */
+  --container-wide:1440px; /* @kind spacing */
+
+  --z-base:0; /* @kind other */
+  --z-raised:10; /* @kind other */
+  --z-sticky:100; /* @kind other */
+  --z-overlay:200; /* @kind other */
+  --z-modal:300; /* @kind other */
+  --z-popover:400; /* @kind other */
+  --z-toast:500; /* @kind other */
+}

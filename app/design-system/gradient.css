@@ -1,0 +1,6 @@
+/* The brand gradient, in the same diagonal direction as the logo.
+   Appears once per view: hero OR primary action, never both. */
+:root{
+  --gradient-brand:linear-gradient(135deg,#21E5FE 0%,#2321FF 45%,#E420FF 100%); /* @kind color */
+  --gradient-brand-soft:linear-gradient(135deg,#21E5FE22 0%,#8080FD22 50%,#E420FF22 100%); /* @kind color */
+}

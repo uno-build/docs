@@ -1,0 +1,254 @@
+/* UNO → Fumadocs adapter. The adjacent token files come from uno-design-system.
+   Keep layout/interaction primitives in Fumadocs; skin them with UNO semantics. */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  src: url('/fonts/IBMPlexSans-VariableFont_wdth,wght.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 100 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Sans';
+  src: url('/fonts/IBMPlexSans-Italic-VariableFont_wdth,wght.ttf') format('truetype');
+  font-style: italic;
+  font-weight: 100 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/fonts/JetBrainsMono-VariableFont_wght.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/fonts/JetBrainsMono-Italic-VariableFont_wght.ttf') format('truetype');
+  font-style: italic;
+  font-weight: 100 800;
+  font-display: swap;
+}
+
+:root, .dark {
+  --color-fd-background: var(--bg-page);
+  --color-fd-foreground: var(--text-primary);
+  --color-fd-muted: var(--bg-subtle);
+  --color-fd-muted-foreground: var(--text-secondary);
+  --color-fd-popover: var(--bg-overlay);
+  --color-fd-popover-foreground: var(--text-primary);
+  --color-fd-card: var(--bg-raised);
+  --color-fd-card-foreground: var(--text-primary);
+  --color-fd-border: var(--border-subtle);
+  --color-fd-primary: var(--brand-solid);
+  --color-fd-primary-foreground: var(--brand-on-solid);
+  --color-fd-secondary: var(--bg-subtle);
+  --color-fd-secondary-foreground: var(--text-secondary);
+  --color-fd-accent: var(--bg-brand-subtle);
+  --color-fd-accent-foreground: var(--brand-text);
+  --color-fd-ring: var(--brand-ring);
+  --color-fd-overlay: var(--bg-scrim);
+  --color-fd-info: var(--info-fg);
+  --color-fd-warning: var(--warning-fg);
+  --color-fd-error: var(--danger-fg);
+  --color-fd-success: var(--success-fg);
+  --color-fd-idea: var(--brand-text);
+  --color-fd-diff-remove: var(--danger-bg);
+  --color-fd-diff-remove-symbol: var(--danger-fg);
+  --color-fd-diff-add: var(--success-bg);
+  --color-fd-diff-add-symbol: var(--success-fg);
+  --default-font-family: var(--font-sans);
+  --default-mono-font-family: var(--font-mono);
+  --animate-fd-dialog-in: uno-dialog-in var(--duration-normal) var(--ease-out);
+  --animate-fd-dialog-out: uno-dialog-out var(--duration-fast) var(--ease-in);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  background: var(--bg-page);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select, textarea { font-family: inherit; }
+code, pre, kbd, samp { font-family: var(--font-mono); }
+::selection { background: var(--bg-brand-subtle); color: var(--brand-text); }
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: var(--border-width-thick) solid var(--brand-ring);
+  outline-offset: 2px;
+}
+:where(button, a, input) {
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-out);
+}
+button:not(:disabled):active { transform: translateY(1px); }
+button:disabled, [aria-disabled='true'] {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+  opacity: 1;
+  box-shadow: none;
+}
+
+/* Compact product navigation, with the original gradient mark used once. */
+#nd-docs-layout { --fd-layout-width: var(--container-wide); }
+#nd-sidebar, #nd-sidebar-mobile {
+  background: var(--bg-page);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  border-color: var(--border-subtle);
+}
+.dark #nd-sidebar {
+  --color-fd-muted: var(--bg-subtle);
+  --color-fd-secondary: var(--bg-subtle);
+  --color-fd-muted-foreground: var(--text-secondary);
+}
+.uno-docs-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+}
+.uno-docs-brand img { width: var(--space-8); height: var(--space-8); }
+#nd-subnav {
+  background: var(--bg-page);
+  backdrop-filter: none;
+  border-color: var(--border-subtle);
+}
+:is(#nd-sidebar, #nd-sidebar-mobile) :is(a[data-active], button[data-state]) {
+  min-height: 34px;
+  border-radius: var(--radius-sm);
+  font-weight: var(--weight-semibold);
+}
+:is(#nd-sidebar, #nd-sidebar-mobile) a[data-active='true'] {
+  background: var(--bg-brand-subtle);
+  color: var(--brand-text);
+  box-shadow: inset 2px 0 var(--brand-accent);
+}
+:is(#nd-sidebar, #nd-sidebar-mobile) a[data-active='false']:hover {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+}
+:is(#nd-sidebar, #nd-sidebar-mobile) button { border-radius: var(--radius-md); }
+.uno-class-tag {
+  padding: 0 var(--space-1);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-xs);
+  background: var(--bg-subtle);
+  font: var(--weight-regular) var(--text-2xs)/var(--leading-snug) var(--font-mono);
+  color: var(--text-tertiary);
+}
+#nd-toc { color: var(--text-secondary); font-size: var(--text-xs); }
+#nd-toc a[data-active='true'] { color: var(--brand-text); }
+
+/* Reading surface: 68ch prose and the exact UNO type scale. */
+#nd-page:not([data-full='true']) { max-width: calc(var(--container-prose) + var(--space-16)); }
+.uno-page-header {
+  padding-bottom: var(--space-6);
+  margin-bottom: var(--space-2);
+  border-bottom: var(--border-width) solid var(--border-subtle);
+}
+.uno-page-header h1 {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tighter);
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+.uno-page-description {
+  margin: var(--space-4) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--text-lg);
+  line-height: var(--leading-normal);
+}
+.prose {
+  font-size: var(--text-base);
+  line-height: var(--leading-loose);
+  color: var(--text-secondary);
+}
+.prose :is(h1, h2, h3, h4) {
+  font-family: var(--font-display);
+  color: var(--text-primary);
+  font-weight: var(--weight-semibold);
+  text-wrap: pretty;
+}
+.prose h2 { font-size: var(--text-2xl); line-height: var(--leading-tight); letter-spacing: var(--tracking-tight); margin-top: var(--space-10); margin-bottom: var(--space-4); }
+.prose h3 { font-size: var(--text-xl); line-height: var(--leading-snug); margin-top: var(--space-8); margin-bottom: var(--space-3); }
+.prose h4 { font-size: var(--text-lg); line-height: var(--leading-snug); }
+.prose strong { color: var(--text-primary); font-weight: var(--weight-semibold); }
+.prose a:not([data-card]) { color: var(--brand-text); text-decoration: none; }
+.prose a:not([data-card]):hover { color: var(--brand-solid-hover); text-decoration: underline; text-underline-offset: 2px; }
+.prose :is(h2, h3, h4) a { color: inherit; }
+.prose li::marker { color: var(--text-tertiary); }
+.prose :not(pre) > code {
+  padding: 0.1em var(--space-1);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-xs);
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+  font-size: 0.92em;
+  font-weight: var(--weight-regular);
+}
+
+/* Code, data and cards use borders for depth; no shadow at rest. */
+figure.shiki {
+  background: var(--bg-subtle);
+  border-color: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: none;
+}
+figure.shiki pre { font-size: var(--text-xs); line-height: var(--leading-loose); }
+figure.shiki > div:has(figcaption) { background: var(--bg-raised); font-family: var(--font-mono); font-size: var(--text-xs); }
+figure.shiki .backdrop-blur-lg { backdrop-filter: none; background: var(--bg-subtle); }
+.prose table { font-size: var(--text-sm); }
+.prose th { background: var(--bg-subtle); color: var(--text-secondary); font-size: var(--text-xs); font-weight: var(--weight-semibold); }
+.prose :is(th, td) { padding: var(--space-3) var(--space-4); border-color: var(--border-subtle); }
+.prose tbody tr:hover { background: var(--bg-subtle); }
+.prose td[data-numeric] { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+[data-card], #nd-page > .\@container > a {
+  background: var(--bg-raised);
+  border-color: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: none;
+}
+[data-card]:hover, #nd-page > .\@container > a:hover { background: var(--bg-subtle); border-color: var(--border-strong); }
+[data-card] > .not-prose:has(svg) { background: var(--bg-brand-subtle); color: var(--brand-text); box-shadow: none; border-radius: var(--radius-sm); }
+
+/* Command palette and keyboard hints. */
+#fd-search-dialog-content {
+  border-radius: var(--radius-xl);
+  border-color: var(--border-subtle);
+  background: var(--bg-overlay);
+  box-shadow: var(--shadow-xl);
+}
+#fd-search-dialog-content [data-active='true'] { background: var(--bg-brand-subtle); color: var(--brand-text); }
+input[data-fd-search-dialog-input] { font-size: var(--text-base); }
+input::placeholder { color: var(--text-tertiary); }
+kbd {
+  background: var(--bg-raised);
+  color: var(--text-secondary);
+  border: var(--border-width) solid var(--border-default);
+  border-bottom-width: var(--border-width-thick);
+  border-radius: var(--radius-xs);
+  font-size: var(--text-2xs);
+}
+[role='tab'] { border-radius: var(--radius-sm); font-size: var(--text-sm); }
+[role='tab'][aria-selected='true'] { color: var(--brand-text); }
+@keyframes uno-dialog-in { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes uno-dialog-out { to { opacity: 0; transform: translateY(8px) scale(0.98); } }
+@media (max-width: 767px) {
+  .uno-page-header h1 { font-size: var(--text-3xl); letter-spacing: var(--tracking-tight); }
+  .prose h2 { font-size: var(--text-xl); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -22,7 +22,7 @@ function labelClasses(node: Node): Node {
     name: (
       <span key={node.url} className="inline-flex items-center gap-2">
         {node.name}
-        <span className="rounded border border-fd-border px-1 font-mono text-[10px] font-normal text-fd-muted-foreground">
+        <span className="uno-class-tag">
           class
         </span>
       </span>
