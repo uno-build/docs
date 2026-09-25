@@ -1,6 +1,7 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared'
 import { Globe } from 'lucide-react'
 import { appName } from './shared'
+import { withBasePath } from './base-path.mjs'
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -8,7 +9,7 @@ export function baseOptions(): BaseLayoutProps {
       // JSX supported
       title: (
         <span className="uno-docs-brand" aria-label={appName}>
-          <img src="/brand/logo.png" alt="" width={32} height={32} />
+          <img src={withBasePath('/brand/logo.png')} alt="" width={32} height={32} />
           <span>Docs</span>
         </span>
       ),

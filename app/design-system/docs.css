@@ -2,28 +2,28 @@
    Keep layout/interaction primitives in Fumadocs; skin them with UNO semantics. */
 @font-face {
   font-family: 'IBM Plex Sans';
-  src: url('/fonts/IBMPlexSans-VariableFont_wdth,wght.ttf') format('truetype');
+  src: url('../../public/fonts/IBMPlexSans-VariableFont_wdth,wght.ttf') format('truetype');
   font-style: normal;
   font-weight: 100 700;
   font-display: swap;
 }
 @font-face {
   font-family: 'IBM Plex Sans';
-  src: url('/fonts/IBMPlexSans-Italic-VariableFont_wdth,wght.ttf') format('truetype');
+  src: url('../../public/fonts/IBMPlexSans-Italic-VariableFont_wdth,wght.ttf') format('truetype');
   font-style: italic;
   font-weight: 100 700;
   font-display: swap;
 }
 @font-face {
   font-family: 'JetBrains Mono';
-  src: url('/fonts/JetBrainsMono-VariableFont_wght.ttf') format('truetype');
+  src: url('../../public/fonts/JetBrainsMono-VariableFont_wght.ttf') format('truetype');
   font-style: normal;
   font-weight: 100 800;
   font-display: swap;
 }
 @font-face {
   font-family: 'JetBrains Mono';
-  src: url('/fonts/JetBrainsMono-Italic-VariableFont_wght.ttf') format('truetype');
+  src: url('../../public/fonts/JetBrainsMono-Italic-VariableFont_wght.ttf') format('truetype');
   font-style: italic;
   font-weight: 100 800;
   font-display: swap;

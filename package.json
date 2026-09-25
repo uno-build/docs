@@ -7,7 +7,6 @@
     "start": "next start",
     "dev": "next dev",
     "demos": "serve demos",
-    "docs:copy": "node scripts/copy-docs.mjs ../ui/docs 'content/(ui)'",
     "types:check": "next typegen && tsc --noEmit"
   },
   "dependencies": {

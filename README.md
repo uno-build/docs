@@ -13,7 +13,27 @@ pnpm dev
 yarn dev
 ```
 
-Open http://localhost:3000 with your browser to see the result.
+Open http://localhost:3000/docs/ with your browser to see the result.
+
+## Static deployment
+
+The site is built for `/docs/`. Run `npm run build` and serve the generated
+`out/` directory with this Nginx configuration inside the HTTPS server block:
+
+```nginx
+location = /docs {
+    return 301 /docs/;
+}
+
+location ^~ /docs/ {
+    alias /home/ubuntu/web/docs/out/;
+    index index.html;
+}
+```
+
+The base path is defined in `lib/base-path.mjs`. Next.js prefixes its assets and
+internal links; public image URLs use `withBasePath`. Fonts are bundled from CSS.
+Rebuild after changing the base path or pulling updates on the server.
 
 ## Explore
 

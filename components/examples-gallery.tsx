@@ -1,6 +1,7 @@
 import { ArrowUpRight } from 'lucide-react';
 import type { ReactNode } from 'react';
 import styles from './examples-gallery.module.css';
+import { withBasePath } from '@/lib/base-path.mjs';
 
 export function ExamplesGallery({ children }: { children: ReactNode }) {
   return <div className={`not-prose ${styles.gallery}`}>{children}</div>;
@@ -16,7 +17,7 @@ export function ExampleCard({ title, href, image, alt }: {
     <a className={styles.card} href={href} target="_blank" rel="noopener noreferrer">
       <div className={styles.preview}>
         <img
-          src={image}
+          src={withBasePath(image)}
           alt={alt ?? `${title} example with background UI, an engine scene, and foreground UI`}
           width={1440}
           height={900}
