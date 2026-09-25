@@ -1,4 +1,4 @@
 {
   "title": "API Reference",
-  "pages": ["styles", "resources-webgpu", "ui", "ui-world-space", "node", "..."]
+  "pages": ["styles", "events", "resources-webgpu", "ui", "ui-world-space", "node", "..."]
 }

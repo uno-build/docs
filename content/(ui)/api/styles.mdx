@@ -139,9 +139,14 @@ function Example({ dimmed }: { dimmed: boolean }) {
 
 `pointerEvents: 'none'` removes a node from WebGPU hit testing.
 
-The WebGPU renderer uses MTSDF alpha distance for strokes and shadows and the RGB distance field for the glyph fill. See [Current limitations](../temp/limitations.mdx) for renderer differences.
+The WebGPU renderer uses MTSDF alpha distance for strokes and shadows and the RGB distance field for the glyph fill.
 
 Longhands are also public style names. For example, `backgroundSizeWidth`, `backgroundPositionY`, and every side-specific border property can be assigned directly.
+
+## Rendering differences
+
+- **Opacity:** WebGPU multiplies ancestor opacity into each drawable separately. Overlapping elements can therefore look different from CSS, which composites the subtree before applying group opacity.
+- **Overflow:** `overflow: 'hidden'` and `overflow: 'scroll'` clip children to a rectangle. `borderRadius` does not round this clip, so children can remain visible in the rounded corners.
 
 ## Images and `objectFit`
 

@@ -21,6 +21,10 @@ react.render({})
 
 React commits call `ui.update()` automatically. Keep the viewport setup and render loop from [First Layout](../getting-started/first-layout.mdx) to draw the UI with `ui.draw()`.
 
+Use one registered root per UI. Call `react.render(props)` again to update the root component's props while preserving its state.
+
+Call `react.unmount()` to remove the component tree and run its cleanup before destroying the UI. It does not destroy the UI or dispose shared resources; see [Destroy](../getting-started/destroy.mdx).
+
 ## Components
 
 `@uno/ui/react` exports five components: `View`, `Text`, `Image`, `ScrollView`, and `Input`. They render Uno nodes and share the properties and event props below. Each component's section describes its additional props and behavior.
@@ -215,7 +219,7 @@ Handlers receive Uno events rather than React DOM synthetic events. Each event i
 | `source_event`      | The original platform event, or `null` for a programmatic event without a source. |
 | `stopPropagation()` | Stops the event from continuing to ancestor nodes.                                |
 
-Events bubble through the Uno node tree, so a component's handler can receive events from its descendants. Event-specific data, such as pointer coordinates, wheel deltas, scroll offsets, and focus transitions, is documented in [Interactivity](../getting-started/interactivity.mdx).
+Events bubble through the Uno node tree, so a component's handler can receive events from its descendants. Event-specific data, such as pointer coordinates, wheel deltas, scroll offsets, and focus transitions, is documented in [Events](../api/events.mdx).
 
 
 

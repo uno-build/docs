@@ -21,7 +21,9 @@ solid.render({})
 
 Solid updates call `ui.update()` automatically after reactive changes settle. Keep the viewport setup and render loop from [First Layout](../getting-started/first-layout.mdx) to draw the UI with `ui.draw()`.
 
-Call `solid.unmount()` to remove the component tree and dispose its reactive computations.
+Use one registered root per UI and call `solid.render(props)` once to mount it. Drive subsequent updates with signals; another `render()` call creates a new root instead of updating the existing root's props.
+
+Call `solid.unmount()` to remove the component tree and run its cleanup before destroying the UI. It does not destroy the UI or dispose shared resources; see [Destroy](../getting-started/destroy.mdx).
 
 ### Configure the compiler
 
@@ -236,7 +238,7 @@ Handlers receive Uno events rather than DOM events. Each event includes these co
 | `source_event`      | The original platform event, or `null` for a programmatic event without a source. |
 | `stopPropagation()` | Stops the event from continuing to ancestor nodes.                                |
 
-Events bubble through the Uno node tree, so a component's handler can receive events from its descendants. Event-specific data, such as pointer coordinates, wheel deltas, scroll offsets, and focus transitions, is documented in [Interactivity](../getting-started/interactivity.mdx).
+Events bubble through the Uno node tree, so a component's handler can receive events from its descendants. Event-specific data, such as pointer coordinates, wheel deltas, scroll offsets, and focus transitions, is documented in [Events](../api/events.mdx).
 
 ## Refs and handles
 

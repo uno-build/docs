@@ -43,7 +43,7 @@ ui.setCamera(camera)
 
 With `ui.setCamera(camera)`, it casts a ray onto the plane and converts the hit position into UI layout coordinates. The component's existing pointer, click, and focus handlers work as the plane rotates.
 
-For pointer, click, and wheel events, the payload described in [Event data](../getting-started/interactivity.mdx#event-data) also includes `distance_to_camera` when the ray hits the plane. It is the distance from the camera to the hit position in Three.js world units. The `x` and `y` fields remain coordinates in the UI's logical coordinate space.
+For pointer, click, and wheel events, the payload described in [Event data](../api/events.mdx#event-data) also includes `distance_to_camera` when the ray hits the plane. It is the distance from the camera to the hit position in Three.js world units. The `x` and `y` fields remain coordinates in the UI's logical coordinate space.
 
 ## 3. Add the plane to the scene
 

@@ -31,77 +31,7 @@ node.on('pointerover', onPointerOver)
 node.off('pointerover', onPointerOver)
 ```
 
-## Supported events
-
-| Event           | When it fires                                                        |
-| --------------- | -------------------------------------------------------------------- |
-| `pointerdown`   | A pointer is pressed on a node.                                      |
-| `pointermove`   | A pointer moves over the UI or during an active pointer interaction. |
-| `pointerup`     | An active pointer is released.                                       |
-| `pointercancel` | The platform cancels an active pointer interaction.                  |
-| `pointerover`   | A node becomes the pointer's hover target.                           |
-| `pointerout`    | A node stops being the pointer's hover target.                       |
-| `click`         | A node is activated by a completed click or tap.                     |
-| `wheel`         | A wheel or trackpad event occurs over a node.                        |
-| `scroll`        | A scroll container's offset changes through scrolling.               |
-| `focus`         | A node gains Uno focus.                                              |
-| `blur`          | A node loses Uno focus.                                              |
-
-- **Pointer and click behavior:** In WebGPU-backed UIs, pointer interactions stay with the pressed node until release or cancellation; a click requires pressing and releasing on the same node without a scrolling gesture.
-- **Wheel and scroll:** `wheel` reports wheel input, while `scroll` reports changes to a container's scroll position; WebGPU scrolling requires scrollable overflow and content larger than the viewport.
-- **Focus and blur:** Each UI has one focused node at a time; `pointerdown` or `node.focus()` moves focus to a node, and `node.blur()` clears its focus.
-
-## Event data
-
-Every node event includes:
-
-- `type`: the Uno event name, such as `'click'`.
-- `target`: the node where the event originated.
-- `current_target`: the node whose listener is currently running.
-- `source_event`: the original platform event, or `null` for a programmatic event without a source, such as `node.focus()`.
-- `stopPropagation()`: stops the event from continuing to ancestor nodes.
-
-Additional fields depend on the event:
-
-| Events                                                              | Additional fields                                                  |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `pointerdown`, `pointermove`, `pointerup`, `pointercancel`, `click` | `x`, `y`, and optional `distance_to_camera`.                       |
-| `pointerover`, `pointerout`                                         | `x`, `y`, optional `distance_to_camera`, and `related_target`.     |
-| `wheel`                                                             | `x`, `y`, optional `distance_to_camera`, `delta_x`, and `delta_y`. |
-| `scroll`                                                            | `scroll_left` and `scroll_top`.                                    |
-| `focus`, `blur`                                                     | `related_target`.                                                  |
-
-`x` and `y` are coordinates in the UI's logical coordinate space, not offsets relative to `current_target`. World-space integrations can also supply `distance_to_camera`.
-
-For pointer events, read properties such as `pointerId`, `pointerType`, and `button` from `source_event`:
-
-```js
-node.on('pointerdown', (event) => {
-  console.log(event.x, event.y)
-  console.log(event.source_event.pointerId, event.source_event.pointerType)
-})
-```
-
-
-## Event propagation
-
-All built-in node events bubble from `target` through its ancestors, including `focus`, `blur`, `scroll`, `pointerover`, and `pointerout`. `target` stays the same during propagation, while `current_target` changes at each node. There is no capture phase.
-
-```js
-node.on('click', (event) => {
-  event.stopPropagation()
-})
-
-ui.root.on('click', (event) => {
-  console.log('A click reached the root:', event.target)
-})
-```
-
-In this example, clicks that reach `node` do not continue to `ui.root`. Other listeners on `node` still run. `stopPropagation()` only affects Uno node propagation; it does not cancel the source event's browser behavior or Uno's built-in focus, click, and scroll processing.
-
-To prevent a source event's browser default action, call `event.source_event?.preventDefault()`. Uno events do not expose their own `preventDefault()` method.
-
-
+For the complete list of supported events, event data, and propagation rules, see [Events](../api/events.mdx).
 
 {/*
 ## Pointer and click behavior

@@ -21,7 +21,9 @@ vue.render({})
 
 Vue updates call `ui.update()` automatically after rendering changes. Keep the viewport setup and render loop from [First Layout](../getting-started/first-layout.mdx) to draw the UI with `ui.draw()`.
 
-Call `vue.render(props)` again to update the root component's props, or `vue.unmount()` to remove the component tree.
+Use one registered root per UI. Call `vue.render(props)` again to update the root component's props while preserving its state.
+
+Call `vue.unmount()` to remove the component tree and run its cleanup before destroying the UI. It does not destroy the UI or dispose shared resources; see [Destroy](../getting-started/destroy.mdx).
 
 ### Configure the compiler
 
@@ -279,7 +281,7 @@ Handlers receive Uno events rather than DOM events. Each event includes these co
 | `source_event`      | The original platform event, or `null` for a programmatic event without a source. |
 | `stopPropagation()` | Stops the event from continuing to ancestor nodes.                               |
 
-Events bubble through the Uno node tree, so a component's handler can receive events from its descendants. Event-specific data, such as pointer coordinates, wheel deltas, scroll offsets, and focus transitions, is documented in [Interactivity](../getting-started/interactivity.mdx).
+Events bubble through the Uno node tree, so a component's handler can receive events from its descendants. Event-specific data, such as pointer coordinates, wheel deltas, scroll offsets, and focus transitions, is documented in [Events](../api/events.mdx).
 
 To prevent the source event's browser default action, call `event.source_event?.preventDefault()` in your handler. Uno events do not expose their own `preventDefault()` method, so Vue's `.prevent` modifier cannot be used here.
 
