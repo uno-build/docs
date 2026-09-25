@@ -55,3 +55,89 @@ function destroy() {
 Call `destroy()` when the view is unmounted or the application no longer needs this UI. This example assumes that no other UI uses `resources`.
 
 If you added browser event listeners to the canvas for interaction, remove those as well, using the same handler functions passed to `addEventListener()`.
+
+
+## Clean up a world-space UI
+
+World-space UIs have resources owned by Uno and resources managed by the rendering engine. `ui.destroy()` releases the Uno nodes, listeners, renderer allocations, and the offscreen GPU texture. It does not remove the mesh from the scene or dispose the engine objects returned by `create()`.
+
+Keep the returned resources you need for cleanup, not just `ui` and `plane`. For example, with Three.js:
+
+```js
+const { ui, plane, geometry, material, texture } = await UIThree.create({
+  // Use the options from the Three.js World Space guide.
+  ...options,
+})
+```
+
+When removing a world-space UI:
+
+1. Stop its draw callbacks and remove any event listeners added by your application. If a framework manages the layout, call its root's `unmount()` while the UI is still alive.
+2. Remove the plane and release its engine resources, as shown below.
+3. Call `ui.destroy()`. Uno releases the backing GPU texture; do not call `gpu_texture.destroy()` separately.
+4. Call `resources.dispose()` only when no other UI uses the resource store.
+
+The following examples assume the default plane resources and a material used only by this UI. If `createPlane()` or `createMaterial()` creates additional resources, release those too. Keep shared materials and geometries alive until their last user is removed.
+
+### Three.js
+
+Remove the mesh from its parent, then dispose the geometry, material, and texture wrapper returned by `UIThree.create()`:
+
+```js
+plane.removeFromParent()
+geometry.dispose()
+material.dispose()
+texture.dispose()
+ui.destroy()
+```
+
+Removing a Three.js mesh from the scene does not dispose its resources. See [Three.js World Space](../engines/three-worldspace.mdx) for creation and custom meshes.
+
+### Babylon.js
+
+Dispose the mesh, then the material and texture returned by `UIBabylon.create()`:
+
+```js
+plane.dispose()
+material.dispose()
+texture.dispose()
+ui.destroy()
+```
+
+Disposing the default mesh removes it from the scene and releases its geometry when no other mesh uses it. The separate calls release the material and texture. See [Babylon.js World Space](../engines/babylon-worldspace.mdx).
+
+### Babylon Lite
+
+Remove the mesh using Babylon Lite's scene API, then destroy the Uno UI:
+
+```js
+import { removeFromScene } from '@babylonjs/lite'
+
+removeFromScene(scene, plane)
+ui.destroy()
+```
+
+`removeFromScene()` handles the mesh's scene and GPU resources. The returned texture is a `Texture2D` record rather than a wrapper with a `dispose()` method; Uno owns its backing GPU texture. `ui.destroy()` also handles the adapter's GPU picker cleanup. See [Babylon Lite World Space](../engines/babylonlite-worldspace.mdx).
+
+### PlayCanvas
+
+Destroy the entity, then the material and texture returned by `UIPlayCanvas.create()`:
+
+```js
+plane.destroy()
+material.destroy()
+texture.destroy()
+ui.destroy()
+```
+
+Destroying the default entity removes its render component and mesh instances, releasing the mesh when it has no remaining references. There is no need to destroy that mesh a second time. See [PlayCanvas World Space](../engines/playcanvas-worldspace.mdx).
+
+### Shared resources and engine shutdown
+
+After the last overlay or world-space UI has been destroyed, dispose the shared image and font atlases:
+
+```js
+resources.dispose()
+```
+
+This does not destroy the GPU device or canvas context. Dispose the scene, renderer, application, or engine separately when shutting down the application; keep them alive when removing only one UI panel.

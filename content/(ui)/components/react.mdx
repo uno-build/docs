@@ -219,6 +219,47 @@ Events bubble through the Uno node tree, so a component's handler can receive ev
 
 
 
+## Refs and handles
+
+Pass a React ref to access a component's Uno nodes. These refs expose handles rather than DOM elements. Import `NodeHandle`, `ScrollViewHandle`, and `InputHandle` from `@uno/ui/react` when using TypeScript.
+
+| Component | Ref value | Available members |
+| --- | --- | --- |
+| `View`, `Text`, `Image` | `NodeHandle` | `nodes.main` |
+| `ScrollView` | `ScrollViewHandle` | `nodes.main` (viewport), `nodes.content` (scrollable content) |
+| `Input` | `InputHandle` | `nodes.main`, `nodes.content`, `nodes.text`, `nodes.caret`, `focus()`, `blur()` |
+
+`nodes.caret` is `null` when the input is unfocused. `focus()` and `blur()` change Uno focus; they do not open a platform keyboard or provide text input.
+{/* 
+This example focuses the input and scrolls the viewport after mounting:
+
+```tsx
+import { useEffect, useRef } from 'react'
+import { Input, ScrollView, View, useUI } from '@uno/ui/react'
+import type { InputHandle, ScrollViewHandle } from '@uno/ui/react'
+
+function Example() {
+  const ui = useUI()
+  const input = useRef<InputHandle | null>(null)
+  const scroll = useRef<ScrollViewHandle | null>(null)
+
+  useEffect(() => {
+    input.current?.focus()
+    if (scroll.current) scroll.current.nodes.main.scrollTop = 40
+    ui.update()
+  }, [ui])
+
+  return (
+    <ScrollView ref={scroll} style={{ height: '120px' }}>
+      <Input ref={input} value="Hello" />
+      <View style={{ height: '300px', flexShrink: '0' }} />
+    </ScrollView>
+  )
+}
+```
+
+Set `scrollTop` or `scrollLeft` on `nodes.main`, then call `ui.update()`. Use refs only while mounted and prefer props for styles and text. See [Node](../api/node.mdx) for the full API. */}
+
 ## `useUI()`
 
 `useUI()` is a React hook that returns the UI passed to `registerRootComponent`. Call it only inside that registered component tree. For example, a component can read the original dimensions of the registered `assets/coin.png` image:

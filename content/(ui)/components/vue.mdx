@@ -283,6 +283,47 @@ Events bubble through the Uno node tree, so a component's handler can receive ev
 
 To prevent the source event's browser default action, call `event.source_event?.preventDefault()` in your handler. Uno events do not expose their own `preventDefault()` method, so Vue's `.prevent` modifier cannot be used here.
 
+## Refs and handles
+
+Use a Vue template ref to access a component's Uno nodes. These refs expose handles rather than DOM elements. Import `NodeHandle`, `ScrollViewHandle`, and `InputHandle` from `@uno/ui/vue` when using TypeScript. Use `shallowRef` to hold a handle without deeply wrapping its nodes in reactive proxies.
+
+| Component | Ref value | Available members |
+| --- | --- | --- |
+| `View`, `Text`, `Image` | `NodeHandle` | `nodes.main` |
+| `ScrollView` | `ScrollViewHandle` | `nodes.main` (viewport), `nodes.content` (scrollable content) |
+| `Input` | `InputHandle` | `nodes.main`, `nodes.content`, `nodes.text`, `nodes.caret`, `focus()`, `blur()` |
+
+`nodes.caret` is `null` when the input is unfocused. `focus()` and `blur()` change Uno focus; they do not open a platform keyboard or provide text input.
+{/* 
+This example focuses the input and scrolls the viewport after mounting:
+
+```vue
+<script setup lang="ts">
+import { onMounted, shallowRef } from 'vue'
+import { Input, ScrollView, View, useUI } from '@uno/ui/vue'
+import type { InputHandle, ScrollViewHandle } from '@uno/ui/vue'
+
+const ui = useUI()
+const input = shallowRef<InputHandle | null>(null)
+const scroll = shallowRef<ScrollViewHandle | null>(null)
+
+onMounted(() => {
+  input.value?.focus()
+  if (scroll.value) scroll.value.nodes.main.scrollTop = 40
+  ui.update()
+})
+</script>
+
+<template>
+  <ScrollView ref="scroll" :style="{ height: '120px' }">
+    <Input ref="input" value="Hello" />
+    <View :style="{ height: '300px', flexShrink: '0' }" />
+  </ScrollView>
+</template>
+```
+
+Set `scrollTop` or `scrollLeft` on `nodes.main`, then call `ui.update()`. Use refs only while mounted and prefer props for styles and text. See [Node](../api/node.mdx) for the full API. */}
+
 ## `useUI()`
 
 `useUI()` is a Vue composable that returns the UI passed to `registerRootComponent`. Call it during `setup()` or `<script setup>` inside that registered component tree. For example, a component can read the original dimensions of the registered `assets/coin.png` image:

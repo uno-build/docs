@@ -238,6 +238,47 @@ Handlers receive Uno events rather than DOM events. Each event includes these co
 
 Events bubble through the Uno node tree, so a component's handler can receive events from its descendants. Event-specific data, such as pointer coordinates, wheel deltas, scroll offsets, and focus transitions, is documented in [Interactivity](../getting-started/interactivity.mdx).
 
+## Refs and handles
+
+In Solid, refs on `View`, `Text`, and `Image` receive the Uno node directly: use `node.layout` or `node.focus()`, without `nodes.main`. `ScrollView` and `Input` instead expose compound handles. Import `ScrollViewHandle` and `InputHandle` from `@uno/ui/solid` when using TypeScript.
+
+| Component | Ref value | Available members |
+| --- | --- | --- |
+| `View`, `Text`, `Image` | Uno node | Node properties and methods directly |
+| `ScrollView` | `ScrollViewHandle` | `nodes.main` (viewport), `nodes.content` (scrollable content) |
+| `Input` | `InputHandle` | `nodes.main`, `nodes.content`, `nodes.text`, `nodes.caret`, `focus()`, `blur()` |
+
+`nodes.caret` is `null` when the input is unfocused. `focus()` and `blur()` change Uno focus; they do not open a platform keyboard or provide text input.
+{/* 
+Use callback refs to store the handles. Clicking the view below focuses the input and scrolls the viewport:
+
+```tsx
+import { Input, ScrollView, View, useUI } from '@uno/ui/solid'
+import type { InputHandle, ScrollViewHandle } from '@uno/ui/solid'
+
+function Example() {
+  const ui = useUI()
+  let input: InputHandle | undefined
+  let scroll: ScrollViewHandle | undefined
+
+  function focusAndScroll() {
+    input?.focus()
+    if (scroll) scroll.nodes.main.scrollTop = 40
+    ui.update()
+  }
+
+  return (
+    <ScrollView ref={(handle) => { scroll = handle }} style={{ height: '120px' }}>
+      <Input ref={(handle) => { input = handle }} value="Hello" />
+      <View onClick={focusAndScroll}
+        style={{ height: '300px', flexShrink: '0', backgroundColor: '#4377bb' }} />
+    </ScrollView>
+  )
+}
+```
+
+Set `scrollTop` or `scrollLeft` on `nodes.main`, then call `ui.update()`. Use refs only while mounted and prefer props for styles and text. See [Node](../api/node.mdx) for the full API. */}
+
 ## `useUI()`
 
 `useUI()` returns the UI passed to `registerRootComponent`. Call it during component initialization inside that registered component tree. For example, a component can read the original dimensions of the registered `assets/coin.png` image:

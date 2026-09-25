@@ -138,6 +138,10 @@ Each face gets its own submesh and material slot. Index `1` selects the `-Z` fac
 
 `mapIntersection()` can also transform the UVs before returning them, allowing you to adapt interaction to a custom texture layout. It changes how hits are mapped to the UI; it does not change how the texture is rendered.
 
+## Cleanup
+
+`ui.destroy()` releases Uno's offscreen texture and UI state. Remove the plane and release its engine resources as described in [Destroy: Babylon.js](../getting-started/destroy.mdx#babylonjs). Dispose shared resources only after the last UI using them has been destroyed.
+
 ## Demo
 
 This demo displays one rotating UI plane using the component from the [React demo](../components/react.mdx#demo).
