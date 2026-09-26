@@ -9,6 +9,12 @@ export const metadata: Metadata = {
     default: 'uno',
     template: '%s - uno',
   },
+  icons: {
+    icon: {
+      url: withBasePath('/brand/logo.png'),
+      type: 'image/png',
+    },
+  },
 };
 
 export default function Layout({ children }: LayoutProps<'/'>) {
