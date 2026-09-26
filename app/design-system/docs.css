@@ -218,6 +218,12 @@ figure.shiki .backdrop-blur-lg { backdrop-filter: none; background: var(--bg-sub
 [data-card]:hover, #nd-page > .\@container > a:hover { background: var(--bg-subtle); border-color: var(--border-strong); }
 [data-card] > .not-prose:has(svg) { background: var(--bg-brand-subtle); color: var(--brand-text); box-shadow: none; border-radius: var(--radius-sm); }
 
+/* Fumadocs heading anchors use an empty data-card attribute. */
+.prose a[data-card=''][href^='#'],
+.prose a[data-card=''][href^='#']:hover {
+  background: transparent;
+}
+
 /* Command palette and keyboard hints. */
 #fd-search-dialog-content {
   border-radius: var(--radius-xl);
