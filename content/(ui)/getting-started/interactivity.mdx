@@ -36,7 +36,7 @@ For the complete list of supported events, event data, and propagation rules, se
 {/*
 ## Pointer and click behavior
 
-With the WebGPU-backed `UI`, `pointerdown` captures the target inside Uno. Subsequent `pointermove`, `pointerup`, and `pointercancel` events received for that pointer are delivered to the original target, even when the pointer moves over another node. `pointerup` and `pointercancel` end this interaction.
+With the WebGPU-backed `UI`, `pointerdown` captures the target inside uno. Subsequent `pointermove`, `pointerup`, and `pointercancel` events received for that pointer are delivered to the original target, even when the pointer moves over another node. `pointerup` and `pointercancel` end this interaction.
 
 Hover tracking follows the node currently under the pointer, independently of that captured target. On `pointerover`, `related_target` is the previous hover target. On `pointerout`, it is the next hover target. It is `null` when there is no other target. A touch release or pointer cancellation also ends hover.
 
@@ -61,7 +61,7 @@ node.on('scroll', (event) => {
 })
 ```
 
-For WebGPU-backed UIs, enable scrolling with `overflowX: 'scroll'` or `overflowY: 'scroll'` and content larger than the viewport. Uno scrolls through wheel input and non-mouse pointer dragging. Wheel input finds the nearest ancestor that can scroll in the requested direction, continuing to an outer container when the inner one reaches its limit.
+For WebGPU-backed UIs, enable scrolling with `overflowX: 'scroll'` or `overflowY: 'scroll'` and content larger than the viewport. uno scrolls through wheel input and non-mouse pointer dragging. Wheel input finds the nearest ancestor that can scroll in the requested direction, continuing to an outer container when the inner one reaches its limit.
 
 Assigning `node.scrollLeft` or `node.scrollTop` directly in a WebGPU-backed UI queues a position update but does not emit a `scroll` event. Call `ui.update()` to apply that change.
 */}
@@ -69,7 +69,7 @@ Assigning `node.scrollLeft` or `node.scrollTop` directly in a WebGPU-backed UI q
 {/*
 ## Focus and blur
 
-Uno maintains one focused node per UI. A `pointerdown` moves focus to its target. You can also call `node.focus()` and `node.blur()`:
+uno maintains one focused node per UI. A `pointerdown` moves focus to its target. You can also call `node.focus()` and `node.blur()`:
 
 ```js
 node.on('focus', (event) => {
@@ -88,7 +88,7 @@ node.blur()
 
 On `focus`, `related_target` is the previously focused node. On `blur`, it is the node receiving focus, or `null` when focus is cleared. Moving focus between nodes emits `blur` on the old node before `focus` on the new one. Focusing an already focused node or blurring an unfocused node emits nothing.
 
-Both methods accept an optional source event. Without one, their events have `source_event: null`. Uno focus does not open a platform keyboard or provide text input.
+Both methods accept an optional source event. Without one, their events have `source_event: null`. uno focus does not open a platform keyboard or provide text input.
 */}
 
 ## Demo

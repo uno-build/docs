@@ -2,14 +2,14 @@
 title: Three.js
 ---
 
-Three.js and Uno UI can draw to the same canvas by sharing a WebGPU device and context. The order of the draw calls determines whether the UI appears in front of or behind the scene.
+Three.js and uno UI can draw to the same canvas by sharing a WebGPU device and context. The order of the draw calls determines whether the UI appears in front of or behind the scene.
 
-The examples below assume you are familiar with the basics of Uno UI covered in the [First Layout](../getting-started/first-layout.mdx) section.
+The examples below assume you are familiar with the basics of uno UI covered in the [First Layout](../getting-started/first-layout.mdx) section.
 
 
 ## Shared setup
 
-Use `WebGPURenderer` from `three/webgpu`. Pass it the `canvas`, `device`, and `context` used by Uno UI.
+Use `WebGPURenderer` from `three/webgpu`. Pass it the `canvas`, `device`, and `context` used by uno UI.
 
 ```js
 import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
@@ -32,7 +32,7 @@ await renderer.init()
 
 Clear the color at the start of each frame, then preserve it in subsequent draws.
 
-### Uno UI: `load_op`
+### uno UI: `load_op`
 
 The `load_op` option of `ui.draw()` controls what happens to the existing pixels before drawing the UI:
 
@@ -72,7 +72,7 @@ requestAnimationFrame(function render(time) {
 })
 ```
 
-Three.js clears to white and draws the cube. Uno UI preserves that image and draws the panel over it.
+Three.js clears to white and draws the cube. uno UI preserves that image and draws the panel over it.
 
 ## UI behind the scene
 
@@ -81,7 +81,7 @@ Draw the UI first with `load_op: 'clear'`, then render the scene with `autoClear
 ```js
 renderer.autoClearColor = false
 
-// Uno UI now paints the background, since Three.js will not clear the color.
+// uno UI now paints the background, since Three.js will not clear the color.
 ui.root.style('backgroundColor', '#ffffff')
 ui.update()
 
@@ -96,9 +96,9 @@ requestAnimationFrame(function render(time) {
 })
 ```
 
-Uno UI clears the canvas and draws the white background and panel. Three.js keeps those pixels and draws the cube over them. Leaving `autoClearColor = true` would erase the UI before drawing the cube.
+uno UI clears the canvas and draws the white background and panel. Three.js keeps those pixels and draws the cube over them. Leaving `autoClearColor = true` would erase the UI before drawing the cube.
 
-Keep `scene.background` at its default value of `null` when Uno UI supplies the background. A background texture or skybox drawn by Three.js can cover the UI even when color clearing is disabled.
+Keep `scene.background` at its default value of `null` when uno UI supplies the background. A background texture or skybox drawn by Three.js can cover the UI even when color clearing is disabled.
 
 ## UI behind and in front
 
@@ -136,7 +136,7 @@ By default, Three.js uses `SRGBColorSpace`. `WebGPURenderer` renders the scene i
 
 `LinearSRGBColorSpace` matches Three.js's working color space. With the default `NoToneMapping`, Three.js skips the intermediate conversion pass and draws directly onto the canvas, preserving the background UI when `autoClearColor = false`. Enabling tone mapping can introduce the intermediate pass again. See [Three.js output conversion](https://threejs.org/docs/pages/Renderer.html#needsFrameBufferTarget).
 
-This setup omits the usual linear-to-sRGB output conversion, so the scene's colors may appear darker than with standard sRGB output. Keeping that conversion requires coordinating the final composition between Three.js and Uno UI.
+This setup omits the usual linear-to-sRGB output conversion, so the scene's colors may appear darker than with standard sRGB output. Keeping that conversion requires coordinating the final composition between Three.js and uno UI.
 
 
 ## Demo

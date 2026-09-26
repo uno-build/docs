@@ -2,13 +2,13 @@
 title: Babylon.js
 ---
 
-Babylon.js and Uno UI can draw to the same canvas by sharing a WebGPU device and context. The order of the draw calls determines whether the UI appears in front of or behind the scene.
+Babylon.js and uno UI can draw to the same canvas by sharing a WebGPU device and context. The order of the draw calls determines whether the UI appears in front of or behind the scene.
 
-The examples below assume you are familiar with the basics of Uno UI covered in the [First Layout](../getting-started/first-layout.mdx) section.
+The examples below assume you are familiar with the basics of uno UI covered in the [First Layout](../getting-started/first-layout.mdx) section.
 
 ## Shared setup
 
-Use `WebGPUEngine` from `@babylonjs/core`. Initialize the engine first, then pass its WebGPU device and the canvas context to Uno UI.
+Use `WebGPUEngine` from `@babylonjs/core`. Initialize the engine first, then pass its WebGPU device and the canvas context to uno UI.
 
 ```js
 import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
@@ -50,7 +50,7 @@ Keep `antialias: false` for this direct canvas composition so Babylon.js draws i
 
 Clear the color at the start of each frame, then preserve it in subsequent draws.
 
-### Uno UI: `load_op`
+### uno UI: `load_op`
 
 The `load_op` option of `ui.draw()` controls what happens to the existing pixels before drawing the UI:
 
@@ -72,7 +72,7 @@ The `load_op` option of `ui.draw()` controls what happens to the existing pixels
 
 Keep `scene.autoClearDepthAndStencil` at its default value of `true`. Changing only `autoClear` lets Babylon.js continue clearing depth and stencil for each frame.
 
-Babylon.js normally submits its WebGPU commands at the end of each frame, after the callback passed to `engine.runRenderLoop()` returns. When drawing Uno UI after `scene.render()`, call `engine.flushFramebuffer()` between them to submit the scene before the UI.
+Babylon.js normally submits its WebGPU commands at the end of each frame, after the callback passed to `engine.runRenderLoop()` returns. When drawing uno UI after `scene.render()`, call `engine.flushFramebuffer()` between them to submit the scene before the UI.
 
 ## UI in front of the scene
 
@@ -92,7 +92,7 @@ engine.runRenderLoop(() => {
 })
 ```
 
-Babylon.js clears to white and draws the cube. Uno UI preserves that image and draws the panel over it.
+Babylon.js clears to white and draws the cube. uno UI preserves that image and draws the panel over it.
 
 ## UI behind the scene
 
@@ -101,7 +101,7 @@ Draw the UI first with `load_op: 'clear'`, then render the scene with `autoClear
 ```js
 scene.autoClear = false
 
-// Uno UI now paints the background, since Babylon.js will not clear the color.
+// uno UI now paints the background, since Babylon.js will not clear the color.
 ui.root.style('backgroundColor', '#ffffff')
 ui.update()
 
@@ -115,7 +115,7 @@ engine.runRenderLoop(() => {
 })
 ```
 
-Uno UI clears the canvas and draws the white background and panel. Babylon.js keeps those pixels and draws the cube over them. Leaving `autoClear = true` would erase the UI before drawing the cube.
+uno UI clears the canvas and draws the white background and panel. Babylon.js keeps those pixels and draws the cube over them. Leaving `autoClear = true` would erase the UI before drawing the cube.
 
 A skybox or fullscreen post-process drawn by Babylon.js can cover the UI even when color clearing is disabled.
 

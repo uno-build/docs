@@ -2,13 +2,13 @@
 title: PlayCanvas
 ---
 
-PlayCanvas and Uno UI can draw to the same canvas by sharing a WebGPU device and context. The order of the draw calls determines whether the UI appears in front of or behind the scene.
+PlayCanvas and uno UI can draw to the same canvas by sharing a WebGPU device and context. The order of the draw calls determines whether the UI appears in front of or behind the scene.
 
-The examples below assume you are familiar with the basics of Uno UI covered in the [First Layout](../getting-started/first-layout.mdx) section.
+The examples below assume you are familiar with the basics of uno UI covered in the [First Layout](../getting-started/first-layout.mdx) section.
 
 ## Shared setup
 
-Use `createGraphicsDevice()` from `playcanvas` with the WebGPU backend. Create the graphics device first, then pass its device, context, and canvas format to Uno UI.
+Use `createGraphicsDevice()` from `playcanvas` with the WebGPU backend. Create the graphics device first, then pass its device, context, and canvas format to uno UI.
 
 ```js
 import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
@@ -57,7 +57,7 @@ Keep `antialias: false` for this direct canvas composition so PlayCanvas draws i
 
 Clear the color at the start of each frame, then preserve it in subsequent draws.
 
-### Uno UI: `load_op`
+### uno UI: `load_op`
 
 The `load_op` option of `ui.draw()` controls what happens to the existing pixels before drawing the UI:
 
@@ -79,7 +79,7 @@ The `load_op` option of `ui.draw()` controls what happens to the existing pixels
 
 Keep `camera.camera.clearDepthBuffer` at its default value of `true`. Changing only `clearColorBuffer` lets PlayCanvas continue clearing depth for each frame.
 
-PlayCanvas fires `prerender` before drawing the scene and `postrender` after it, then submits its WebGPU commands. Pass `submit: false` and `command_encoder: graphics_device.getCommandEncoder()` to Uno UI so its draws use the same command encoder and are submitted in order with the scene.
+PlayCanvas fires `prerender` before drawing the scene and `postrender` after it, then submits its WebGPU commands. Pass `submit: false` and `command_encoder: graphics_device.getCommandEncoder()` to uno UI so its draws use the same command encoder and are submitted in order with the scene.
 
 Use one of the following rendering setups after applying the UI layout and viewport setup.
 
@@ -99,7 +99,7 @@ app.on('postrender', () => {
 app.start()
 ```
 
-PlayCanvas clears to white and draws the scene. Uno UI preserves that image and draws the panel over it.
+PlayCanvas clears to white and draws the scene. uno UI preserves that image and draws the panel over it.
 
 ## UI behind the scene
 
@@ -108,7 +108,7 @@ Draw the UI in `prerender` with `load_op: 'clear'`, then let PlayCanvas render t
 ```js
 camera.camera.clearColorBuffer = false
 
-// Uno UI now paints the background, since PlayCanvas will not clear the color.
+// uno UI now paints the background, since PlayCanvas will not clear the color.
 ui.root.style('backgroundColor', '#ffffff')
 ui.update()
 
@@ -122,7 +122,7 @@ app.on('prerender', () => {
 app.start()
 ```
 
-Uno UI clears the canvas and draws the white background and panel. PlayCanvas keeps those pixels and draws the scene over them. Leaving `clearColorBuffer = true` would erase the UI before drawing the scene.
+uno UI clears the canvas and draws the white background and panel. PlayCanvas keeps those pixels and draws the scene over them. Leaving `clearColorBuffer = true` would erase the UI before drawing the scene.
 
 A skybox or fullscreen post-process drawn by PlayCanvas can cover the UI even when color clearing is disabled.
 

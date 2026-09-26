@@ -2,14 +2,14 @@
 title: TypeGPU
 ---
 
-TypeGPU and Uno UI can draw to the same canvas by sharing a WebGPU device and context. The order of the draw calls determines whether the UI appears in front of or behind the scene.
+TypeGPU and uno UI can draw to the same canvas by sharing a WebGPU device and context. The order of the draw calls determines whether the UI appears in front of or behind the scene.
 
-The examples below assume you are familiar with the basics of Uno UI covered in the [First Layout](../getting-started/first-layout.mdx) section.
+The examples below assume you are familiar with the basics of uno UI covered in the [First Layout](../getting-started/first-layout.mdx) section.
 
 
 ## Shared setup
 
-Use `tgpu.initFromDevice()` to create a TypeGPU root with the `device` used by Uno UI. Use the same `context` for the canvas texture and `format` for the pipeline's color target.
+Use `tgpu.initFromDevice()` to create a TypeGPU root with the `device` used by uno UI. Use the same `context` for the canvas texture and `format` for the pipeline's color target.
 
 ```js
 import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
@@ -32,7 +32,7 @@ The rendering examples below use the cube's `pipeline` and `frame_uniform` from 
 
 Clear the color at the start of each frame, then preserve it in subsequent draws.
 
-### Uno UI: `load_op`
+### uno UI: `load_op`
 
 The `load_op` option of `ui.draw()` controls what happens to the existing pixels before drawing the UI:
 
@@ -74,14 +74,14 @@ requestAnimationFrame(function render(time) {
 })
 ```
 
-TypeGPU clears to white and draws the cube. Uno UI preserves that image and draws the panel over it, then submits both draws together.
+TypeGPU clears to white and draws the cube. uno UI preserves that image and draws the panel over it, then submits both draws together.
 
 ## UI behind the scene
 
 Draw the UI first with `load_op: 'clear'`, then draw the scene with `loadOp: 'load'`:
 
 ```js
-// Uno UI now paints the background, since TypeGPU will not clear the color.
+// uno UI now paints the background, since TypeGPU will not clear the color.
 ui.root.style('backgroundColor', '#ffffff')
 ui.update()
 
@@ -101,7 +101,7 @@ requestAnimationFrame(function render(time) {
 })
 ```
 
-Uno UI clears the canvas and draws the white background and panel. TypeGPU keeps those pixels and draws the cube over them. Using `loadOp: 'clear'` would erase the UI before drawing the cube.
+uno UI clears the canvas and draws the white background and panel. TypeGPU keeps those pixels and draws the cube over them. Using `loadOp: 'clear'` would erase the UI before drawing the cube.
 
 ## UI behind and in front
 

@@ -27,7 +27,7 @@ Call `solid.unmount()` to remove the component tree and run its cleanup before d
 
 ### Configure the compiler
 
-The Uno integration uses Solid 2. With Vite, pass `compilerConfig` to the Solid plugin:
+The uno integration uses Solid 2. With Vite, pass `compilerConfig` to the Solid plugin:
 
 ```js
 // vite.config.js
@@ -45,17 +45,17 @@ export default defineConfig({
 })
 ```
 
-`compilerConfig` sets `generate: 'universal'` so JSX creates Uno nodes. It generates imports from `uno-ui/solid`, which the alias above resolves to `@uno/ui/solid`.
+`compilerConfig` sets `generate: 'universal'` so JSX creates uno nodes. It generates imports from `uno-ui/solid`, which the alias above resolves to `@uno/ui/solid`.
 
 The [demo below](#demo) compiles JSX directly in the browser with Babel Standalone and `@dom-expressions/babel-plugin-jsx`, using `compilerConfig.solid`.
 
 ## Components
 
-`@uno/ui/solid` exports five components: `View`, `Text`, `Image`, `ScrollView`, and `Input`. They render Uno nodes and share the properties and event props below. Each component's section describes its additional props and behavior.
+`@uno/ui/solid` exports five components: `View`, `Text`, `Image`, `ScrollView`, and `Input`. They render uno nodes and share the properties and event props below. Each component's section describes its additional props and behavior.
 
 ### `<View>`
 
-`View` is a container for layout, backgrounds, and child components. Rendering a `View` creates an Uno node, equivalent to calling `ui.create()` in the imperative API. Solid adds the node to its parent and manages its updates and removal. Use Solid signals to update its styles in response to events. Read each signal by calling its getter inside JSX.
+`View` is a container for layout, backgrounds, and child components. Rendering a `View` creates an uno node, equivalent to calling `ui.create()` in the imperative API. Solid adds the node to its parent and manages its updates and removal. Use Solid signals to update its styles in response to events. Read each signal by calling its getter inside JSX.
 
 ```jsx
 // SolidView.jsx
@@ -105,7 +105,7 @@ export default function App() {
 }
 ```
 
-A string directly inside `View`, such as `<View>Hello</View>`, is invalid. `Text` is a leaf node: it accepts strings, numbers, reactive expressions, and fragments containing only text, but cannot contain Uno nodes. To use different styles within a line, place sibling `Text` components inside a `View` with `flexDirection: 'row'`.
+A string directly inside `View`, such as `<View>Hello</View>`, is invalid. `Text` is a leaf node: it accepts strings, numbers, reactive expressions, and fragments containing only text, but cannot contain uno nodes. To use different styles within a line, place sibling `Text` components inside a `View` with `flexDirection: 'row'`.
 
 ### `<Image>`
 
@@ -208,13 +208,13 @@ export default function App(props) {
 }
 ```
 
-`Input` does not create a DOM input or handle IME, selection, or clipboard input. To support typing in a browser, connect a native `<input>` outside the Uno component tree, synchronize its value with a Solid signal, and manage its focus through `onFocus` and `onBlur`. See the [demo below](#demo) for a complete example.
+`Input` does not create a DOM input or handle IME, selection, or clipboard input. To support typing in a browser, connect a native `<input>` outside the uno component tree, synchronize its value with a Solid signal, and manage its focus through `onFocus` and `onBlur`. See the [demo below](#demo) for a complete example.
 
 ## Event props
 
 All five components accept the following event props. Pass a handler function to subscribe; omit the prop or set it to `null` or `undefined` to remove your handler. Solid manages the listener registration and cleanup.
 
-| Prop              | Uno event       | When it fires                                                        |
+| Prop              | uno event       | When it fires                                                        |
 | ----------------- | --------------- | -------------------------------------------------------------------- |
 | `onPointerDown`   | `pointerdown`   | A pointer is pressed on a node.                                      |
 | `onPointerMove`   | `pointermove`   | A pointer moves over the UI or during an active pointer interaction. |
@@ -225,32 +225,32 @@ All five components accept the following event props. Pass a handler function to
 | `onClick`         | `click`         | A node is activated by a completed click or tap.                     |
 | `onWheel`         | `wheel`         | Wheel or trackpad input occurs over a node.                          |
 | `onScroll`        | `scroll`        | A scroll container's offset changes through scrolling.               |
-| `onFocus`         | `focus`         | A node gains Uno focus.                                              |
-| `onBlur`          | `blur`          | A node loses Uno focus.                                              |
+| `onFocus`         | `focus`         | A node gains uno focus.                                              |
+| `onBlur`          | `blur`          | A node loses uno focus.                                              |
 
-Handlers receive Uno events rather than DOM events. Each event includes these common members:
+Handlers receive uno events rather than DOM events. Each event includes these common members:
 
 | Member              | Meaning                                                                           |
 | ------------------- | --------------------------------------------------------------------------------- |
-| `type`              | The Uno event name, such as `'pointerdown'`.                                      |
-| `target`            | The Uno node where the event originated.                                          |
-| `current_target`    | The Uno node whose handler is currently running.                                  |
+| `type`              | The uno event name, such as `'pointerdown'`.                                      |
+| `target`            | The uno node where the event originated.                                          |
+| `current_target`    | The uno node whose handler is currently running.                                  |
 | `source_event`      | The original platform event, or `null` for a programmatic event without a source. |
 | `stopPropagation()` | Stops the event from continuing to ancestor nodes.                                |
 
-Events bubble through the Uno node tree, so a component's handler can receive events from its descendants. Event-specific data, such as pointer coordinates, wheel deltas, scroll offsets, and focus transitions, is documented in [Events](../api/events.mdx).
+Events bubble through the uno node tree, so a component's handler can receive events from its descendants. Event-specific data, such as pointer coordinates, wheel deltas, scroll offsets, and focus transitions, is documented in [Events](../api/events.mdx).
 
 ## Refs and handles
 
-In Solid, refs on `View`, `Text`, and `Image` receive the Uno node directly: use `node.layout` or `node.focus()`, without `nodes.main`. `ScrollView` and `Input` instead expose compound handles. Import `ScrollViewHandle` and `InputHandle` from `@uno/ui/solid` when using TypeScript.
+In Solid, refs on `View`, `Text`, and `Image` receive the uno node directly: use `node.layout` or `node.focus()`, without `nodes.main`. `ScrollView` and `Input` instead expose compound handles. Import `ScrollViewHandle` and `InputHandle` from `@uno/ui/solid` when using TypeScript.
 
 | Component | Ref value | Available members |
 | --- | --- | --- |
-| `View`, `Text`, `Image` | Uno node | Node properties and methods directly |
+| `View`, `Text`, `Image` | uno node | Node properties and methods directly |
 | `ScrollView` | `ScrollViewHandle` | `nodes.main` (viewport), `nodes.content` (scrollable content) |
 | `Input` | `InputHandle` | `nodes.main`, `nodes.content`, `nodes.text`, `nodes.caret`, `focus()`, `blur()` |
 
-`nodes.caret` is `null` when the input is unfocused. `focus()` and `blur()` change Uno focus; they do not open a platform keyboard or provide text input.
+`nodes.caret` is `null` when the input is unfocused. `focus()` and `blur()` change uno focus; they do not open a platform keyboard or provide text input.
 {/* 
 Use callback refs to store the handles. Clicking the view below focuses the input and scrolls the viewport:
 

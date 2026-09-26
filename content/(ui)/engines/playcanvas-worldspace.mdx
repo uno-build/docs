@@ -2,13 +2,13 @@
 title: PlayCanvas World Space
 ---
 
-`UIPlayCanvas` renders Uno UI into a texture and displays it on a plane inside a PlayCanvas scene. The plane can move, rotate, and scale while its UI remains interactive.
+`UIPlayCanvas` renders uno UI into a texture and displays it on a plane inside a PlayCanvas scene. The plane can move, rotate, and scale while its UI remains interactive.
 
 This section continues the [PlayCanvas](./playcanvas.mdx) guide. As before, keep the shared WebGPU resources, graphics device, and app. The following examples inject the UI directly onto a plane in the scene instead of drawing it as a background or foreground overlay. Replace the overlay draw callbacks with the texture draw below.
 
 ## 1. Create the UI plane
 
-Replace the `UI` import and `UI.create()` call with `UIPlayCanvas`. Pass it the app as well as the shared resources. It returns the Uno UI instance and a PlayCanvas entity with its texture and material already connected:
+Replace the `UI` import and `UI.create()` call with `UIPlayCanvas`. Pass it the app as well as the shared resources. It returns the uno UI instance and a PlayCanvas entity with its texture and material already connected:
 
 ```js
 import UIPlayCanvas from '@uno/ui/UIPlayCanvas'
@@ -55,7 +55,7 @@ app.root.addChild(camera)
 ui.setCamera(camera)
 ```
 
-Pass the camera entity to `ui.setCamera(camera)`. Uno casts a ray onto the plane and converts the hit position into UI layout coordinates. The component's existing pointer, click, and focus handlers work as the plane rotates.
+Pass the camera entity to `ui.setCamera(camera)`. uno casts a ray onto the plane and converts the hit position into UI layout coordinates. The component's existing pointer, click, and focus handlers work as the plane rotates.
 
 For pointer, click, and wheel events, the payload described in [Event data](../api/events.mdx#event-data) also includes `distance_to_camera` when the ray hits the plane. It is the distance from the camera to the hit position in PlayCanvas world units. The `x` and `y` fields remain coordinates in the UI's logical coordinate space.
 
@@ -89,7 +89,7 @@ Here, `ui.draw()` updates the plane's texture rather than the canvas. PlayCanvas
 
 Use the optional `createPlane()` callback to display the UI on a different PlayCanvas entity, such as one containing a box, sphere, or cylinder mesh. It receives the configured UI `material` and the requested `world_width` and `world_height`. Return the entity as `plane`; additional resources such as `geometry` and `body_material` are also returned by `UIPlayCanvas.create()`.
 
-For custom interaction, return a `mapIntersection()` callback alongside the entity. It receives the closest triangle intersection from the entity's render components, including its children, and returns UV coordinates as `{ x, y }`, or `null` to reject the hit. The intersection includes `mesh_instance` and the interpolated `uv` coordinates. Uno converts the returned UVs into UI layout coordinates. Without this callback, Uno maps hits against the default rectangular plane rather than raycasting custom geometry.
+For custom interaction, return a `mapIntersection()` callback alongside the entity. It receives the closest triangle intersection from the entity's render components, including its children, and returns UV coordinates as `{ x, y }`, or `null` to reject the hit. The intersection includes `mesh_instance` and the interpolated `uv` coordinates. uno converts the returned UVs into UI layout coordinates. Without this callback, uno maps hits against the default rectangular plane rather than raycasting custom geometry.
 
 For example, add this `createPlane` option to `UIPlayCanvas.create()` to display the UI on only the front (`+Z`) face of a box and make only that face interactive:
 
@@ -135,15 +135,15 @@ const { ui, plane, material } = await UIPlayCanvas.create({
 })
 ```
 
-The first six indices select the `+Z` face for the UI material; the remaining indices use `body_material`. Hits on the other faces return `null`; Uno does not continue looking for an interactive face behind them.
+The first six indices select the `+Z` face for the UI material; the remaining indices use `body_material`. Hits on the other faces return `null`; uno does not continue looking for an interactive face behind them.
 
-The box's UVs have `V = 0` at the top, while Uno's hit mapper expects `y = 0` at the bottom. Returning `1 - intersection.uv.y` aligns interaction with the displayed texture.
+The box's UVs have `V = 0` at the top, while uno's hit mapper expects `y = 0` at the bottom. Returning `1 - intersection.uv.y` aligns interaction with the displayed texture.
 
 `mapIntersection()` can also transform the UVs before returning them, allowing you to adapt interaction to a custom texture layout. It changes how hits are mapped to the UI; it does not change how the texture is rendered.
 
 ## Cleanup
 
-World-space UIs have resources owned by Uno and resources managed by the rendering engine. `ui.destroy()` releases the Uno nodes, listeners, renderer allocations, and offscreen GPU texture. It does not remove the plane from the scene or dispose the engine objects returned by `create()`.
+World-space UIs have resources owned by uno and resources managed by the rendering engine. `ui.destroy()` releases the uno nodes, listeners, renderer allocations, and offscreen GPU texture. It does not remove the plane from the scene or dispose the engine objects returned by `create()`.
 
 Before cleanup, stop this UI's draw callbacks and remove any event listeners added by your application. If a framework manages the layout, call its root's `unmount()` while the UI is still alive.
 
@@ -158,7 +158,7 @@ ui.destroy()
 
 Destroying the default entity removes its render component and mesh instances, releasing the mesh when it has no remaining references. There is no need to destroy that mesh a second time.
 
-Uno releases the backing GPU texture in `ui.destroy()`; do not call `gpu_texture.destroy()` separately.
+uno releases the backing GPU texture in `ui.destroy()`; do not call `gpu_texture.destroy()` separately.
 
 This example assumes the default plane resources and a material used only by this UI. If `createPlane()` or `createMaterial()` creates additional resources, release those too. Keep shared materials and geometries alive until their last user is removed.
 

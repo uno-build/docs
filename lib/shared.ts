@@ -1,7 +1,7 @@
 import { createGetUrl } from 'fumadocs-core/source'
 import { withBasePath } from './base-path.mjs'
 
-export const appName = 'UNO'
+export const appName = 'uno'
 export const docsRoute = '/'
 export const docsImageRoute = '/og/docs'
 export const docsContentRoute = '/llms.mdx/docs'

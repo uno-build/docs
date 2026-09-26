@@ -2,13 +2,13 @@
 title: Three.js World Space
 ---
 
-`UIThree` renders Uno UI into a texture and displays it on a plane inside a Three.js scene. The plane can move, rotate, and scale while its UI remains interactive.
+`UIThree` renders uno UI into a texture and displays it on a plane inside a Three.js scene. The plane can move, rotate, and scale while its UI remains interactive.
 
 This section continues the [Three.js](./three.mdx) guide. As before, keep the shared WebGPU resources, renderer, scene, and camera. The following examples inject the UI directly onto a plane in the scene instead of drawing it as a background or foreground overlay.
 
 ## 1. Create the UI plane
 
-Replace the `UI` import and `UI.create()` call with `UIThree`. It returns the Uno UI instance and a Three.js plane with its texture and material already connected:
+Replace the `UI` import and `UI.create()` call with `UIThree`. It returns the uno UI instance and a Three.js plane with its texture and material already connected:
 
 ```js
 import UIThree from '@uno/ui/UIThree'
@@ -58,7 +58,7 @@ scene.add(plane)
 
 Use the optional `createPlane()` callback to display the UI on a different `THREE.Mesh`, such as a box, sphere, or cylinder. It receives the configured UI `material` and the requested `world_width` and `world_height`. Return the mesh as `plane`; additional resources such as `geometry` and `body_material` are also returned by `UIThree.create()`.
 
-For custom interaction, return an optional `mapIntersection()` callback alongside the mesh. It receives the closest Three.js raycast intersection and returns UV coordinates as `{ x, y }`, or `null` to reject the hit. Uno converts these UVs into UI layout coordinates. Without this callback, Uno uses `intersection.uv` directly.
+For custom interaction, return an optional `mapIntersection()` callback alongside the mesh. It receives the closest Three.js raycast intersection and returns UV coordinates as `{ x, y }`, or `null` to reject the hit. uno converts these UVs into UI layout coordinates. Without this callback, uno uses `intersection.uv` directly.
 
 For example, add this `createPlane` option to `UIThree.create()` to display the UI on only the front (`+Z`) face of a box and make only that face interactive:
 
@@ -91,13 +91,13 @@ const { ui, plane } = await UIThree.create({
 })
 ```
 
-`BoxGeometry` assigns its six material slots in the order `+X`, `-X`, `+Y`, `-Y`, `+Z`, `-Z`, so index `4` selects the front face. Hits on the other faces return `null`; Uno does not continue looking for an interactive face behind them.
+`BoxGeometry` assigns its six material slots in the order `+X`, `-X`, `+Y`, `-Y`, `+Z`, `-Z`, so index `4` selects the front face. Hits on the other faces return `null`; uno does not continue looking for an interactive face behind them.
 
 `mapIntersection()` can also transform the UVs before returning them, allowing you to adapt interaction to a custom texture layout. It changes how hits are mapped to the UI; it does not change how the texture is rendered.
 
 ## Cleanup
 
-World-space UIs have resources owned by Uno and resources managed by the rendering engine. `ui.destroy()` releases the Uno nodes, listeners, renderer allocations, and offscreen GPU texture. It does not remove the plane from the scene or dispose the engine objects returned by `create()`.
+World-space UIs have resources owned by uno and resources managed by the rendering engine. `ui.destroy()` releases the uno nodes, listeners, renderer allocations, and offscreen GPU texture. It does not remove the plane from the scene or dispose the engine objects returned by `create()`.
 
 Before cleanup, stop this UI's draw callbacks and remove any event listeners added by your application. If a framework manages the layout, call its root's `unmount()` while the UI is still alive.
 
@@ -113,7 +113,7 @@ ui.destroy()
 
 Removing a Three.js mesh from the scene does not dispose its resources.
 
-Uno releases the backing GPU texture in `ui.destroy()`; do not call `gpu_texture.destroy()` separately.
+uno releases the backing GPU texture in `ui.destroy()`; do not call `gpu_texture.destroy()` separately.
 
 This example assumes the default plane resources and a material used only by this UI. If `createPlane()` or `createMaterial()` creates additional resources, release those too. Keep shared materials and geometries alive until their last user is removed.
 

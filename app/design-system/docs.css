@@ -127,6 +127,9 @@ button:disabled, [aria-disabled='true'] {
   color: var(--brand-text);
   box-shadow: inset 2px 0 var(--brand-accent);
 }
+[class~='data-[active=true]:before:bg-fd-primary'][data-active='true']::before {
+  background-color: transparent;
+}
 :is(#nd-sidebar, #nd-sidebar-mobile) a[data-active='false']:hover {
   background: var(--bg-subtle);
   color: var(--text-primary);

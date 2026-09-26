@@ -27,7 +27,7 @@ Call `vue.unmount()` to remove the component tree and run its cleanup before des
 
 ### Configure the compiler
 
-The examples below use Vue single-file components. With Vite, pass `compilerConfig` to the Vue plugin and add `stylesPlugin()` to process Uno styles:
+The examples below use Vue single-file components. With Vite, pass `compilerConfig` to the Vue plugin and add `stylesPlugin()` to process uno styles:
 
 ```js
 // vite.config.js
@@ -45,17 +45,17 @@ export default defineConfig({
 })
 ```
 
-`compilerConfig` preserves image resource identifiers and disables static hoisting for the Uno renderer. The current styles plugin generates imports from `uno-ui/vue`, so the alias above resolves them to `@uno/ui/vue`.
+`compilerConfig` preserves image resource identifiers and disables static hoisting for the uno renderer. The current styles plugin generates imports from `uno-ui/vue`, so the alias above resolves them to `@uno/ui/vue`.
 
 The [demo below](#demo) compiles `.vue` files directly in the browser. Its loader passes `compilerConfig.template` to `compileScript`, processes styles with `compileStyles`, and registers the resulting rules with `registerStyleSheet`.
 
 ## Components
 
-`@uno/ui/vue` exports five components: `View`, `Text`, `Image`, `ScrollView`, and `Input`. They render Uno nodes and share the style and event bindings below. Each component's section describes its additional props and behavior.
+`@uno/ui/vue` exports five components: `View`, `Text`, `Image`, `ScrollView`, and `Input`. They render uno nodes and share the style and event bindings below. Each component's section describes its additional props and behavior.
 
 ### `<View>`
 
-`View` is a container for layout, backgrounds, and child components. Rendering a `View` creates an Uno node, equivalent to calling `ui.create()` in the imperative API. Vue adds the node to its parent and manages its updates and removal. Use reactive state to update its styles in response to events.
+`View` is a container for layout, backgrounds, and child components. Rendering a `View` creates an uno node, equivalent to calling `ui.create()` in the imperative API. Vue adds the node to its parent and manages its updates and removal. Use reactive state to update its styles in response to events.
 
 ```vue
 <!-- App.vue -->
@@ -209,13 +209,13 @@ defineProps({ value: { type: String, default: '' } })
 </template>
 ```
 
-`Input` does not create a DOM input, emit value updates for `v-model`, or handle IME, selection, or clipboard input. To support typing in a browser, connect a native `<input>` outside the Uno component tree, synchronize its value with a Vue `ref`, and manage its focus through `@focus` and `@blur`. See the [demo below](#demo) for a complete example.
+`Input` does not create a DOM input, emit value updates for `v-model`, or handle IME, selection, or clipboard input. To support typing in a browser, connect a native `<input>` outside the uno component tree, synchronize its value with a Vue `ref`, and manage its focus through `@focus` and `@blur`. See the [demo below](#demo) for a complete example.
 
 ## Styles
 
 Pass an object to `:style` with camelCase property names and string values, as in the examples above. All five components also accept `class` and `:class`, including strings, arrays, and objects for conditional classes.
 
-With the compiler setup above, `<style>` and `<style scoped>` blocks apply Uno styles to those classes:
+With the compiler setup above, `<style>` and `<style scoped>` blocks apply uno styles to those classes:
 
 ```vue
 <script setup>
@@ -247,7 +247,7 @@ const hovered = ref(false)
 </style>
 ```
 
-Inline `:style` values override class styles. Style blocks support class selectors such as `.box`, `.box.hovered`, and comma-separated class selectors. Use Uno style properties; these rules are applied to Uno nodes.
+Inline `:style` values override class styles. Style blocks support class selectors such as `.box`, `.box.hovered`, and comma-separated class selectors. Use uno style properties; these rules are applied to uno nodes.
 
 Descendant selectors, tag selectors, pseudo-classes such as `:hover`, nested rules, at-rules, `!important`, CSS custom properties, and `var()` are not supported. Style blocks must contain inline CSS: `src`, CSS modules, preprocessors, and CSS `v-bind()` are not supported. Use reactive classes or `:style` for dynamic values.
 
@@ -255,7 +255,7 @@ Descendant selectors, tag selectors, pseudo-classes such as `:hover`, nested rul
 
 All five components accept the following event bindings. Pass a handler function to subscribe; omit the binding or set its handler to `null` or `undefined` to remove it. Vue manages the listener registration and cleanup.
 
-| Template binding  | Uno event       | When it fires                                                        |
+| Template binding  | uno event       | When it fires                                                        |
 | ----------------- | --------------- | -------------------------------------------------------------------- |
 | `@pointerdown`   | `pointerdown`   | A pointer is pressed on a node.                                      |
 | `@pointermove`   | `pointermove`   | A pointer moves over the UI or during an active pointer interaction. |
@@ -266,28 +266,28 @@ All five components accept the following event bindings. Pass a handler function
 | `@click`          | `click`         | A node is activated by a completed click or tap.                     |
 | `@wheel`          | `wheel`         | Wheel or trackpad input occurs over a node.                          |
 | `@scroll`         | `scroll`        | A scroll container's offset changes through scrolling.               |
-| `@focus`          | `focus`         | A node gains Uno focus.                                              |
-| `@blur`           | `blur`          | A node loses Uno focus.                                              |
+| `@focus`          | `focus`         | A node gains uno focus.                                              |
+| `@blur`           | `blur`          | A node loses uno focus.                                              |
 
-Use the hyphenated pointer bindings shown above, such as `@pointerdown`, so Vue generates Uno's `onPointerDown` prop.
+Use the hyphenated pointer bindings shown above, such as `@pointerdown`, so Vue generates uno's `onPointerDown` prop.
 
-Handlers receive Uno events rather than DOM events. Each event includes these common members:
+Handlers receive uno events rather than DOM events. Each event includes these common members:
 
 | Member              | Meaning                                                                          |
 | ------------------- | -------------------------------------------------------------------------------- |
-| `type`              | The Uno event name, such as `'pointerdown'`.                                      |
-| `target`            | The Uno node where the event originated.                                         |
-| `current_target`    | The Uno node whose handler is currently running.                                 |
+| `type`              | The uno event name, such as `'pointerdown'`.                                      |
+| `target`            | The uno node where the event originated.                                         |
+| `current_target`    | The uno node whose handler is currently running.                                 |
 | `source_event`      | The original platform event, or `null` for a programmatic event without a source. |
 | `stopPropagation()` | Stops the event from continuing to ancestor nodes.                               |
 
-Events bubble through the Uno node tree, so a component's handler can receive events from its descendants. Event-specific data, such as pointer coordinates, wheel deltas, scroll offsets, and focus transitions, is documented in [Events](../api/events.mdx).
+Events bubble through the uno node tree, so a component's handler can receive events from its descendants. Event-specific data, such as pointer coordinates, wheel deltas, scroll offsets, and focus transitions, is documented in [Events](../api/events.mdx).
 
-To prevent the source event's browser default action, call `event.source_event?.preventDefault()` in your handler. Uno events do not expose their own `preventDefault()` method, so Vue's `.prevent` modifier cannot be used here.
+To prevent the source event's browser default action, call `event.source_event?.preventDefault()` in your handler. uno events do not expose their own `preventDefault()` method, so Vue's `.prevent` modifier cannot be used here.
 
 ## Refs and handles
 
-Use a Vue template ref to access a component's Uno nodes. These refs expose handles rather than DOM elements. Import `NodeHandle`, `ScrollViewHandle`, and `InputHandle` from `@uno/ui/vue` when using TypeScript. Use `shallowRef` to hold a handle without deeply wrapping its nodes in reactive proxies.
+Use a Vue template ref to access a component's uno nodes. These refs expose handles rather than DOM elements. Import `NodeHandle`, `ScrollViewHandle`, and `InputHandle` from `@uno/ui/vue` when using TypeScript. Use `shallowRef` to hold a handle without deeply wrapping its nodes in reactive proxies.
 
 | Component | Ref value | Available members |
 | --- | --- | --- |
@@ -295,7 +295,7 @@ Use a Vue template ref to access a component's Uno nodes. These refs expose hand
 | `ScrollView` | `ScrollViewHandle` | `nodes.main` (viewport), `nodes.content` (scrollable content) |
 | `Input` | `InputHandle` | `nodes.main`, `nodes.content`, `nodes.text`, `nodes.caret`, `focus()`, `blur()` |
 
-`nodes.caret` is `null` when the input is unfocused. `focus()` and `blur()` change Uno focus; they do not open a platform keyboard or provide text input.
+`nodes.caret` is `null` when the input is unfocused. `focus()` and `blur()` change uno focus; they do not open a platform keyboard or provide text input.
 {/* 
 This example focuses the input and scrolls the viewport after mounting:
 
