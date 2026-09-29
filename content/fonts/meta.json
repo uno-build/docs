@@ -1,0 +1,11 @@
+{
+  "title": "fonts",
+  "description": "",
+  "icon": "Type",
+  "root": true,
+  "pages": [
+    "index",
+    "cli-options",
+    "mtsdfx"
+  ]
+}

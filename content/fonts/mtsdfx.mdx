@@ -1,0 +1,96 @@
+---
+title: MTSDFX
+description: Separate distance ranges for precise text edges and extended effects.
+---
+
+`mtsdfx` is a local Node CLI extension of MTSDF. It produces one RGBA PNG with
+two distance ranges: a narrow RGB range for precise text edges and sharp
+corners, and a wider true-distance range in alpha for effects such as glows,
+rounded outlines, and soft shadows. It provides distance data; the renderer
+still implements the desired effects.
+
+| Channels | Content                                                          | CLI option       | Default total range                                                           |
+| -------- | ---------------------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------- |
+| RGB      | Multichannel signed distance; use the median for text rendering. | `-pxrange`       | `16` pixels (`-8` to `+8`).                                                   |
+| Alpha    | True signed distance for effects farther from the contour.       | `-effectpxrange` | `max(size / 2, pxrange)`; `32` pixels (`-16` to `+16`) with the CLI defaults. |
+
+When `-effectpxrange` is omitted, the effect range is computed as
+`Math.max(size / 2, pxRange)`. The calculation uses `-size`, or `-minsize`
+when supplied without `-size`, otherwise the default size of `64`.
+An explicit `-effectpxrange` overrides this calculation.
+
+Ordinary `mtsdf` uses the same range for all four channels. Increasing that
+shared range trades text-edge precision for effect reach. `mtsdfx` stores RGB
+with a smaller range while retaining the larger effect range in alpha.
+
+For example, to override the defaults with a size of `48`, an RGB range of
+`8`, and an alpha range of `32`:
+
+```sh
+npx @uno.build/fonts \
+  -font font.ttf \
+  -type mtsdfx -size 48 -pxrange 8 -effectpxrange 32 \
+  -imageout atlas-mtsdfx.png -json atlas-mtsdfx.json
+```
+
+Internally, the CLI generates a floating-point MTSDF using the effect range,
+including its glyph bounds and packing margin. Before writing the 8-bit PNG,
+it remaps RGB around `0.5` by `effectRange / rgbRange`, clamps to `[0, 1]`,
+and quantizes. Alpha keeps the original effect-range values. The conversion
+happens before 8-bit quantization to preserve RGB precision. A wider effect
+range increases the margin needed around glyphs and may increase atlas
+dimensions, even if the RGB range stays unchanged.
+
+The JSON sets `atlas.type` to **`"mtsdfx"`**. It sets
+`atlas.distanceRange` to the RGB range and adds `atlas.effectDistanceRange`
+for alpha. For the example above, these fields are:
+
+```json
+{
+  "type": "mtsdfx",
+  "distanceRange": 8,
+  "distanceRangeMiddle": 0,
+  "effectDistanceRange": 32,
+  "size": 48
+}
+```
+
+These are selected fields from `metadata.atlas`, not the complete JSON file.
+Glyph bounds and optional CSV layout retain the larger effect-range geometry.
+JSON glyph entries use Unicode code points, as with the other atlas types.
+
+A renderer can distinguish extended MTSDF by `atlas.type === "mtsdfx"`.
+With normalized texture samples, decode distances in
+atlas pixels as follows, then convert them to screen units for rendering:
+
+```glsl
+float median3(vec3 v) {
+    return max(min(v.r, v.g), min(max(v.r, v.g), v.b));
+}
+
+// distanceRange = metadata.atlas.distanceRange
+// effectDistanceRange = metadata.atlas.effectDistanceRange
+vec4 sampleValue = texture(atlasTexture, uv);
+float textDistance = (median3(sampleValue.rgb) - 0.5) * distanceRange;
+float effectDistance = (sampleValue.a - 0.5) * effectDistanceRange;
+```
+
+Zero is the contour; positive distances are inside the glyph. These formulas
+use symmetric ranges. For ordinary MTSDF generated with `-pxrange`, use
+`distanceRange` for both channels when `effectDistanceRange` is absent.
+A renderer that only uses RGB can continue to use `distanceRange`.
+A renderer that uses alpha must read the separate effect range.
+
+The extension's limits are:
+
+- Both ranges must be positive finite numbers, and `effectpxrange` must be
+  greater than or equal to `pxrange`. Equal ranges need no RGB remapping.
+- Only symmetric pixel ranges are supported.
+- Outputs are PNG (`-imageout`), JSON (`-json`), and CSV (`-csv`). Use a
+  `.png` image filename or explicit `-format png`.
+- `-effectpxrange` is rejected outside `-type mtsdfx`.
+- Font selection, variable fonts, multiple inputs, fixed size, and both Y
+  origins are exercised by the extension's tests. `mtsdfx` does not imply
+  all glyphs or a fixed font size.
+- The extension is implemented by the Node CLI. Use `npx @uno.build/fonts` to
+  generate `mtsdfx` atlases.

@@ -1,0 +1,42 @@
+---
+title: Overview
+description: Generate font atlases with @uno.build/fonts.
+---
+
+`@uno.build/fonts` is a WebAssembly (WASM) version of
+[msdf-atlas-gen](https://github.com/Chlumsky/msdf-atlas-gen). It runs the original C++
+generator compiled to WASM through a Node.js CLI.
+
+## Quick start
+
+With Node.js 8.0.0 or later and npm installed, generate an atlas and its layout
+from a local font file:
+
+```sh
+npx @uno.build/fonts font.ttf
+```
+
+This generates `font.png` and `font.json` using the default `mtsdfx` atlas type.
+
+This is equivalent to specifying the defaults explicitly:
+
+```sh
+npx @uno.build/fonts \
+  -font font.ttf \
+  -imageout font.png \
+  -json font.json \
+  -type mtsdfx \
+  -size 64 \
+  -pxrange 16 \
+  -effectpxrange 32 \
+  -chars "[0x20, 0x7e]" \
+  -format png
+```
+
+## Next steps
+
+- [CLI options](./cli-options.mdx): inputs, outputs, character selection, and atlas settings.
+- [MTSDFX](./mtsdfx.mdx): separate distance ranges for text edges and effects.
+- [Texts & Fonts](../(ui)/getting-started/texts-fonts.mdx): load and use an atlas in uno UI.
+
+For development instructions and third-party licenses, see the [fonts repository](https://github.com/uno-build/fonts).

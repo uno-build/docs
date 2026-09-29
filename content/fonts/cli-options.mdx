@@ -1,0 +1,32 @@
+---
+title: CLI options
+description: Reference for the @uno.build/fonts command-line options.
+---
+
+| Option           | Values                                                                  | Description                                                                                                               |
+| ---------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `-font`          | Path to a `.ttf` or `.otf` file                                         | Input font; also accepted as the first positional argument. Required unless using `-varfont`.                             |
+| `-imageout`      | Output image path                                                       | Atlas image destination. Default: last input font path with its extension replaced by `.png`.                             |
+| `-json`          | Output `.json` path                                                     | Exports metrics, Unicode glyph layout, and kerning. Default: last input font path with its extension replaced by `.json`. |
+| `-chars`         | Code points, ranges, or quoted strings, e.g. `'[0x20, 0x7e], "áéíóúñ"'` | Characters to include. Default: printable ASCII (`U+0020`–`U+007E`).                                                      |
+| `-charset`       | Text file path                                                          | Reads Unicode character selection from a UTF-8 or ASCII file instead of inline `-chars`.                                  |
+| `-type`          | `mtsdfx`, `mtsdf`, `msdf`, `sdf`                                        | Atlas type. Default: `mtsdfx`, with separate RGB and alpha distance ranges.                                               |
+| `-size`          | Positive number                                                         | Glyph size in pixels per em. Default: `64`, unless `-minsize` is supplied.                                                |
+| `-pxrange`       | Positive number                                                         | Total symmetric distance range in pixels; RGB range for `mtsdfx`. Default: `16` (−8 to +8).                               |
+| `-effectpxrange` | Positive number ≥ `-pxrange`                                            | Alpha/effect range in pixels, only for `mtsdfx`. Default: `max(size / 2, pxrange)` (`32` with CLI defaults).              |
+| `-yorigin`       | `bottom`, `top`                                                         | Output Y-axis direction: upward (`bottom`, default) or downward (`top`).                                                  |
+| `-format`        | `png`, `binfloat`                                                       | Image encoding: 8-bit PNG or raw little-endian 32-bit floats. A `.png` path selects PNG; `mtsdfx` only supports PNG.      |
+| `-allglyphs`     | No value                                                                | Packs every glyph, including unmapped glyphs; JSON omits glyphs without Unicode mappings.                                 |
+| `-varfont`       | `"font.ttf?wdth=75&wght=700"`                                           | Input variable font with axis values. Quote the entire argument.                                                          |
+| `-minsize`       | Positive number                                                         | Minimum pixels per em; uses the largest size that fits the same atlas dimensions.                                         |
+| `-glyphs`        | Glyph indices or ranges, e.g. `'0, 1, [10, 20]'`                        | Selects font-specific glyph indices instead of Unicode characters.                                                        |
+| `-glyphset`      | Text file path                                                          | Reads glyph indices and ranges from a file instead of inline `-glyphs`.                                                   |
+| `-csv`           | Output `.csv` path                                                      | Exports glyph identifiers, advances, and bounds as an additional layout file.                                             |
+| `-fontname`      | Name                                                                    | Sets the font name in output metadata.                                                                                    |
+| `-and`           | No value                                                                | Starts another font input group in the same atlas; character selection carries forward.                                   |
+| `-printvaraxes`  | No value                                                                | Lists the input font's variation axes without creating default outputs.                                                   |
+| `-threads`       | Integer ≥ `0`                                                           | Accepted for compatibility; this WASM build always runs sequentially.                                                     |
+
+For more details, see the [official msdf-atlas-gen repository](https://github.com/Chlumsky/msdf-atlas-gen).
+
+See [MTSDFX](./mtsdfx.mdx) for details on the default atlas type and its distance ranges.
