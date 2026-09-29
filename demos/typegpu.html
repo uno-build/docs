@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -31,36 +31,36 @@
           "typegpu": "https://esm.sh/typegpu@0.12.5",
           "typegpu/data": "https://esm.sh/typegpu@0.12.5/data",
           "yoga-layout/load": "https://esm.sh/yoga-layout@3.2.1/load",
-          "@uno/ui/react": "./uno-ui/components/react/index.js",
-          "@uno/ui/ResourcesWebGPU": "./uno-ui/renderer/webgpu/ResourcesWebGPU.js",
-          "@uno/ui/UI": "./uno-ui/ui/UI.js"
+          "@uno.build/ui/": "https://esm.sh/@uno.build/ui@0.1.0/"
         }
       }
     </script>
-    <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+    <script src="https://esm.sh/@babel/standalone@7.29.0/babel.min.js?raw"></script>
     <script type="module">
-      import tgpu from "typegpu";
-      import * as d from "typegpu/data";
-      import ResourcesWebGPU from "@uno/ui/ResourcesWebGPU";
-      import UI from "@uno/ui/UI";
-      import { registerRootComponent } from "@uno/ui/react";
-      import { getReactComponent } from "./components/loaders.js";
+      import tgpu from 'typegpu'
+      import * as d from 'typegpu/data'
+      import ResourcesWebGPU from '@uno.build/ui/ResourcesWebGPU'
+      import UI from '@uno.build/ui/UI'
+      import { registerRootComponent } from '@uno.build/ui/react'
+      import { loadReactComponent } from './components/loaders.js'
 
       // TypeGPU and Uno UI share the same canvas and WebGPU device.
-      const canvas = document.querySelector("canvas");
-      const resources = await ResourcesWebGPU.create({ canvas });
-      const { device, context, format } = resources;
-      const root = tgpu.initFromDevice({ device });
-      const { ui: background_ui } = await UI.create({ resources });
-      const { ui: foreground_ui } = await UI.create({ resources });
+      const canvas = document.querySelector('canvas')
+      const resources = await ResourcesWebGPU.create({ canvas })
+      const { device, context, format } = resources
+      const root = tgpu.initFromDevice({ device })
+      const { ui: background_ui } = await UI.create({ resources })
+      const { ui: foreground_ui } = await UI.create({ resources })
 
-      const frame_uniform = root.createUniform(d.vec2f); // Time and aspect ratio.
+      const frame_uniform = root.createUniform(d.vec2f) // Time and aspect ratio.
 
       // Generate the cube from eight corners and twelve triangles, without vertex buffers.
-      const cube_vertex_fn = tgpu.vertexFn({
-        in: { vertex_index: d.builtin.vertexIndex },
-        out: { position: d.builtin.position, color: d.vec3f },
-      })(`{
+      const cube_vertex_fn = tgpu
+        .vertexFn({
+          in: { vertex_index: d.builtin.vertexIndex },
+          out: { position: d.builtin.position, color: d.vec3f },
+        })(
+          `{
         let corners = array<vec3f, 8>(
           vec3f(-1, -1, -1), vec3f(1, -1, -1), vec3f(1, 1, -1), vec3f(-1, 1, -1),
           vec3f(-1, -1,  1), vec3f(1, -1,  1), vec3f(1, 1,  1), vec3f(-1, 1,  1),
@@ -80,85 +80,84 @@
         p = vec3f(c.y * p.x + s.y * p.z, p.y, -s.y * p.x + c.y * p.z);
         let depth = 4.0 - p.z;
         return Out(vec4f(p.x * 1.4 / frame.y, p.y * 1.4, depth - 1.0, depth), corner * 0.5 + vec3f(0.5));
-      }`).$uses({ frame: frame_uniform });
+      }`,
+        )
+        .$uses({ frame: frame_uniform })
 
       const cube_fragment_fn = tgpu.fragmentFn({
         in: { color: d.vec3f },
         out: d.vec4f,
       })(`{
         return vec4f(in.color, 1.0);
-      }`);
+      }`)
 
       // A single convex cube only needs back-face culling, so no depth texture is needed.
       const pipeline = root.createRenderPipeline({
         vertex: cube_vertex_fn,
         fragment: cube_fragment_fn,
         targets: { format },
-        primitive: { topology: "triangle-list", cullMode: "back" },
-      });
+        primitive: { topology: 'triangle-list', cullMode: 'back' },
+      })
 
       // Load the font and images used by components/React.jsx and the background.
-      const font_name = "ChangaOne";
-      const response_image = await fetch(`assets/${font_name}.png`);
-      const blob = await response_image.blob();
-      const image = await createImageBitmap(blob);
-      const response_data = await fetch(`assets/${font_name}.json`);
-      const data = await response_data.json();
-      resources.registerFont(font_name, { image, data });
+      const font_name = 'ChangaOne'
+      const response_image = await fetch(`assets/${font_name}.png`)
+      const blob = await response_image.blob()
+      const image = await createImageBitmap(blob)
+      const response_data = await fetch(`assets/${font_name}.json`)
+      const data = await response_data.json()
+      resources.registerFont(font_name, { image, data })
 
-      const image_url = "assets/coin.png";
-      const response = await fetch(image_url);
-      const coin_blob = await response.blob();
-      const coin = await createImageBitmap(coin_blob);
-      resources.registerImage(image_url, { image: coin });
+      const image_url = 'assets/coin.png'
+      const response = await fetch(image_url)
+      const coin_blob = await response.blob()
+      const coin = await createImageBitmap(coin_blob)
+      resources.registerImage(image_url, { image: coin })
 
-      background_ui.root.style("backgroundImage", image_url);
-      background_ui.root.style("backgroundSize", "32px 32px");
-      background_ui.root.style("backgroundRepeat", "repeat");
+      background_ui.root.style('backgroundImage', image_url)
+      background_ui.root.style('backgroundSize', '32px 32px')
+      background_ui.root.style('backgroundRepeat', 'repeat')
 
       // Mount the same React component used earlier as the foreground UI.
-      const App = await getReactComponent("components/React.jsx");
-      const react = registerRootComponent(App, { ui: foreground_ui });
-      react.mount({ backgroundColor: '#F5F2EC99', defaultName: 'TypeGPU' });
+      const App = await loadReactComponent('components/React.jsx')
+      const react = registerRootComponent(App, { ui: foreground_ui })
+      react.mount({ backgroundColor: '#F5F2EC99', defaultName: 'TypeGPU' })
 
       function onResize() {
-        const width = canvas.clientWidth;
-        const height = canvas.clientHeight;
-        const device_pixel_ratio = window.devicePixelRatio;
-        canvas.width = Math.max(1, Math.round(width * device_pixel_ratio));
-        canvas.height = Math.max(1, Math.round(height * device_pixel_ratio));
+        const width = canvas.clientWidth
+        const height = canvas.clientHeight
+        const device_pixel_ratio = window.devicePixelRatio
+        canvas.width = Math.max(1, Math.round(width * device_pixel_ratio))
+        canvas.height = Math.max(1, Math.round(height * device_pixel_ratio))
         for (const ui of [background_ui, foreground_ui]) {
-          ui.setViewport(width, height);
-          ui.setDevicePixelRatio(device_pixel_ratio);
-          ui.update();
+          ui.setViewport(width, height)
+          ui.setDevicePixelRatio(device_pixel_ratio)
+          ui.update()
         }
       }
-      window.addEventListener("resize", onResize);
-      onResize();
+      window.addEventListener('resize', onResize)
+      onResize()
 
-      let bgposition = 0;
+      let bgposition = 0
       requestAnimationFrame(function render(time) {
-        const canvas_texture = context.getCurrentTexture();
-        const texture_view = canvas_texture.createView();
+        const canvas_texture = context.getCurrentTexture()
+        const texture_view = canvas_texture.createView()
 
-        bgposition += 0.25;
-        background_ui.root.style("backgroundPosition", `${bgposition}px ${-bgposition}px`);
-        background_ui.update();
+        bgposition += 0.25
+        background_ui.root.style('backgroundPosition', `${bgposition}px ${-bgposition}px`)
+        background_ui.update()
 
-        frame_uniform.write(d.vec2f(time / 1000, canvas.width / canvas.height));
+        frame_uniform.write(d.vec2f(time / 1000, canvas.width / canvas.height))
 
         // Draw the background, TypeGPU cube, and React in one command buffer.
-        const command_encoder = device.createCommandEncoder();
-        background_ui.draw({ submit: false, command_encoder, texture_view, load_op: "clear" });
-        pipeline
-          .with(command_encoder)
-          .withColorAttachment({ view: texture_view, loadOp: "load" })
-          .draw(36);
-        foreground_ui.update();
-        foreground_ui.draw({ command_encoder, texture_view });
+        const command_encoder = device.createCommandEncoder()
+        background_ui.draw({ submit: false, command_encoder, texture_view, load_op: 'clear' })
+        pipeline.with(command_encoder).withColorAttachment({ view: texture_view, loadOp: 'load' }).draw(36)
+        foreground_ui.update()
+        foreground_ui.draw({ command_encoder, texture_view })
 
-        requestAnimationFrame(render);
-      });
+        requestAnimationFrame(render)
+      })
     </script>
   </body>
 </html>

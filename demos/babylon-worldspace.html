@@ -28,15 +28,13 @@
           "react/jsx-runtime": "https://esm.sh/react@19.3.0/jsx-runtime?external=react",
           "react-reconciler": "https://esm.sh/react-reconciler@0.34.0?external=react",
           "react-reconciler/constants.js": "https://esm.sh/react-reconciler@0.34.0/constants.js",
-          "@babylonjs/core/": "https://cdn.jsdelivr.net/npm/@babylonjs/core@9.26.1/",
+          "@babylonjs/core/": "https://raw.esm.sh/@babylonjs/core@9.26.1/",
           "yoga-layout/load": "https://esm.sh/yoga-layout@3.2.1/load",
-          "@uno/ui/react": "./uno-ui/components/react/index.js",
-          "@uno/ui/ResourcesWebGPU": "./uno-ui/renderer/webgpu/ResourcesWebGPU.js",
-          "@uno/ui/UIBabylon": "./uno-ui/ui/UIBabylon.js"
+          "@uno.build/ui/": "https://esm.sh/@uno.build/ui@0.1.0/"
         }
       }
     </script>
-    <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+    <script src="https://esm.sh/@babel/standalone@7.29.0/babel.min.js?raw"></script>
     <script type="module">
       import { FreeCamera } from '@babylonjs/core/Cameras/freeCamera.js'
       import { WebGPUEngine } from '@babylonjs/core/Engines/webgpuEngine.js'
@@ -47,10 +45,11 @@
       import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder.js'
       import { SubMesh } from '@babylonjs/core/Meshes/subMesh.js'
       import { Scene } from '@babylonjs/core/scene.js'
-      import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
-      import UIBabylon from '@uno/ui/UIBabylon'
-      import { registerRootComponent } from '@uno/ui/react'
-      import { getReactComponent } from './components/loaders.js'
+      import ResourcesWebGPU from '@uno.build/ui/ResourcesWebGPU'
+      // Share the demo's Babylon modules so engine extensions and meshes use the same classes.
+      import UIBabylon from 'https://esm.sh/@uno.build/ui@0.1.0/UIBabylon?external=@babylonjs/core'
+      import { registerRootComponent } from '@uno.build/ui/react'
+      import { loadReactComponent } from './components/loaders.js'
 
       // Babylon.js and Uno UI share the same canvas and WebGPU device.
       const canvas = document.querySelector('canvas')
@@ -156,8 +155,8 @@
       const coin = await createImageBitmap(coin_blob)
       resources.registerImage(image_url, { image: coin })
 
-      // Mount the same React component used earlier.
-      const App = await getReactComponent('components/React.jsx')
+      // Mount the same loadReactComponentsed earlier.
+      const App = await loadReactComponent('components/React.jsx')
       const react = registerRootComponent(App, { ui })
       react.mount({ defaultName: 'Babylon.js' })
 

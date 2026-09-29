@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -24,60 +24,59 @@
       {
         "imports": {
           "yoga-layout/load": "https://esm.sh/yoga-layout@3.2.1/load",
-          "@uno/ui/ResourcesWebGPU": "./uno-ui/renderer/webgpu/ResourcesWebGPU.js",
-          "@uno/ui/UI": "./uno-ui/ui/UI.js"
+          "@uno.build/ui/": "https://esm.sh/@uno.build/ui@0.1.0/"
         }
       }
     </script>
     <script type="module">
-      import ResourcesWebGPU from "@uno/ui/ResourcesWebGPU";
-      import UI from "@uno/ui/UI";
+      import ResourcesWebGPU from '@uno.build/ui/ResourcesWebGPU'
+      import UI from '@uno.build/ui/UI'
 
-      const canvas = document.querySelector("canvas");
-      const resources = await ResourcesWebGPU.create({ canvas });
-      const { ui } = await UI.create({ resources });
+      const canvas = document.querySelector('canvas')
+      const resources = await ResourcesWebGPU.create({ canvas })
+      const { ui } = await UI.create({ resources })
 
-      const font_name = "ChangaOne";
+      const font_name = 'ChangaOne'
 
       // Load font/image
-      const response_image = await fetch(`assets/${font_name}.png`);
-      const blob = await response_image.blob();
-      const image = await createImageBitmap(blob);
+      const response_image = await fetch(`assets/${font_name}.png`)
+      const blob = await response_image.blob()
+      const image = await createImageBitmap(blob)
 
       // Load font/data
-      const response_data = await fetch(`assets/${font_name}.json`);
-      const data = await response_data.json();
+      const response_data = await fetch(`assets/${font_name}.json`)
+      const data = await response_data.json()
 
       // Register the font
-      resources.registerFont(font_name, { image, data });
+      resources.registerFont(font_name, { image, data })
 
-      ui.root.style("backgroundColor", "#8080FD");
-      ui.root.style("alignItems", "center");
-      ui.root.style("justifyContent", "center");
+      ui.root.style('backgroundColor', '#8080FD')
+      ui.root.style('alignItems', 'center')
+      ui.root.style('justifyContent', 'center')
 
-      const node = ui.create();
-      node.text("Hello World!");
-      node.style("fontFamily", font_name);
-      node.style("fontSize", "8vw");
-      node.style("color", "#ffffff");
-      node.style("textStroke", "0.5vw #000000");
-      node.style("textShadow", "0px 0.5vw 0px #000000");
-      ui.root.add(node);
+      const node = ui.create()
+      node.text('Hello World!')
+      node.style('fontFamily', font_name)
+      node.style('fontSize', '8vw')
+      node.style('color', '#ffffff')
+      node.style('textStroke', '0.5vw #000000')
+      node.style('textShadow', '0px 0.5vw 0px #000000')
+      ui.root.add(node)
 
       function onResize() {
-        canvas.width = canvas.clientWidth * window.devicePixelRatio;
-        canvas.height = canvas.clientHeight * window.devicePixelRatio;
-        ui.setViewport(canvas.clientWidth, canvas.clientHeight);
-        ui.setDevicePixelRatio(window.devicePixelRatio);
-        ui.update();
+        canvas.width = canvas.clientWidth * window.devicePixelRatio
+        canvas.height = canvas.clientHeight * window.devicePixelRatio
+        ui.setViewport(canvas.clientWidth, canvas.clientHeight)
+        ui.setDevicePixelRatio(window.devicePixelRatio)
+        ui.update()
       }
-      window.addEventListener("resize", onResize);
-      onResize();
+      window.addEventListener('resize', onResize)
+      onResize()
 
       requestAnimationFrame(function render() {
-        ui.draw();
-        requestAnimationFrame(render);
-      });
+        ui.draw()
+        requestAnimationFrame(render)
+      })
     </script>
   </body>
 </html>

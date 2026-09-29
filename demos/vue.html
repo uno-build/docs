@@ -23,21 +23,18 @@
     <script type="importmap">
       {
         "imports": {
-          "vue": "https://unpkg.com/vue@3.5.42/dist/vue.runtime.esm-browser.js",
-          "vue/compiler-sfc": "https://unpkg.com/@vue/compiler-sfc@3.5.42/dist/compiler-sfc.esm-browser.js",
+          "vue": "https://esm.sh/vue@^3.5.42?target=es2022",
+          "vue/compiler-sfc": "https://esm.sh/@vue/compiler-sfc@3.5.42/dist/compiler-sfc.esm-browser.js?raw",
           "yoga-layout/load": "https://esm.sh/yoga-layout@3.2.1/load",
-          "@uno/ui/vue": "./uno-ui/components/vue/index.js",
-          "@uno/ui/vue/config": "./uno-ui/components/vue/config.js",
-          "@uno/ui/ResourcesWebGPU": "./uno-ui/renderer/webgpu/ResourcesWebGPU.js",
-          "@uno/ui/UI": "./uno-ui/ui/UI.js"
+          "@uno.build/ui/": "https://esm.sh/@uno.build/ui@0.1.0/"
         }
       }
     </script>
     <script type="module">
-      import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
-      import UI from '@uno/ui/UI'
-      import { registerRootComponent } from '@uno/ui/vue'
-      import { getVueComponent } from './components/loaders.js'
+      import ResourcesWebGPU from '@uno.build/ui/ResourcesWebGPU'
+      import UI from '@uno.build/ui/UI'
+      import { registerRootComponent } from '@uno.build/ui/vue'
+      import { loadVueComponent } from './components/loaders.js'
 
       const canvas = document.querySelector('canvas')
       const resources = await ResourcesWebGPU.create({ canvas })
@@ -60,7 +57,7 @@
       resources.registerImage(image_url, { image: coin })
 
       // Vue
-      const App = await getVueComponent('components/Vue.vue') // import App from './components/Vue.vue'
+      const App = await loadVueComponent('components/Vue.vue') // import App from './components/Vue.vue'
       const vue = registerRootComponent(App, { ui })
       vue.mount({})
 

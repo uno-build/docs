@@ -1,6 +1,6 @@
 <script setup>
 import { onUnmounted, ref, watch } from 'vue'
-import { View, Text, Image, Input } from '@uno/ui/vue'
+import { View, Text, Image, Input } from '@uno.build/ui/vue'
 
 let dom_input = null
 const name = ref('Vue')
@@ -27,12 +27,13 @@ function focusInput(event) {
 
   if (!dom_input) {
     // The DOM input captures typing, paste, and IME for the Uno input.
-    const input = document.createElement("input");
-    input.tabIndex = -1;
-    input.style.cssText = "position: fixed; left: 0; bottom: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none;";
-    input.oninput = () => (name.value = input.value);
-    document.body.appendChild(input);
-    dom_input = input;
+    const input = document.createElement('input')
+    input.tabIndex = -1
+    input.style.cssText =
+      'position: fixed; left: 0; bottom: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none;'
+    input.oninput = () => (name.value = input.value)
+    document.body.appendChild(input)
+    dom_input = input
   }
 
   const input = dom_input
@@ -82,7 +83,7 @@ function blurInput() {
   align-items: center;
   justify-content: center;
   gap: 16px;
-  background-color: #F5F2EC;
+  background-color: #f5f2ec;
   font-family: ChangaOne;
 }
 
@@ -97,7 +98,7 @@ function blurInput() {
   padding: 0px 12px;
   font-size: 18px;
   color: #213547;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   border-radius: 12px;
 }
 

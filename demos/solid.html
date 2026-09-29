@@ -27,20 +27,16 @@
           "@solidjs/universal": "https://esm.sh/@solidjs/universal@2.0.0-rc.8?external=solid-js",
           "@dom-expressions/babel-plugin-jsx": "https://esm.sh/@dom-expressions/babel-plugin-jsx@0.50.0-next.44?bundle",
           "yoga-layout/load": "https://esm.sh/yoga-layout@3.2.1/load",
-          "@uno/ui/solid": "./uno-ui/components/solid/index.js",
-          "uno-ui/solid": "./uno-ui/components/solid/index.js",
-          "@uno/ui/solid/config": "./uno-ui/components/solid/config.js",
-          "@uno/ui/ResourcesWebGPU": "./uno-ui/renderer/webgpu/ResourcesWebGPU.js",
-          "@uno/ui/UI": "./uno-ui/ui/UI.js"
+          "@uno.build/ui/": "https://esm.sh/@uno.build/ui@0.1.0/"
         }
       }
     </script>
-    <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+    <script src="https://esm.sh/@babel/standalone@7.29.0/babel.min.js?raw"></script>
     <script type="module">
-      import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
-      import UI from '@uno/ui/UI'
-      import { registerRootComponent } from '@uno/ui/solid'
-      import { getSolidComponent } from './components/loaders.js'
+      import ResourcesWebGPU from '@uno.build/ui/ResourcesWebGPU'
+      import UI from '@uno.build/ui/UI'
+      import { registerRootComponent } from '@uno.build/ui/solid'
+      import { loadSolidComponent } from './components/loaders.js'
 
       const canvas = document.querySelector('canvas')
       const resources = await ResourcesWebGPU.create({ canvas })
@@ -63,7 +59,7 @@
       resources.registerImage(image_url, { image: coin })
 
       // Solid
-      const App = await getSolidComponent('components/Solid.jsx') // import App from './components/Solid.jsx'
+      const App = await loadSolidComponent('components/Solid.jsx') // import App from './components/Solid.jsx'
       const solid = registerRootComponent(App, { ui })
       solid.mount({})
 

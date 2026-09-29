@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -30,78 +30,76 @@
           "react-reconciler/constants.js": "https://esm.sh/react-reconciler@0.34.0/constants.js",
           "three/webgpu": "https://esm.sh/three@0.186.0/webgpu",
           "yoga-layout/load": "https://esm.sh/yoga-layout@3.2.1/load",
-          "@uno/ui/react": "./uno-ui/components/react/index.js",
-          "@uno/ui/ResourcesWebGPU": "./uno-ui/renderer/webgpu/ResourcesWebGPU.js",
-          "@uno/ui/UI": "./uno-ui/ui/UI.js"
+          "@uno.build/ui/": "https://esm.sh/@uno.build/ui@0.1.0/"
         }
       }
     </script>
-    <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+    <script src="https://esm.sh/@babel/standalone@7.29.0/babel.min.js?raw"></script>
     <script type="module">
-      import * as THREE from "three/webgpu";
-      import ResourcesWebGPU from "@uno/ui/ResourcesWebGPU";
-      import UI from "@uno/ui/UI";
-      import { registerRootComponent } from "@uno/ui/react";
-      import { getReactComponent } from "./components/loaders.js";
+      import * as THREE from 'three/webgpu'
+      import ResourcesWebGPU from '@uno.build/ui/ResourcesWebGPU'
+      import UI from '@uno.build/ui/UI'
+      import { registerRootComponent } from '@uno.build/ui/react'
+      import { loadReactComponent } from './components/loaders.js'
 
       // Uno UI share the same canvas and WebGPU device.
-      const canvas = document.querySelector("canvas");
-      const resources = await ResourcesWebGPU.create({ canvas });
-      const { device, context } = resources;
-      
-      const { ui: background_ui } = await UI.create({ resources });
-      const { ui: foreground_ui } = await UI.create({ resources });
+      const canvas = document.querySelector('canvas')
+      const resources = await ResourcesWebGPU.create({ canvas })
+      const { device, context } = resources
 
-      // Three.js 
-      const renderer = new THREE.WebGPURenderer({ canvas, device, context });
-      renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
-      renderer.autoClearColor = false;
-      await renderer.init();
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10);
-      camera.position.z = 2.5;
-      const cube = new THREE.Mesh( new THREE.BoxGeometry(1, 1, 1), new THREE.MeshNormalMaterial());
-      scene.add(cube);
+      const { ui: background_ui } = await UI.create({ resources })
+      const { ui: foreground_ui } = await UI.create({ resources })
+
+      // Three.js
+      const renderer = new THREE.WebGPURenderer({ canvas, device, context })
+      renderer.outputColorSpace = THREE.LinearSRGBColorSpace
+      renderer.autoClearColor = false
+      await renderer.init()
+      const scene = new THREE.Scene()
+      const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10)
+      camera.position.z = 2.5
+      const cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshNormalMaterial())
+      scene.add(cube)
 
       // Load the font and images used by components/React.jsx and the background.
-      const font_name = "ChangaOne";
-      const response_image = await fetch(`assets/${font_name}.png`);
-      const blob = await response_image.blob();
-      const image = await createImageBitmap(blob);
-      const response_data = await fetch(`assets/${font_name}.json`);
-      const data = await response_data.json();
-      resources.registerFont(font_name, { image, data });
+      const font_name = 'ChangaOne'
+      const response_image = await fetch(`assets/${font_name}.png`)
+      const blob = await response_image.blob()
+      const image = await createImageBitmap(blob)
+      const response_data = await fetch(`assets/${font_name}.json`)
+      const data = await response_data.json()
+      resources.registerFont(font_name, { image, data })
 
-      const image_url = "assets/coin.png";
-      const response = await fetch(image_url);
-      const coin_blob = await response.blob();
-      const coin = await createImageBitmap(coin_blob);
-      resources.registerImage(image_url, { image: coin });
+      const image_url = 'assets/coin.png'
+      const response = await fetch(image_url)
+      const coin_blob = await response.blob()
+      const coin = await createImageBitmap(coin_blob)
+      resources.registerImage(image_url, { image: coin })
 
-      background_ui.root.style("backgroundImage", image_url);
-      background_ui.root.style("backgroundSize", "32px 32px");
-      background_ui.root.style("backgroundRepeat", "repeat");
+      background_ui.root.style('backgroundImage', image_url)
+      background_ui.root.style('backgroundSize', '32px 32px')
+      background_ui.root.style('backgroundRepeat', 'repeat')
 
       // Mount the same React component used earlier as the foreground UI.
-      const App = await getReactComponent("components/React.jsx");
-      const react = registerRootComponent(App, { ui: foreground_ui });
-      react.mount({ backgroundColor: '#F5F2EC99', defaultName: 'Three.js' });
+      const App = await loadReactComponent('components/React.jsx')
+      const react = registerRootComponent(App, { ui: foreground_ui })
+      react.mount({ backgroundColor: '#F5F2EC99', defaultName: 'Three.js' })
 
       function onResize() {
-        const width = canvas.clientWidth;
-        const height = canvas.clientHeight;
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(width, height, false);
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
+        const width = canvas.clientWidth
+        const height = canvas.clientHeight
+        renderer.setPixelRatio(window.devicePixelRatio)
+        renderer.setSize(width, height, false)
+        camera.aspect = width / height
+        camera.updateProjectionMatrix()
         for (const ui of [background_ui, foreground_ui]) {
-          ui.setViewport(width, height);
-          ui.setDevicePixelRatio(window.devicePixelRatio);
-          ui.update();
+          ui.setViewport(width, height)
+          ui.setDevicePixelRatio(window.devicePixelRatio)
+          ui.update()
         }
       }
-      window.addEventListener("resize", onResize);
-      onResize();
+      window.addEventListener('resize', onResize)
+      onResize()
 
       let bgposition = 0
       requestAnimationFrame(function render(time) {
@@ -111,16 +109,16 @@
         background_ui.update()
 
         // Rotate the cube using elapsed time in milliseconds.
-        cube.rotation.x = time / 2000;
-        cube.rotation.y = time / 1000;
+        cube.rotation.x = time / 2000
+        cube.rotation.y = time / 1000
 
         // Draw the background repeating coins, then the Three.js cube, then React on top.
-        background_ui.draw({ load_op: "clear" });
-        renderer.render(scene, camera);
-        foreground_ui.draw(); // Equivalent to foreground_ui.draw({ load_op: 'load' })
+        background_ui.draw({ load_op: 'clear' })
+        renderer.render(scene, camera)
+        foreground_ui.draw() // Equivalent to foreground_ui.draw({ load_op: 'load' })
 
-        requestAnimationFrame(render);
-      });
+        requestAnimationFrame(render)
+      })
     </script>
   </body>
 </html>

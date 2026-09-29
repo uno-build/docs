@@ -28,18 +28,16 @@
           "react-reconciler": "https://esm.sh/react-reconciler@0.34.0?external=react",
           "react-reconciler/constants.js": "https://esm.sh/react-reconciler@0.34.0/constants.js",
           "yoga-layout/load": "https://esm.sh/yoga-layout@3.2.1/load",
-          "@uno/ui/react": "./uno-ui/components/react/index.js",
-          "@uno/ui/ResourcesWebGPU": "./uno-ui/renderer/webgpu/ResourcesWebGPU.js",
-          "@uno/ui/UI": "./uno-ui/ui/UI.js"
+          "@uno.build/ui/": "https://esm.sh/@uno.build/ui@0.1.0/"
         }
       }
     </script>
-    <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+    <script src="https://esm.sh/@babel/standalone@7.29.0/babel.min.js?raw"></script>
     <script type="module">
-      import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
-      import UI from '@uno/ui/UI'
-      import { registerRootComponent } from '@uno/ui/react'
-      import { getReactComponent } from './components/loaders.js'
+      import ResourcesWebGPU from '@uno.build/ui/ResourcesWebGPU'
+      import UI from '@uno.build/ui/UI'
+      import { registerRootComponent } from '@uno.build/ui/react'
+      import { loadReactComponent } from './components/loaders.js'
 
       const canvas = document.querySelector('canvas')
       const resources = await ResourcesWebGPU.create({ canvas })
@@ -62,7 +60,7 @@
       resources.registerImage(image_url, { image: coin })
 
       // React
-      const App = await getReactComponent('components/React.jsx') // import App from './components/React.jsx'
+      const App = await loadReactComponent('components/React.jsx') // import App from './components/React.jsx'
       const react = registerRootComponent(App, { ui })
       react.mount({ defaultName: 'React' })
 

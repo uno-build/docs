@@ -1,5 +1,5 @@
 import { createEffect, createSignal, onSettled } from 'solid-js'
-import { View, Text, Image, Input } from '@uno/ui/solid'
+import { View, Text, Image, Input } from '@uno.build/ui/solid'
 
 export default function App() {
   let dom_input = null
@@ -29,7 +29,8 @@ export default function App() {
       // The DOM input captures typing, paste, and IME for the Uno input.
       const input = document.createElement('input')
       input.tabIndex = -1
-      input.style.cssText = 'position: fixed; left: 0; bottom: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none;'
+      input.style.cssText =
+        'position: fixed; left: 0; bottom: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none;'
       input.oninput = () => setName(input.value)
       document.body.appendChild(input)
       dom_input = input
@@ -61,9 +62,7 @@ export default function App() {
     >
       <Image src="assets/coin.png" width="64px" />
 
-      <Text style={{ fontSize: '28px', color: '#1f3b77' }}>
-        {getName() ? `Hello, ${getName()}!` : 'Your name'}
-      </Text>
+      <Text style={{ fontSize: '28px', color: '#1f3b77' }}>{getName() ? `Hello, ${getName()}!` : 'Your name'}</Text>
 
       <Input
         value={getName()}
@@ -95,9 +94,7 @@ export default function App() {
           borderRadius: '12px',
         }}
       >
-        <Text style={{ fontSize: '16px', color: '#ffffff', pointerEvents: 'none' }}>
-          Clear
-        </Text>
+        <Text style={{ fontSize: '16px', color: '#ffffff', pointerEvents: 'none' }}>Clear</Text>
       </View>
     </View>
   )

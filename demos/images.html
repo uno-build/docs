@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -24,44 +24,43 @@
       {
         "imports": {
           "yoga-layout/load": "https://esm.sh/yoga-layout@3.2.1/load",
-          "@uno/ui/ResourcesWebGPU": "./uno-ui/renderer/webgpu/ResourcesWebGPU.js",
-          "@uno/ui/UI": "./uno-ui/ui/UI.js"
+          "@uno.build/ui/": "https://esm.sh/@uno.build/ui@0.1.0/"
         }
       }
     </script>
     <script type="module">
-      import ResourcesWebGPU from "@uno/ui/ResourcesWebGPU";
-      import UI from "@uno/ui/UI";
+      import ResourcesWebGPU from '@uno.build/ui/ResourcesWebGPU'
+      import UI from '@uno.build/ui/UI'
 
-      const canvas = document.querySelector("canvas");
-      const resources = await ResourcesWebGPU.create({ canvas });
-      const { ui } = await UI.create({ resources });
+      const canvas = document.querySelector('canvas')
+      const resources = await ResourcesWebGPU.create({ canvas })
+      const { ui } = await UI.create({ resources })
 
-      const image_url = "assets/coin.png";
-      const response = await fetch(image_url);
-      const blob = await response.blob();
-      const image = await createImageBitmap(blob);
+      const image_url = 'assets/coin.png'
+      const response = await fetch(image_url)
+      const blob = await response.blob()
+      const image = await createImageBitmap(blob)
 
-      resources.registerImage(image_url, { image });
+      resources.registerImage(image_url, { image })
 
-      ui.root.style("backgroundImage", image_url);
-      ui.root.style("backgroundSize", "32px 32px");
-      ui.root.style("backgroundRepeat", "repeat");
+      ui.root.style('backgroundImage', image_url)
+      ui.root.style('backgroundSize', '32px 32px')
+      ui.root.style('backgroundRepeat', 'repeat')
 
       function onResize() {
-        canvas.width = canvas.clientWidth * window.devicePixelRatio;
-        canvas.height = canvas.clientHeight * window.devicePixelRatio;
-        ui.setViewport(canvas.clientWidth, canvas.clientHeight);
-        ui.setDevicePixelRatio(window.devicePixelRatio);
-        ui.update();
+        canvas.width = canvas.clientWidth * window.devicePixelRatio
+        canvas.height = canvas.clientHeight * window.devicePixelRatio
+        ui.setViewport(canvas.clientWidth, canvas.clientHeight)
+        ui.setDevicePixelRatio(window.devicePixelRatio)
+        ui.update()
       }
-      window.addEventListener("resize", onResize);
-      onResize();
+      window.addEventListener('resize', onResize)
+      onResize()
 
       requestAnimationFrame(function render() {
-        ui.draw();
-        requestAnimationFrame(render);
-      });
+        ui.draw()
+        requestAnimationFrame(render)
+      })
     </script>
   </body>
 </html>
