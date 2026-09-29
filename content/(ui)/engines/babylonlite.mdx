@@ -11,8 +11,8 @@ The examples below assume you are familiar with the basics of uno UI covered in 
 Use `createEngine` from `@babylonjs/lite`. Initialize the engine first, then pass its WebGPU device and the canvas context to uno UI.
 
 ```js
-import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
-import UI from '@uno/ui/UI'
+import ResourcesWebGPU from '@uno.build/ui/ResourcesWebGPU'
+import UI from '@uno.build/ui/UI'
 import {
   addTask,
   createEngine,
@@ -60,10 +60,10 @@ Clear the color at the start of each frame, then preserve it in subsequent draws
 
 The `load_op` option of `ui.draw()` controls what happens to the existing pixels before drawing the UI:
 
-| Value | Effect |
-| --- | --- |
+| Value              | Effect                                                                |
+| ------------------ | --------------------------------------------------------------------- |
 | `'load'` (default) | Keeps existing pixels. Used when calling `ui.draw()` without options. |
-| `'clear'` | Clears the target to transparent black. |
+| `'clear'`          | Clears the target to transparent black.                               |
 
 `load_op` does not choose which layer is in front. The draw order does that. Using `'clear'` after drawing the scene erases the scene; using `'load'` keeps it visible wherever the UI is transparent.
 
@@ -71,10 +71,10 @@ The `load_op` option of `ui.draw()` controls what happens to the existing pixels
 
 The `clr` option of `createRenderTask()` controls whether Babylon Lite clears the color before rendering the scene:
 
-| Value | Effect |
-| --- | --- |
-| `true` (default) | Clears the existing color. |
-| `false` | Preserves the existing color. |
+| Value            | Effect                        |
+| ---------------- | ----------------------------- |
+| `true` (default) | Clears the existing color.    |
+| `false`          | Preserves the existing color. |
 
 The separate `depth` target is cleared for each frame even when `clr` is `false`.
 
@@ -129,9 +129,19 @@ requestAnimationFrame(function render(time) {
 Add the scene task first, then the UI task:
 
 ```js
-addTask(scene, createRenderTask({
-  name: 'scene', rt: engine.scRT, depth, clr: true,
-}, engine, scene))
+addTask(
+  scene,
+  createRenderTask(
+    {
+      name: 'scene',
+      rt: engine.scRT,
+      depth,
+      clr: true,
+    },
+    engine,
+    scene,
+  ),
+)
 addTask(scene, createUITask('foreground-ui', ui))
 ```
 
@@ -147,9 +157,19 @@ ui.root.style('backgroundColor', '#ffffff')
 ui.update()
 
 addTask(scene, createUITask('background-ui', ui, 'clear'))
-addTask(scene, createRenderTask({
-  name: 'scene', rt: engine.scRT, depth, clr: false,
-}, engine, scene))
+addTask(
+  scene,
+  createRenderTask(
+    {
+      name: 'scene',
+      rt: engine.scRT,
+      depth,
+      clr: false,
+    },
+    engine,
+    scene,
+  ),
+)
 ```
 
 uno UI clears the canvas and draws the white background and panel. Babylon Lite keeps those pixels and draws the cube over them. Leaving `clr: true` would erase the UI before drawing the cube.
@@ -169,9 +189,19 @@ Apply the layout and viewport setup to each UI, then add the background UI, the 
 
 ```js
 addTask(scene, createUITask('background-ui', background_ui, 'clear'))
-addTask(scene, createRenderTask({
-  name: 'scene', rt: engine.scRT, depth, clr: false,
-}, engine, scene))
+addTask(
+  scene,
+  createRenderTask(
+    {
+      name: 'scene',
+      rt: engine.scRT,
+      depth,
+      clr: false,
+    },
+    engine,
+    scene,
+  ),
+)
 addTask(scene, createUITask('foreground-ui', foreground_ui))
 ```
 

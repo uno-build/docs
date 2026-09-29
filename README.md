@@ -35,6 +35,10 @@ The base path is defined in `lib/base-path.mjs`. Next.js prefixes its assets and
 internal links; public image URLs use `withBasePath`. Fonts are bundled from CSS.
 Rebuild after changing the base path or pulling updates on the server.
 
+Static exports do not support Next.js Proxy or request-time content negotiation.
+Markdown is available directly at `/docs/llms.mdx/docs/<slug>/content.md`,
+with indexes at `/docs/llms.txt` and `/docs/llms-full.txt`.
+
 ## Explore
 
 In the project, you can see:

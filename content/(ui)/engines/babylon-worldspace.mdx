@@ -11,7 +11,7 @@ This section continues the [Babylon.js](./babylon.mdx) guide. As before, keep th
 Replace the `UI` import and `UI.create()` call with `UIBabylon`. Pass it the scene as well as the shared resources. It returns the uno UI instance and a Babylon.js plane with its texture and material already connected:
 
 ```js
-import UIBabylon from '@uno/ui/UIBabylon'
+import UIBabylon from '@uno.build/ui/UIBabylon'
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial.js'
 import { Color3 } from '@babylonjs/core/Maths/math.color.js'
 
@@ -95,24 +95,21 @@ import { SubMesh } from '@babylonjs/core/Meshes/subMesh.js'
 const { ui, plane } = await UIBabylon.create({
   //...
   createPlane({ material, world_width, world_height }) {
-    const plane = MeshBuilder.CreateBox('ui-box', {
-      width: world_width,
-      height: world_height,
-      depth: world_width,
-    }, scene)
+    const plane = MeshBuilder.CreateBox(
+      'ui-box',
+      {
+        width: world_width,
+        height: world_height,
+        depth: world_width,
+      },
+      scene,
+    )
     const body_material = new StandardMaterial('body-material', scene)
     body_material.disableLighting = true
     body_material.emissiveColor = Color3.FromHexString('#F5F2EC')
 
     const box_material = new MultiMaterial('box-material', scene)
-    box_material.subMaterials = [
-      body_material,
-      material,
-      body_material,
-      body_material,
-      body_material,
-      body_material,
-    ]
+    box_material.subMaterials = [body_material, material, body_material, body_material, body_material, body_material]
     plane.material = box_material
     plane.releaseSubMeshes()
     for (let face = 0; face < 6; face++) {
@@ -125,9 +122,7 @@ const { ui, plane } = await UIBabylon.create({
       body_material,
       box_material,
       mapIntersection(intersection) {
-        return intersection.subMeshId === 1
-          ? intersection.getTextureCoordinates()
-          : null
+        return intersection.subMeshId === 1 ? intersection.getTextureCoordinates() : null
       },
     }
   },

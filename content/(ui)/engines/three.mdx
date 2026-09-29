@@ -6,14 +6,13 @@ Three.js and uno UI can draw to the same canvas by sharing a WebGPU device and c
 
 The examples below assume you are familiar with the basics of uno UI covered in the [First Layout](../getting-started/first-layout.mdx) section.
 
-
 ## Shared setup
 
 Use `WebGPURenderer` from `three/webgpu`. Pass it the `canvas`, `device`, and `context` used by uno UI.
 
 ```js
-import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
-import UI from '@uno/ui/UI'
+import ResourcesWebGPU from '@uno.build/ui/ResourcesWebGPU'
+import UI from '@uno.build/ui/UI'
 import * as THREE from 'three/webgpu'
 
 const canvas = document.querySelector('canvas')
@@ -27,7 +26,6 @@ renderer.setClearColor(0xffffff, 1)
 await renderer.init()
 ```
 
-
 ## Control the draw order
 
 Clear the color at the start of each frame, then preserve it in subsequent draws.
@@ -36,10 +34,10 @@ Clear the color at the start of each frame, then preserve it in subsequent draws
 
 The `load_op` option of `ui.draw()` controls what happens to the existing pixels before drawing the UI:
 
-| Value | Effect |
-| --- | --- |
+| Value              | Effect                                                                |
+| ------------------ | --------------------------------------------------------------------- |
 | `'load'` (default) | Keeps existing pixels. Used when calling `ui.draw()` without options. |
-| `'clear'` | Clears the target to transparent black. |
+| `'clear'`          | Clears the target to transparent black.                               |
 
 `load_op` does not choose which layer is in front. The draw order does that. Using `'clear'` after drawing the scene erases the scene; using `'load'` keeps it visible wherever the UI is transparent.
 
@@ -47,10 +45,10 @@ The `load_op` option of `ui.draw()` controls what happens to the existing pixels
 
 `renderer.autoClearColor` controls whether Three.js clears the color before rendering the scene:
 
-| Value | Effect |
-| --- | --- |
-| `true` (default) | Clears the existing color. |
-| `false` | Preserves the existing color. |
+| Value            | Effect                        |
+| ---------------- | ----------------------------- |
+| `true` (default) | Clears the existing color.    |
+| `false`          | Preserves the existing color. |
 
 Keep `renderer.autoClear` at its default value of `true`. Changing only `autoClearColor` lets Three.js continue clearing depth and stencil for each frame.
 
@@ -137,7 +135,6 @@ By default, Three.js uses `SRGBColorSpace`. `WebGPURenderer` renders the scene i
 `LinearSRGBColorSpace` matches Three.js's working color space. With the default `NoToneMapping`, Three.js skips the intermediate conversion pass and draws directly onto the canvas, preserving the background UI when `autoClearColor = false`. Enabling tone mapping can introduce the intermediate pass again. See [Three.js output conversion](https://threejs.org/docs/pages/Renderer.html#needsFrameBufferTarget).
 
 This setup omits the usual linear-to-sRGB output conversion, so the scene's colors may appear darker than with standard sRGB output. Keeping that conversion requires coordinating the final composition between Three.js and uno UI.
-
 
 ## Demo
 

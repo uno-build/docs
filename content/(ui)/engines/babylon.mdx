@@ -11,8 +11,8 @@ The examples below assume you are familiar with the basics of uno UI covered in 
 Use `WebGPUEngine` from `@babylonjs/core`. Initialize the engine first, then pass its WebGPU device and the canvas context to uno UI.
 
 ```js
-import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
-import UI from '@uno/ui/UI'
+import ResourcesWebGPU from '@uno.build/ui/ResourcesWebGPU'
+import UI from '@uno.build/ui/UI'
 import { WebGPUEngine } from '@babylonjs/core/Engines/webgpuEngine.js'
 import { Color4 } from '@babylonjs/core/Maths/math.color.js'
 import { Scene } from '@babylonjs/core/scene.js'
@@ -54,10 +54,10 @@ Clear the color at the start of each frame, then preserve it in subsequent draws
 
 The `load_op` option of `ui.draw()` controls what happens to the existing pixels before drawing the UI:
 
-| Value | Effect |
-| --- | --- |
+| Value              | Effect                                                                |
+| ------------------ | --------------------------------------------------------------------- |
 | `'load'` (default) | Keeps existing pixels. Used when calling `ui.draw()` without options. |
-| `'clear'` | Clears the target to transparent black. |
+| `'clear'`          | Clears the target to transparent black.                               |
 
 `load_op` does not choose which layer is in front. The draw order does that. Using `'clear'` after drawing the scene erases the scene; using `'load'` keeps it visible wherever the UI is transparent.
 
@@ -65,10 +65,10 @@ The `load_op` option of `ui.draw()` controls what happens to the existing pixels
 
 `scene.autoClear` controls whether Babylon.js clears the color before rendering the scene:
 
-| Value | Effect |
-| --- | --- |
-| `true` (default) | Clears the existing color. |
-| `false` | Preserves the existing color. |
+| Value            | Effect                        |
+| ---------------- | ----------------------------- |
+| `true` (default) | Clears the existing color.    |
+| `false`          | Preserves the existing color. |
 
 Keep `scene.autoClearDepthAndStencil` at its default value of `true`. Changing only `autoClear` lets Babylon.js continue clearing depth and stencil for each frame.
 

@@ -11,7 +11,7 @@ This section continues the [PlayCanvas](./playcanvas.mdx) guide. As before, keep
 Replace the `UI` import and `UI.create()` call with `UIPlayCanvas`. Pass it the app as well as the shared resources. It returns the uno UI instance and a PlayCanvas entity with its texture and material already connected:
 
 ```js
-import UIPlayCanvas from '@uno/ui/UIPlayCanvas'
+import UIPlayCanvas from '@uno.build/ui/UIPlayCanvas'
 
 const UI_SIZE = 400
 const device_pixel_ratio = window.devicePixelRatio
@@ -71,7 +71,7 @@ Draw the UI texture in `prerender` so the plane displays the updated layout when
 
 ```js
 app.on('update', () => {
-  plane.setLocalEulerAngles(0, Math.sin(performance.now() / 2000) * 0.8 * 180 / Math.PI, 0)
+  plane.setLocalEulerAngles(0, (Math.sin(performance.now() / 2000) * 0.8 * 180) / Math.PI, 0)
 })
 app.on('prerender', () => {
   ui.update()

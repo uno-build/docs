@@ -5,9 +5,9 @@ title: Vue
 ## Register the root component
 
 ```js
-import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
-import UI from '@uno/ui/UI'
-import { registerRootComponent } from '@uno/ui/vue'
+import ResourcesWebGPU from '@uno.build/ui/ResourcesWebGPU'
+import UI from '@uno.build/ui/UI'
+import { registerRootComponent } from '@uno.build/ui/vue'
 import App from './App.vue'
 
 const canvas = document.querySelector('canvas')
@@ -31,25 +31,25 @@ The examples below use Vue single-file components. With Vite, pass `compilerConf
 // vite.config.js
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { compilerConfig, stylesPlugin } from '@uno/ui/vue/config'
+import { compilerConfig, stylesPlugin } from '@uno.build/ui/vue/config'
 
 export default defineConfig({
   plugins: [vue(compilerConfig), stylesPlugin()],
   resolve: {
     alias: {
-      'uno-ui/vue': '@uno/ui/vue',
+      'uno-ui/vue': '@uno.build/ui/vue',
     },
   },
 })
 ```
 
-`compilerConfig` preserves image resource identifiers and disables static hoisting for the uno renderer. The current styles plugin generates imports from `uno-ui/vue`, so the alias above resolves them to `@uno/ui/vue`.
+`compilerConfig` preserves image resource identifiers and disables static hoisting for the uno renderer. The current styles plugin generates imports from `uno-ui/vue`, so the alias above resolves them to `@uno.build/ui/vue`.
 
 The [demo below](#demo) compiles `.vue` files directly in the browser. Its loader passes `compilerConfig.template` to `compileScript`, processes styles with `compileStyles`, and registers the resulting rules with `registerStyleSheet`.
 
 ## Components
 
-`@uno/ui/vue` exports five components: `View`, `Text`, `Image`, `ScrollView`, and `Input`. They render uno nodes and share the style and event bindings below. Each component's section describes its additional props and behavior.
+`@uno.build/ui/vue` exports five components: `View`, `Text`, `Image`, `ScrollView`, and `Input`. They render uno nodes and share the style and event bindings below. Each component's section describes its additional props and behavior.
 
 ### `<View>`
 
@@ -59,7 +59,7 @@ The [demo below](#demo) compiles `.vue` files directly in the browser. Its loade
 <!-- App.vue -->
 <script setup>
 import { ref } from 'vue'
-import { View } from '@uno/ui/vue'
+import { View } from '@uno.build/ui/vue'
 
 const hovered = ref(false)
 </script>
@@ -93,7 +93,7 @@ Use `Text` for all text content. Follow [Texts & Fonts](./texts-fonts.mdx) to lo
 
 ```vue
 <script setup>
-import { View, Text } from '@uno/ui/vue'
+import { View, Text } from '@uno.build/ui/vue'
 </script>
 
 <template>
@@ -109,12 +109,12 @@ A string directly inside `View`, such as `<View>Hello</View>`, is invalid. `Text
 
 `Image` displays a registered image resource. It does not download the image from `src`. Follow [Images](./images.mdx) to load and register the asset before calling `vue.mount({})`.
 
-| Property          | Value                                      | Default  | Usage                                                                                                     |
-| ----------------- | ------------------------------------------ | -------- | --------------------------------------------------------------------------------------------------------- |
-| `src`             | String                                     | Required | The registered image resource identifier.                                                                 |
-| `width`           | String                                     | Not set  | Width with units, such as `'128px'`. If only this dimension is set, the registered aspect ratio is preserved. |
-| `height`          | String                                     | Not set  | Height with units, such as `'100px'`. If only this dimension is set, the registered aspect ratio is preserved. |
-| `style.objectFit` | `'fill'`, `'contain'`, `'cover'`, or `'none'` | `'fill'` | Controls how the image fits within the component's dimensions. Set it inside `style`.                       |
+| Property          | Value                                         | Default  | Usage                                                                                                          |
+| ----------------- | --------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------- |
+| `src`             | String                                        | Required | The registered image resource identifier.                                                                      |
+| `width`           | String                                        | Not set  | Width with units, such as `'128px'`. If only this dimension is set, the registered aspect ratio is preserved.  |
+| `height`          | String                                        | Not set  | Height with units, such as `'100px'`. If only this dimension is set, the registered aspect ratio is preserved. |
+| `style.objectFit` | `'fill'`, `'contain'`, `'cover'`, or `'none'` | `'fill'` | Controls how the image fits within the component's dimensions. Set it inside `style`.                          |
 
 With neither dimension set, the component uses the registered image size. Dimensions from classes or `:style` take precedence over the `width` and `height` props.
 
@@ -122,7 +122,7 @@ Use the same identifier as the component's `src`:
 
 ```vue
 <script setup>
-import { Image, View } from '@uno/ui/vue'
+import { Image, View } from '@uno.build/ui/vue'
 </script>
 
 <template>
@@ -137,26 +137,22 @@ import { Image, View } from '@uno/ui/vue'
 
 `ScrollView` clips its children and provides vertical scrolling by default.
 
-| Property     | Value   | Default | Usage                                                                     |
-| ------------ | ------- | ------- | ------------------------------------------------------------------------- |
+| Property     | Value   | Default | Usage                                                                       |
+| ------------ | ------- | ------- | --------------------------------------------------------------------------- |
 | `horizontal` | Boolean | `false` | Arranges the content in a row and enables horizontal scrolling when `true`. |
 
 Give it a limited height so that content can overflow the viewport:
 
 ```vue
 <script setup>
-import { ScrollView, Text, View } from '@uno/ui/vue'
+import { ScrollView, Text, View } from '@uno.build/ui/vue'
 
 const ITEMS = Array.from({ length: 20 }, (_, index) => index + 1)
 </script>
 
 <template>
   <ScrollView :style="{ width: '240px', height: '200px' }">
-    <View
-      v-for="item in ITEMS"
-      :key="item"
-      :style="{ padding: '12px', flexShrink: '0', backgroundColor: '#42B883' }"
-    >
+    <View v-for="item in ITEMS" :key="item" :style="{ padding: '12px', flexShrink: '0', backgroundColor: '#42B883' }">
       <Text :style="{ color: '#ffffff' }">Item {{ item }}</Text>
     </View>
   </ScrollView>
@@ -183,17 +179,17 @@ The `style` and `class` bindings apply to the viewport. Use `@scroll` to respond
 
 `Input` is a visual component controlled by `value`. It displays text, a placeholder, and a blinking caret while focused.
 
-| Property                 | Value                    | Default     | Usage                                                                                |
-| ------------------------ | ------------------------ | ----------- | ------------------------------------------------------------------------------------ |
+| Property                 | Value                     | Default     | Usage                                                                                   |
+| ------------------------ | ------------------------- | ----------- | --------------------------------------------------------------------------------------- |
 | `value`                  | String, number, or `null` | `undefined` | The displayed input value. An empty string, `null`, or `undefined` is treated as empty. |
-| `placeholder`            | String, number, or `null` | `undefined` | Text displayed only when `value` is empty and the input is unfocused.                  |
-| `placeholder-text-color` | Color string             | `'#777777'` | The color used for the placeholder text (`placeholderTextColor` in JavaScript).        |
+| `placeholder`            | String, number, or `null` | `undefined` | Text displayed only when `value` is empty and the input is unfocused.                   |
+| `placeholder-text-color` | Color string              | `'#777777'` | The color used for the placeholder text (`placeholderTextColor` in JavaScript).         |
 
 Pass the displayed text through `:value`:
 
 ```vue
 <script setup>
-import { Input } from '@uno/ui/vue'
+import { Input } from '@uno.build/ui/vue'
 
 defineProps({ value: { type: String, default: '' } })
 </script>
@@ -218,25 +214,20 @@ With the compiler setup above, `<style>` and `<style scoped>` blocks apply uno s
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { View } from '@uno/ui/vue'
+import { View } from '@uno.build/ui/vue'
 
 const hovered = ref(false)
 </script>
 
 <template>
-  <View
-    class="box"
-    :class="{ hovered }"
-    @pointerover="hovered = true"
-    @pointerout="hovered = false"
-  />
+  <View class="box" :class="{ hovered }" @pointerover="hovered = true" @pointerout="hovered = false" />
 </template>
 
 <style scoped>
 .box {
   width: 200px;
   height: 150px;
-  background-color: #42B883;
+  background-color: #42b883;
 }
 
 .box.hovered {
@@ -253,31 +244,31 @@ Descendant selectors, tag selectors, pseudo-classes such as `:hover`, nested rul
 
 All five components accept the following event bindings. Pass a handler function to subscribe; omit the binding or set its handler to `null` or `undefined` to remove it. Vue manages the listener registration and cleanup.
 
-| Template binding  | uno event       | When it fires                                                        |
-| ----------------- | --------------- | -------------------------------------------------------------------- |
+| Template binding | uno event       | When it fires                                                        |
+| ---------------- | --------------- | -------------------------------------------------------------------- |
 | `@pointerdown`   | `pointerdown`   | A pointer is pressed on a node.                                      |
 | `@pointermove`   | `pointermove`   | A pointer moves over the UI or during an active pointer interaction. |
 | `@pointerup`     | `pointerup`     | An active pointer is released.                                       |
 | `@pointercancel` | `pointercancel` | The platform cancels an active pointer interaction.                  |
 | `@pointerover`   | `pointerover`   | A node becomes the pointer's hover target.                           |
 | `@pointerout`    | `pointerout`    | A node stops being the pointer's hover target.                       |
-| `@click`          | `click`         | A node is activated by a completed click or tap.                     |
-| `@wheel`          | `wheel`         | Wheel or trackpad input occurs over a node.                          |
-| `@scroll`         | `scroll`        | A scroll container's offset changes through scrolling.               |
-| `@focus`          | `focus`         | A node gains uno focus.                                              |
-| `@blur`           | `blur`          | A node loses uno focus.                                              |
+| `@click`         | `click`         | A node is activated by a completed click or tap.                     |
+| `@wheel`         | `wheel`         | Wheel or trackpad input occurs over a node.                          |
+| `@scroll`        | `scroll`        | A scroll container's offset changes through scrolling.               |
+| `@focus`         | `focus`         | A node gains uno focus.                                              |
+| `@blur`          | `blur`          | A node loses uno focus.                                              |
 
 Use the hyphenated pointer bindings shown above, such as `@pointerdown`, so Vue generates uno's `onPointerDown` prop.
 
 Handlers receive uno events rather than DOM events. Each event includes these common members:
 
-| Member              | Meaning                                                                          |
-| ------------------- | -------------------------------------------------------------------------------- |
+| Member              | Meaning                                                                           |
+| ------------------- | --------------------------------------------------------------------------------- |
 | `type`              | The uno event name, such as `'pointerdown'`.                                      |
-| `target`            | The uno node where the event originated.                                         |
-| `current_target`    | The uno node whose handler is currently running.                                 |
+| `target`            | The uno node where the event originated.                                          |
+| `current_target`    | The uno node whose handler is currently running.                                  |
 | `source_event`      | The original platform event, or `null` for a programmatic event without a source. |
-| `stopPropagation()` | Stops the event from continuing to ancestor nodes.                               |
+| `stopPropagation()` | Stops the event from continuing to ancestor nodes.                                |
 
 Events bubble through the uno node tree, so a component's handler can receive events from its descendants. Event-specific data, such as pointer coordinates, wheel deltas, scroll offsets, and focus transitions, is documented in [Events](../api/events.mdx).
 
@@ -289,7 +280,7 @@ To prevent the source event's browser default action, call `event.source_event?.
 
 ```vue
 <script setup>
-import { Text, useUI } from '@uno/ui/vue'
+import { Text, useUI } from '@uno.build/ui/vue'
 
 const ui = useUI()
 const { width, height } = ui.resources.getImageSize('assets/coin.png')

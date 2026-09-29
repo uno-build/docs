@@ -55,7 +55,6 @@ node.on('pointerdown', (event) => {
 })
 ```
 
-
 ## Event propagation
 
 All built-in node events bubble from `target` through its ancestors, including `focus`, `blur`, `scroll`, `pointerover`, and `pointerout`. `target` stays the same during propagation, while `current_target` changes at each node. There is no capture phase.
@@ -79,7 +78,7 @@ To prevent a source event's browser default action, call `event.source_event?.pr
 `EventEmitter` is available for application events. `on()` returns an unsubscribe function; `emit()` calls listeners synchronously, and `destroy()` removes all listeners.
 
 ```ts
-import { EventEmitter } from '@uno/ui/events'
+import { EventEmitter } from '@uno.build/ui/events'
 
 const events = new EventEmitter<{ ready: { value: number } }>()
 const off = events.on('ready', ({ value }) => console.log(value))
@@ -95,8 +94,8 @@ You can also remove a listener with `off(type, listener)`. Registering the same 
 Pass factories through `defined_events` when creating the UI. Built-in events are already included. This example converts an application source event into a bubbling uno `press` event:
 
 ```ts
-import UI from '@uno/ui/UI'
-import type { UIOptions } from '@uno/ui/UI'
+import UI from '@uno.build/ui/UI'
+import type { UIOptions } from '@uno.build/ui/UI'
 
 type EventFactory = NonNullable<UIOptions['defined_events']>[number]
 

@@ -8,20 +8,23 @@
 .card {
   overflow: hidden;
   border: 1px solid var(--color-fd-border);
-  border-radius: 12px;
+  border-radius: 5px;
   background: var(--color-fd-card);
   color: var(--color-fd-foreground);
   text-decoration: none;
-  transition: border-color 160ms ease, box-shadow 160ms ease;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .card:hover,
-.card:focus-visible {
+.card:focus-within {
   border-color: var(--color-fd-primary);
   box-shadow: 0 4px 20px rgb(0 0 0 / 8%);
 }
 
 .preview {
+  display: block;
   overflow: hidden;
   aspect-ratio: 8 / 5;
   border-bottom: 1px solid var(--color-fd-border);
@@ -54,12 +57,28 @@
   gap: 4px;
   color: var(--color-fd-muted-foreground);
   font-size: 12px;
+  text-decoration: none;
+}
+
+.action:hover {
+  color: var(--color-fd-primary);
+  text-decoration: underline;
+}
+
+.action:focus-visible,
+.preview:focus-visible {
+  outline: 2px solid var(--color-fd-primary);
+  outline-offset: -2px;
 }
 
 @media (max-width: 639px) {
-  .gallery { grid-template-columns: minmax(0, 1fr); }
+  .gallery {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card { transition: none; }
+  .card {
+    transition: none;
+  }
 }

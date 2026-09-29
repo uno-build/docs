@@ -11,7 +11,7 @@ This section continues the [Babylon Lite](./babylonlite.mdx) guide. As before, k
 Replace the `UI` import and `UI.create()` call with `UIBabylonLite`. Pass it the engine and scene as well as the shared resources. It returns the uno UI instance and a Babylon Lite plane with its texture and material already connected:
 
 ```js
-import UIBabylonLite from '@uno/ui/UIBabylonLite'
+import UIBabylonLite from '@uno.build/ui/UIBabylonLite'
 import { addToScene, createStandardMaterial } from '@babylonjs/lite'
 
 const UI_SIZE = 400
@@ -67,13 +67,7 @@ By default, `plane` is a Babylon Lite mesh created with `createPlane()` using `w
 Draw the UI texture before rendering the scene so the plane displays the updated layout. Enable material plugins before registering the scene so the plane's material handles the UI texture correctly:
 
 ```js
-import {
-  enableMaterialPlugins,
-  onBeforeRender,
-  registerScene,
-  renderFrame,
-  resizeEngine,
-} from '@babylonjs/lite'
+import { enableMaterialPlugins, onBeforeRender, registerScene, renderFrame, resizeEngine } from '@babylonjs/lite'
 
 onBeforeRender(scene, () => {
   plane.rotation.y = Math.sin(performance.now() / 2000) * 0.8

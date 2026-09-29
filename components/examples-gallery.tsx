@@ -7,15 +7,16 @@ export function ExamplesGallery({ children }: { children: ReactNode }) {
   return <div className={`not-prose ${styles.gallery}`}>{children}</div>;
 }
 
-export function ExampleCard({ title, href, image, alt }: {
+export function ExampleCard({ title, href, sourceHref, image, alt }: {
   title: string;
   href: string;
+  sourceHref: string;
   image: string;
   alt?: string;
 }) {
   return (
-    <a className={styles.card} href={href} target="_blank" rel="noopener noreferrer">
-      <div className={styles.preview}>
+    <div className={styles.card}>
+      <a className={styles.preview} href={href} target="_blank" rel="noopener noreferrer" aria-label={`Open ${title} demo (opens in a new tab)`}>
         <img
           src={withBasePath(image)}
           alt={alt ?? `${title} example with background UI, an engine scene, and foreground UI`}
@@ -24,14 +25,14 @@ export function ExampleCard({ title, href, image, alt }: {
           loading="lazy"
           decoding="async"
         />
-      </div>
+      </a>
       <div className={styles.caption}>
         <span className={styles.title}>{title}</span>
-        <span className={styles.action}>
-          Open demo <ArrowUpRight size={16} aria-hidden="true" />
-          <span className="sr-only"> (opens in a new tab)</span>
-        </span>
+        <a className={styles.action} href={sourceHref} target="_blank" rel="noopener noreferrer">
+          Source code <ArrowUpRight size={16} aria-hidden="true" />
+          <span className="sr-only"> for {title} (opens in a new tab)</span>
+        </a>
       </div>
-    </a>
+    </div>
   );
 }

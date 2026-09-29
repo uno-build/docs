@@ -5,9 +5,9 @@ title: Solid
 ## Register the root component
 
 ```js
-import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
-import UI from '@uno/ui/UI'
-import { registerRootComponent } from '@uno/ui/solid'
+import ResourcesWebGPU from '@uno.build/ui/ResourcesWebGPU'
+import UI from '@uno.build/ui/UI'
+import { registerRootComponent } from '@uno.build/ui/solid'
 import App from './App.jsx'
 
 const canvas = document.querySelector('canvas')
@@ -33,25 +33,25 @@ The uno integration uses Solid 2. With Vite, pass `compilerConfig` to the Solid 
 // vite.config.js
 import { defineConfig } from 'vite'
 import solid from '@solidjs/vite-plugin'
-import { compilerConfig } from '@uno/ui/solid/config'
+import { compilerConfig } from '@uno.build/ui/solid/config'
 
 export default defineConfig({
   plugins: [solid(compilerConfig)],
   resolve: {
     alias: {
-      'uno-ui/solid': '@uno/ui/solid',
+      'uno-ui/solid': '@uno.build/ui/solid',
     },
   },
 })
 ```
 
-`compilerConfig` sets `generate: 'universal'` so JSX creates uno nodes. It generates imports from `uno-ui/solid`, which the alias above resolves to `@uno/ui/solid`.
+`compilerConfig` sets `generate: 'universal'` so JSX creates uno nodes. It generates imports from `uno-ui/solid`, which the alias above resolves to `@uno.build/ui/solid`.
 
 The [demo below](#demo) compiles JSX directly in the browser with Babel Standalone and `@dom-expressions/babel-plugin-jsx`, using `compilerConfig.solid`.
 
 ## Components
 
-`@uno/ui/solid` exports five components: `View`, `Text`, `Image`, `ScrollView`, and `Input`. They render uno nodes and share the properties and event props below. Each component's section describes its additional props and behavior.
+`@uno.build/ui/solid` exports five components: `View`, `Text`, `Image`, `ScrollView`, and `Input`. They render uno nodes and share the properties and event props below. Each component's section describes its additional props and behavior.
 
 ### `<View>`
 
@@ -60,7 +60,7 @@ The [demo below](#demo) compiles JSX directly in the browser with Babel Standalo
 ```jsx
 // SolidView.jsx
 import { createSignal } from 'solid-js'
-import { View } from '@uno/ui/solid'
+import { View } from '@uno.build/ui/solid'
 
 export default function App() {
   const [isHovered, setHovered] = createSignal(false)
@@ -94,7 +94,7 @@ export default function App() {
 Use `Text` for all text content. Follow [Texts & Fonts](../getting-started/texts-fonts.mdx) to load and register a font before rendering the examples below.
 
 ```jsx
-import { View, Text } from '@uno/ui/solid'
+import { View, Text } from '@uno.build/ui/solid'
 
 export default function App() {
   return (
@@ -123,7 +123,7 @@ With neither dimension set, the component uses the registered image size. Dimens
 Use the same identifier as the component's `src`:
 
 ```jsx
-import { Image, View } from '@uno/ui/solid'
+import { Image, View } from '@uno.build/ui/solid'
 
 export default function App() {
   return (
@@ -147,7 +147,7 @@ Give it a limited height so that content can overflow the viewport:
 
 ```jsx
 import { For } from 'solid-js'
-import { ScrollView, Text, View } from '@uno/ui/solid'
+import { ScrollView, Text, View } from '@uno.build/ui/solid'
 
 const ITEMS = Array.from({ length: 20 }, (_, index) => index + 1)
 
@@ -195,7 +195,7 @@ The `style` prop applies to the viewport. Use the `onScroll` event to respond to
 Pass the displayed text through `value`:
 
 ```jsx
-import { Input } from '@uno/ui/solid'
+import { Input } from '@uno.build/ui/solid'
 
 export default function App(props) {
   return (
@@ -242,21 +242,21 @@ Events bubble through the uno node tree, so a component's handler can receive ev
 
 ## Refs and handles
 
-In Solid, refs on `View`, `Text`, and `Image` receive the uno node directly: use `node.layout` or `node.focus()`, without `nodes.main`. `ScrollView` and `Input` instead expose compound handles. Import `ScrollViewHandle` and `InputHandle` from `@uno/ui/solid` when using TypeScript.
+In Solid, refs on `View`, `Text`, and `Image` receive the uno node directly: use `node.layout` or `node.focus()`, without `nodes.main`. `ScrollView` and `Input` instead expose compound handles. Import `ScrollViewHandle` and `InputHandle` from `@uno.build/ui/solid` when using TypeScript.
 
-| Component | Ref value | Available members |
-| --- | --- | --- |
-| `View`, `Text`, `Image` | uno node | Node properties and methods directly |
-| `ScrollView` | `ScrollViewHandle` | `nodes.main` (viewport), `nodes.content` (scrollable content) |
-| `Input` | `InputHandle` | `nodes.main`, `nodes.content`, `nodes.text`, `nodes.caret`, `focus()`, `blur()` |
+| Component               | Ref value          | Available members                                                               |
+| ----------------------- | ------------------ | ------------------------------------------------------------------------------- |
+| `View`, `Text`, `Image` | uno node           | Node properties and methods directly                                            |
+| `ScrollView`            | `ScrollViewHandle` | `nodes.main` (viewport), `nodes.content` (scrollable content)                   |
+| `Input`                 | `InputHandle`      | `nodes.main`, `nodes.content`, `nodes.text`, `nodes.caret`, `focus()`, `blur()` |
 
 `nodes.caret` is `null` when the input is unfocused. `focus()` and `blur()` change uno focus; they do not open a platform keyboard or provide text input.
-{/* 
+{/*
 Use callback refs to store the handles. Clicking the view below focuses the input and scrolls the viewport:
 
 ```tsx
-import { Input, ScrollView, View, useUI } from '@uno/ui/solid'
-import type { InputHandle, ScrollViewHandle } from '@uno/ui/solid'
+import { Input, ScrollView, View, useUI } from '@uno.build/ui/solid'
+import type { InputHandle, ScrollViewHandle } from '@uno.build/ui/solid'
 
 function Example() {
   const ui = useUI()
@@ -270,10 +270,19 @@ function Example() {
   }
 
   return (
-    <ScrollView ref={(handle) => { scroll = handle }} style={{ height: '120px' }}>
-      <Input ref={(handle) => { input = handle }} value="Hello" />
-      <View onClick={focusAndScroll}
-        style={{ height: '300px', flexShrink: '0', backgroundColor: '#4377bb' }} />
+    <ScrollView
+      ref={(handle) => {
+        scroll = handle
+      }}
+      style={{ height: '120px' }}
+    >
+      <Input
+        ref={(handle) => {
+          input = handle
+        }}
+        value="Hello"
+      />
+      <View onClick={focusAndScroll} style={{ height: '300px', flexShrink: '0', backgroundColor: '#4377bb' }} />
     </ScrollView>
   )
 }
@@ -286,7 +295,7 @@ Set `scrollTop` or `scrollLeft` on `nodes.main`, then call `ui.update()`. Use re
 `useUI()` returns the UI passed to `registerRootComponent`. Call it during component initialization inside that registered component tree. For example, a component can read the original dimensions of the registered `assets/coin.png` image:
 
 ```jsx
-import { Text, useUI } from '@uno/ui/solid'
+import { Text, useUI } from '@uno.build/ui/solid'
 
 export function ImageSize() {
   const ui = useUI()

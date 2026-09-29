@@ -4,15 +4,15 @@ title: Texts & Fonts
 
 ## 1. Generate your font atlas
 
-uno UI renders text using [MTSDF font atlases](https://github.com/Chlumsky/msdf-atlas-gen). Before loading a font, convert your `.ttf` file using `uno/fonts`:
+uno UI renders text using [MTSDF font atlases](https://github.com/Chlumsky/msdf-atlas-gen). Before loading a font, convert your `.ttf` file using `@uno.build/fonts`:
 
 ```bash
-npx @uno/fonts assets/ChangaOne.ttf
+npx @uno.build/fonts assets/ChangaOne.ttf
 ```
 
 By default, this generates `assets/ChangaOne.png` and `assets/ChangaOne.json`.
 
-For additional options see the [@uno/fonts documentation](https://github.com/uno-build/fonts).
+For additional options see the [documentation](https://github.com/uno-build/fonts).
 
 ## 2. Load and register the font
 

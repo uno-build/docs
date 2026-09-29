@@ -6,14 +6,13 @@ Pixi.js and uno UI can draw to the same canvas by sharing a WebGPU adapter and d
 
 The examples below assume you are familiar with the basics of uno UI covered in the [First Layout](../getting-started/first-layout.mdx) section.
 
-
 ## Shared setup
 
 Use `WebGPURenderer` from `pixi.js`. Pass it the `canvas` used by uno UI and its `adapter` and `device` through the `gpu` option.
 
 ```js
-import ResourcesWebGPU from '@uno/ui/ResourcesWebGPU'
-import UI from '@uno/ui/UI'
+import ResourcesWebGPU from '@uno.build/ui/ResourcesWebGPU'
+import UI from '@uno.build/ui/UI'
 import { WebGPURenderer } from 'pixi.js'
 
 const canvas = document.querySelector('canvas')
@@ -40,7 +39,6 @@ Keep `antialias: false` for this direct canvas composition so Pixi.js draws into
 
 The rendering examples below use the `stage` container and rotating `square` sprite from the demo. Apply the UI layout and viewport setup before starting the render loop.
 
-
 ## Control the draw order
 
 Clear the color at the start of each frame, then preserve it in subsequent draws.
@@ -49,10 +47,10 @@ Clear the color at the start of each frame, then preserve it in subsequent draws
 
 The `load_op` option of `ui.draw()` controls what happens to the existing pixels before drawing the UI:
 
-| Value | Effect |
-| --- | --- |
+| Value              | Effect                                                                |
+| ------------------ | --------------------------------------------------------------------- |
 | `'load'` (default) | Keeps existing pixels. Used when calling `ui.draw()` without options. |
-| `'clear'` | Clears the target to transparent black. |
+| `'clear'`          | Clears the target to transparent black.                               |
 
 `load_op` does not choose which layer is in front. The draw order does that. Using `'clear'` after drawing the scene erases the scene; using `'load'` keeps it visible wherever the UI is transparent.
 
@@ -60,9 +58,9 @@ The `load_op` option of `ui.draw()` controls what happens to the existing pixels
 
 The `clear` option of `renderer.render()` controls whether Pixi.js clears the color before rendering the scene:
 
-| Value | Effect |
-| --- | --- |
-| `true` | Clears the existing color. |
+| Value   | Effect                        |
+| ------- | ----------------------------- |
+| `true`  | Clears the existing color.    |
 | `false` | Preserves the existing color. |
 
 If `clear` is omitted, Pixi.js uses `clearBeforeRender`, which defaults to `true` but is set to `false` in the setup above. `backgroundAlpha: 0` makes the background transparent; it does not prevent clearing pixels already drawn by uno UI.
@@ -129,7 +127,6 @@ requestAnimationFrame(function render(time) {
 ```
 
 The background UI starts the frame, Pixi.js draws over it, and the foreground UI draws last. Keep the foreground layout transparent wherever the scene should remain visible.
-
 
 ## Demo
 
