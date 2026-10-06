@@ -179,13 +179,17 @@ The `style` and `class` bindings apply to the viewport. Use `@scroll` to respond
 
 ### `<Input>`
 
-`Input` is a visual component controlled by `value`. It displays text, a placeholder, and a blinking caret while focused.
+`Input` is a visual component controlled by `value`. It displays text, a placeholder, and a configurable caret and selection highlight while focused.
 
 | Property                 | Value                     | Default     | Usage                                                                                   |
 | ------------------------ | ------------------------- | ----------- | --------------------------------------------------------------------------------------- |
 | `value`                  | String, number, or `null` | `undefined` | The displayed input value. An empty string, `null`, or `undefined` is treated as empty. |
 | `placeholder`            | String, number, or `null` | `undefined` | Text displayed only when `value` is empty and the input is unfocused.                   |
 | `placeholder-text-color` | Color string              | `'#777777'` | The color used for the placeholder text (`placeholderTextColor` in JavaScript).         |
+| `caret-visible` | Boolean | `true` | Shows the blinking caret while focused. Set to `false` to hide it without hiding the selection. |
+| `caret-position` | Number | Selection end, or value length | Caret offset in the displayed value, measured in UTF-16 code units. |
+| `selection` | `readonly [number, number]` | `undefined` | Selection range `[start, end]`, with an inclusive start and exclusive end. Highlighted only while focused. |
+| `selection-color` | Color string | `'#3390ff55'` | Background color of the selected text. |
 
 Pass the displayed text through `:value`:
 
@@ -205,7 +209,26 @@ defineProps({ value: { type: String, default: '' } })
 </template>
 ```
 
-`Input` does not create a DOM input, emit value updates for `v-model`, or handle IME, selection, or clipboard input. To support typing in a browser, connect a native `<input>` outside the uno component tree, synchronize its value with a Vue `ref`, and manage its focus through `@focus` and `@blur`. See the [demo below](#demo) for a complete example.
+`caretPosition` and `selection` use the same UTF-16 offsets as a native input's `selectionStart` and `selectionEnd`. Offsets are clamped to the value's length. An empty or reversed range produces no highlight. If `caretPosition` is omitted, the caret uses the selection end when `selection` is provided, or the end of the value otherwise.
+
+The input preserves spaces and disables automatic wrapping. While focused, it scrolls horizontally as needed to keep the caret position visible. The selection is drawn behind the text by the component.
+
+In Vue templates, use the hyphenated bindings shown in the table; their JavaScript prop names are `caretVisible`, `caretPosition`, `selection`, and `selectionColor`.
+
+```vue
+<Input
+  value="Hello world"
+  :caret-position="5"
+  :selection="[0, 5]"
+  selection-color="#3390ff55"
+/>
+```
+
+Focus the input to display the caret and highlight in this example.
+
+`Input` displays selection supplied through props; it does not handle typing, IME, clipboard operations, or selection gestures itself. It does not emit value updates for `v-model`. To support typing in a browser, connect a native `<input>` outside the uno component tree, synchronize its value with Vue refs, and manage its focus through `@focus` and `@blur`.
+
+On the native input's `input` and `selectionchange` events, set `selection` to `[input.selectionStart, input.selectionEnd]`. Set `caretPosition` to `input.selectionStart` when `input.selectionDirection === 'backward'`, or to `input.selectionEnd` otherwise. This keeps the visible caret at the active end of the selection. These props only control the uno display; use the native input's `setSelectionRange(start, end, direction)` to change its actual selection.
 
 ## Styles
 
@@ -286,7 +309,7 @@ Use a Vue template ref to access a component's uno nodes. These refs expose hand
 | `ScrollView`            | `ScrollViewHandle` | `nodes.main` (viewport), `nodes.content` (scrollable content)                   |
 | `Input`                 | `InputHandle`      | `nodes.main`, `nodes.content`, `nodes.text`, `nodes.caret`, `focus()`, `blur()` |
 
-`nodes.caret` is `null` when the input is unfocused. `focus()` and `blur()` change uno focus; they do not open a platform keyboard or provide text input.
+`nodes.caret` is `null` when the input is unfocused or `caretVisible` is `false`. `focus()` and `blur()` change uno focus; they do not open a platform keyboard or provide text input.
 {/*
 This example focuses the input and scrolls the viewport after mounting:
 

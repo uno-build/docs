@@ -184,13 +184,17 @@ The `style` prop applies to the viewport. Use the `onScroll` event to respond to
 
 ### `<Input>`
 
-`Input` is a visual component controlled by `value`. It displays text, a placeholder, and a blinking caret while focused.
+`Input` is a visual component controlled by `value`. It displays text, a placeholder, and a configurable caret and selection highlight while focused.
 
 | Property               | Value                     | Default     | Usage                                                                                   |
 | ---------------------- | ------------------------- | ----------- | --------------------------------------------------------------------------------------- |
 | `value`                | String, number, or `null` | `undefined` | The displayed input value. An empty string, `null`, or `undefined` is treated as empty. |
 | `placeholder`          | String, number, or `null` | `undefined` | Text displayed only when `value` is empty and the input is unfocused.                   |
 | `placeholderTextColor` | Color string              | `'#777777'` | The color used for the placeholder text.                                                |
+| `caretVisible` | Boolean | `true` | Shows the blinking caret while focused. Set to `false` to hide it without hiding the selection. |
+| `caretPosition` | Number | Selection end, or value length | Caret offset in the displayed value, measured in UTF-16 code units. |
+| `selection` | `readonly [number, number]` | `undefined` | Selection range `[start, end]`, with an inclusive start and exclusive end. Highlighted only while focused. |
+| `selectionColor` | Color string | `'#3390ff55'` | Background color of the selected text. |
 
 Pass the displayed text through `value`:
 
@@ -208,7 +212,24 @@ export default function App(props) {
 }
 ```
 
-`Input` does not create a DOM input or handle IME, selection, or clipboard input. To support typing in a browser, connect a native `<input>` outside the uno component tree, synchronize its value with a Solid signal, and manage its focus through `onFocus` and `onBlur`. See the [demo below](#demo) for a complete example.
+`caretPosition` and `selection` use the same UTF-16 offsets as a native input's `selectionStart` and `selectionEnd`. Offsets are clamped to the value's length. An empty or reversed range produces no highlight. If `caretPosition` is omitted, the caret uses the selection end when `selection` is provided, or the end of the value otherwise.
+
+The input preserves spaces and disables automatic wrapping. While focused, it scrolls horizontally as needed to keep the caret position visible. The selection is drawn behind the text by the component.
+
+```jsx
+<Input
+  value="Hello world"
+  caretPosition={5}
+  selection={[0, 5]}
+  selectionColor="#3390ff55"
+/>
+```
+
+Focus the input to display the caret and highlight in this example.
+
+`Input` displays selection supplied through props; it does not handle typing, IME, clipboard operations, or selection gestures itself. To support typing in a browser, connect a native `<input>` outside the uno component tree, synchronize its value with Solid signals, and manage its focus through `onFocus` and `onBlur`.
+
+On the native input's `input` and `selectionchange` events, set `selection` to `[input.selectionStart, input.selectionEnd]`. Set `caretPosition` to `input.selectionStart` when `input.selectionDirection === 'backward'`, or to `input.selectionEnd` otherwise. This keeps the visible caret at the active end of the selection. These props only control the uno display; use the native input's `setSelectionRange(start, end, direction)` to change its actual selection.
 
 ## Event props
 
@@ -250,7 +271,7 @@ In Solid, refs on `View`, `Text`, and `Image` receive the uno node directly: use
 | `ScrollView`            | `ScrollViewHandle` | `nodes.main` (viewport), `nodes.content` (scrollable content)                   |
 | `Input`                 | `InputHandle`      | `nodes.main`, `nodes.content`, `nodes.text`, `nodes.caret`, `focus()`, `blur()` |
 
-`nodes.caret` is `null` when the input is unfocused. `focus()` and `blur()` change uno focus; they do not open a platform keyboard or provide text input.
+`nodes.caret` is `null` when the input is unfocused or `caretVisible` is `false`. `focus()` and `blur()` change uno focus; they do not open a platform keyboard or provide text input.
 {/*
 Use callback refs to store the handles. Clicking the view below focuses the input and scrolls the viewport:
 

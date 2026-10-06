@@ -125,7 +125,7 @@ function Example({ dimmed }: { dimmed: boolean }) {
 | `lineHeight`              | `text`        | Non-negative unitless number or non-negative length                                                                                              |
 | `letterSpacing`           | `text`        | Signed length                                                                                                                                    |
 | `textAlign`               | `text`        | `left`, `right`, `center`, `justify`                                                                                                             |
-| `whiteSpace`              | `text`        | `normal`, `nowrap`, `pre-wrap`                                                                                                                   |
+| `whiteSpace`              | `text`        | `normal`, `nowrap`, `pre-wrap`, `pre`                                                                                                                   |
 | `textShadow`              | `text`        | `offset-x offset-y blur [color]`; length units only, non-negative blur, black default color                                                      |
 | `textStroke`              | `text`        | `width color`; non-negative length and a hex color                                                                                               |
 | `overflow`                | `shorthands`  | `overflowX`, `overflowY`                                                                                                                         |
@@ -136,6 +136,8 @@ function Example({ dimmed }: { dimmed: boolean }) {
 | `margin`                  | `shorthands`  | One to four edge values                                                                                                                          |
 | `padding`                 | `shorthands`  | One to four edge values                                                                                                                          |
 | `flex`                    | `shorthands`  | CSS-like one-, two-, or three-value expansion to grow/shrink/basis; `auto` is supported, `none` is not                                           |
+
+`whiteSpace: 'pre'` preserves whitespace and explicit line breaks in text nodes while disabling automatic wrapping. Unlike `nowrap`, it preserves repeated spaces; unlike `pre-wrap`, it does not wrap text to fit the available width.
 
 `pointerEvents: 'none'` removes a node from WebGPU hit testing.
 

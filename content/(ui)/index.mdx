@@ -2,6 +2,8 @@
 title: 'Introduction'
 ---
 
+[https://github.com/uno-build/ui](https://github.com/uno-build/ui)
+
 Build high-performance and pixel-perfect user interfaces for WebGPU. Use the rendering engine and UI framework of your choice.
 
 ## Motivation
@@ -19,6 +21,7 @@ uno UI solves both problems by rendering the UI directly through the game's rend
 - High-quality text rendering with strokes and shadows using [MTSDF](https://github.com/Chlumsky/msdf-atlas-gen)
 - Accurate text measurement and layout powered by [Pretext](https://github.com/chenglou/pretext)
 - Flexbox layout powered by [Yoga](https://www.yogalayout.dev/)
+- Only one draw call per UI frame
 - Fine-grained updates for efficient rendering
 - Lightweight, basic setup is around 280kb (93kb gzip)
 
@@ -53,7 +56,7 @@ uno UI solves both problems by rendering the UI directly through the game's rend
 
 - [Styles](./api/styles.mdx): supported style properties and values.
 - [Events](./api/events.mdx): supported events, event data, propagation, and custom definitions.
-- [UI](./api/ui.mdx): creation, viewport, events, updates, and drawing.
-- [Node](./api/node.mdx): tree operations, styles, text, layout, and listeners.
 - [ResourcesWebGPU](./api/resources-webgpu.mdx): shared WebGPU resources and image and font registration.
+- [UI](./api/ui.mdx): creation, viewport, events, updates, and drawing.
 - [UIWorldSpace](./api/ui-world-space.mdx): engine factories, cameras, materials, and custom meshes.
+- [Node](./api/node.mdx): tree operations, styles, text, layout, and listeners.
