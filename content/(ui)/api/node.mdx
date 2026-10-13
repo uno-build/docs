@@ -67,6 +67,8 @@ ui.update()
 
 `layout` starts empty. Attach the node beneath `ui.root` and call `ui.update()` before reading its computed dimensions. Update again after changes that affect layout; scroll metrics such as `scrollHeight` and `clientHeight` are also refreshed by `update()`.
 
+`translate` and `scale` are not part of `layout`: they move and scale what the node paints, not its computed box.
+
 ```js
 node.style('width', '240px')
 ui.update()

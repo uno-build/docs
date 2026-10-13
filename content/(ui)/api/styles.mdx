@@ -117,6 +117,8 @@ function Example({ dimmed }: { dimmed: boolean }) {
 | `borderBottomLeftRadius`  | `painting`    | Non-negative percentage length                                                                                                                   |
 | `boxShadow`               | `painting`    | `offset-x offset-y blur spread [color]`; length units only, non-negative blur, black default color                                               |
 | `opacity`                 | `painting`    | Number from `0` through `1`                                                                                                                      |
+| `translate`               | `painting`    | One or two signed `px` lengths, `x [y]`; `y` defaults to `0`                                                                                     |
+| `scale`                   | `painting`    | One or two non-negative numbers, `x [y]`; `y` defaults to `x`                                                                                    |
 | `zIndex`                  | `painting`    | Integer                                                                                                                                          |
 | `pointerEvents`           | `painting`    | `all`, `none`                                                                                                                                    |
 | `color`                   | `text`        | Hex color                                                                                                                                        |
@@ -141,6 +143,8 @@ function Example({ dimmed }: { dimmed: boolean }) {
 
 `pointerEvents: 'none'` removes a node from WebGPU hit testing.
 
+`translate` and `scale` move and scale what a node and its subtree paint without changing layout. As with the CSS individual transform properties, the origin is the center of the box and the scale applies before the translation. Hit testing follows the transformed box. To animate every frame, prefer them over `left`, `top`, or `fontSize`: they do not trigger layout.
+
 The WebGPU renderer uses MTSDF alpha distance for strokes and shadows and the RGB distance field for the glyph fill.
 
 Longhands are also public style names. For example, `backgroundSizeWidth`, `backgroundPositionY`, and every side-specific border property can be assigned directly.
@@ -149,6 +153,7 @@ Longhands are also public style names. For example, `backgroundSizeWidth`, `back
 
 - **Opacity:** WebGPU multiplies ancestor opacity into each drawable separately. Overlapping elements can therefore look different from CSS, which composites the subtree before applying group opacity.
 - **Overflow:** `overflow: 'hidden'` and `overflow: 'scroll'` clip children to a rectangle. `borderRadius` does not round this clip, so children can remain visible in the rounded corners.
+- **Transforms:** in WebGPU, `translate` and `scale` do not extend the scrollable overflow (`scrollWidth`, `scrollHeight`). With a non-uniform `scale`, shadow blur and spread and the text stroke width use the smaller factor. Box shadow offsets, blur, and spread are rounded to whole pixels, so an animated `scale` moves them in 1 px steps.
 
 ## Images and `objectFit`
 

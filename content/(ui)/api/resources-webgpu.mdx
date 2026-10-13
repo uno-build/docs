@@ -49,6 +49,8 @@ Duplicate image or font keys throw. Disposing an unknown key does nothing. `ui.d
 
 A supplied context is used without reconfiguration.
 
+A supplied `device` must allow three storage buffers in the vertex stage. A device created in compatibility mode has to request them with `requiredLimits: { maxStorageBuffersInVertexStage: 3 }`; the device that `ResourcesWebGPU` requests already does.
+
 ```ts
 type WebGPUCanvas = {
   getContext(context_id: 'webgpu'): WebGPUContext | null
