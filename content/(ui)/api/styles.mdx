@@ -2,15 +2,17 @@
 title: 'Styles'
 ---
 
-uno implements a strict CSS-like subset. Style names accept both camelCase and kebab-case. The TypeScript type `StyleName` only includes camelCase names. Every value must be a string, including numbers.
+uno implements a strict CSS-like subset. Style names accept both camelCase and kebab-case. The TypeScript type `StyleName` only includes camelCase names. Values are strings; `node.style()` also accepts a number for [numeric longhands](#numeric-values).
 
 ```ts
 node.style('backgroundColor', '#1f6fb2')
 node.style('padding', '12px 16px')
 node.style('flex-grow', '1')
+node.style('translateX', 120) // 120px
+node.style('opacity', 0.5)
 
-// Invalid: numeric values are not accepted.
-node.style('opacity', 0.5) // Throws an error
+// Invalid: shorthands, colors, and keywords need a string.
+node.style('padding', 12) // Throws an error
 ```
 
 ## Units and common values
@@ -26,6 +28,10 @@ node.style('opacity', 0.5) // Throws an error
 In WebGPU, `rem` uses the value set by `ui.setRootSize()` (`16` by default), while `vw` and `vh` use the last values supplied to `ui.setViewport()`.
 
 CSS-wide keywords other than `unset`, CSS functions such as `calc()` and `var()`, named colors, `rgb()`, `em`, and arbitrary CSS declarations are not supported.
+
+## Numeric values
+
+`node.style()` accepts a number for the longhands in the `NumberStyleName` type. Lengths read it as `px`; `opacity`, `zIndex`, `flexGrow`, `flexShrink`, `aspectRatio`, `lineHeight`, `scaleX`, and `scaleY` read it as is. `node.style('width', 200)` stores the same value as `node.style('width', '200px')` and applies the same range checks, but skips string parsing, so prefer numbers for values that change every frame. Percentages, `rem`, `vw`, `vh`, `auto`, `unset`, shorthands, colors, and keywords still need a string, and framework `style` props keep string values.
 
 ## Resetting styles with `unset`
 
@@ -117,8 +123,10 @@ function Example({ dimmed }: { dimmed: boolean }) {
 | `borderBottomLeftRadius`  | `painting`    | Non-negative percentage length                                                                                                                   |
 | `boxShadow`               | `painting`    | `offset-x offset-y blur spread [color]`; length units only, non-negative blur, black default color                                               |
 | `opacity`                 | `painting`    | Number from `0` through `1`                                                                                                                      |
-| `translate`               | `painting`    | One or two signed `px` lengths, `x [y]`; `y` defaults to `0`                                                                                     |
-| `scale`                   | `painting`    | One or two non-negative numbers, `x [y]`; `y` defaults to `x`                                                                                    |
+| `translateX`              | `painting`    | Signed `px` length                                                                                                                               |
+| `translateY`              | `painting`    | Signed `px` length                                                                                                                               |
+| `scaleX`                  | `painting`    | Non-negative number                                                                                                                              |
+| `scaleY`                  | `painting`    | Non-negative number                                                                                                                              |
 | `zIndex`                  | `painting`    | Integer                                                                                                                                          |
 | `pointerEvents`           | `painting`    | `all`, `none`                                                                                                                                    |
 | `color`                   | `text`        | Hex color                                                                                                                                        |
@@ -135,6 +143,8 @@ function Example({ dimmed }: { dimmed: boolean }) {
 | `borderRadius`            | `shorthands`  | One to four corner radii                                                                                                                         |
 | `backgroundSize`          | `shorthands`  | One or two dimensions, or `cover`/`contain` alone                                                                                                |
 | `backgroundPosition`      | `shorthands`  | X and optional Y; Y defaults to `50%`                                                                                                            |
+| `translate`               | `shorthands`  | `translateX` and optional `translateY`; Y defaults to `0px`                                                                                      |
+| `scale`                   | `shorthands`  | `scaleX` and optional `scaleY`; Y defaults to X                                                                                                  |
 | `margin`                  | `shorthands`  | One to four edge values                                                                                                                          |
 | `padding`                 | `shorthands`  | One to four edge values                                                                                                                          |
 | `flex`                    | `shorthands`  | CSS-like one-, two-, or three-value expansion to grow/shrink/basis; `auto` is supported, `none` is not                                           |
@@ -143,11 +153,13 @@ function Example({ dimmed }: { dimmed: boolean }) {
 
 `pointerEvents: 'none'` removes a node from WebGPU hit testing.
 
-`translate` and `scale` move and scale what a node and its subtree paint without changing layout. As with the CSS individual transform properties, the origin is the center of the box and the scale applies before the translation. Hit testing follows the transformed box. To animate every frame, prefer them over `left`, `top`, or `fontSize`: they do not trigger layout.
+`translate` and `scale` move and scale what a node and its subtree paint without changing layout. As with the CSS individual transform properties, the origin is the center of the box and the scale applies before the translation. Hit testing follows the transformed box. To animate every frame, prefer them over `left`, `top`, or `fontSize`: they do not trigger layout. To change a single axis, set `translateX`, `translateY`, `scaleX`, or `scaleY`; they have no CSS equivalent and the DOM renderer composes them into `translate` and `scale`.
+
+A UI created with `yoga: false` only reads the box styles listed in [Layout without Yoga](./ui.mdx#layout-without-yoga) and ignores the other `yoga-layout` styles.
 
 The WebGPU renderer uses MTSDF alpha distance for strokes and shadows and the RGB distance field for the glyph fill.
 
-Longhands are also public style names. For example, `backgroundSizeWidth`, `backgroundPositionY`, and every side-specific border property can be assigned directly.
+Longhands are also public style names. For example, `backgroundSizeWidth`, `backgroundPositionY`, `translateX`, and every side-specific border property can be assigned directly.
 
 ## Rendering differences
 

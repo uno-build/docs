@@ -30,7 +30,8 @@
           "react-reconciler/constants.js": "https://esm.sh/react-reconciler@0.34.0/constants.js",
           "@babylonjs/core/": "https://raw.esm.sh/@babylonjs/core@9.26.1/",
           "yoga-layout/load": "https://esm.sh/yoga-layout@3.2.1/load",
-          "@uno.build/ui/": "https://esm.sh/@uno.build/ui@0.1.0/"
+          "@uno.build/ui/react": "https://esm.sh/@uno.build/ui@0.3.0/react?external=react,react-reconciler",
+          "@uno.build/ui/": "https://esm.sh/@uno.build/ui@0.3.0/"
         }
       }
     </script>
@@ -47,7 +48,7 @@
       import { Scene } from '@babylonjs/core/scene.js'
       import ResourcesWebGPU from '@uno.build/ui/ResourcesWebGPU'
       // Share the demo's Babylon modules so engine extensions and meshes use the same classes.
-      import UIBabylon from 'https://esm.sh/@uno.build/ui@0.1.0/UIBabylon?external=@babylonjs/core'
+      import UIBabylon from 'https://esm.sh/@uno.build/ui@0.3.0/UIBabylon?external=@babylonjs/core'
       import { registerRootComponent } from '@uno.build/ui/react'
       import { loadReactComponent } from './components/loaders.js'
 

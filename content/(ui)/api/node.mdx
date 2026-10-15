@@ -34,6 +34,7 @@ title: 'Node'
 | `detach()` | `void` | Detaches this subtree for reuse. |
 | `destroy()` | `void` | Destroys this subtree; the root destroys the UI. |
 | `style(name: StyleName \| (string & {}), value: string)` | `void` | Sets a [style](./styles.mdx). |
+| `style(name: NumberStyleName, value: number)` | `void` | Sets a [numeric style](./styles.mdx#numeric-values) without parsing a string: lengths in `px`, other styles unitless. |
 | `text(value: string)` | `void` | Sets text; text nodes cannot have children. |
 | `isTextNode()` | `boolean` | Whether `text()` has initialized this node. |
 | `hasTextContent()` | `boolean` | Whether this node has non-empty text. |
