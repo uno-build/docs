@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Three.js Render to Image + Uno UI</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas></canvas>
+    <script type="importmap">
+      {
+        "imports": {
+          "three/webgpu": "https://esm.sh/three@0.186.0/webgpu",
+          "yoga-layout/load": "https://esm.sh/yoga-layout@3.2.1/load",
+          "@uno.build/ui/": "https://esm.sh/@uno.build/ui@0.4.0/"
+        }
+      }
+    </script>
+    <script type="module">
+      import * as THREE from 'three/webgpu'
+      import ResourcesWebGPU from '@uno.build/ui/ResourcesWebGPU'
+      import UI from '@uno.build/ui/UI'
+
+      // CSS size of each image. It renders at that many device pixels, so it maps 1:1.
+      const IMAGE_SIZE = 168
+      const CARD_COLOR = '#ffffff'
+
+      // Uno UI and Three.js share the same canvas and WebGPU device.
+      const canvas = document.querySelector('canvas')
+      const resources = await ResourcesWebGPU.create({ canvas })
+      const { device, context } = resources
+      const { ui } = await UI.create({ resources })
+
+      // Three.js renders the shapes into textures only. The card color behind them is opaque, so
+      // antialiased edges blend into it and Uno UI gets no premultiplied edges from MSAA.
+      const renderer = new THREE.WebGPURenderer({ canvas, device, context })
+      await renderer.init()
+      renderer.setClearColor(CARD_COLOR, 1)
+      const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 10)
+      camera.position.z = 4
+      const material = new THREE.MeshNormalMaterial()
+      const image_pixels = Math.round(IMAGE_SIZE * window.devicePixelRatio)
+
+      const font_name = 'ChangaOne'
+      const font_image = await createImageBitmap(await (await fetch(`assets/${font_name}.png`)).blob())
+      const font_data = await (await fetch(`assets/${font_name}.json`)).json()
+      resources.registerFont(font_name, { image: font_image, data: font_data })
+
+      ui.root.style('backgroundColor', '#cfeeda')
+      ui.root.style('justifyContent', 'center')
+      ui.root.style('alignItems', 'center')
+      ui.root.style('flexWrap', 'wrap')
+      ui.root.style('gap', '24px')
+
+      const shapes = [
+        { name: 'Cube', geometry: new THREE.BoxGeometry(1.4, 1.4, 1.4) },
+        { name: 'Knot', geometry: new THREE.TorusKnotGeometry(0.7, 0.25, 128, 16) },
+        { name: 'Gem', geometry: new THREE.IcosahedronGeometry(1.1) },
+      ].map(({ name, geometry }) => {
+        const scene = new THREE.Scene()
+        const mesh = new THREE.Mesh(geometry, material)
+        scene.add(mesh)
+
+        // An sRGB 8-bit target is rgba8unorm-srgb: the GPU encodes the colors as images have them.
+        const target = new THREE.RenderTarget(image_pixels, image_pixels, { samples: 4 })
+        target.texture.colorSpace = THREE.SRGBColorSpace
+
+        // Without `image`, Uno UI only reserves its place in the atlas.
+        const src = `three-${name}`
+        resources.registerImage(src, { width: image_pixels, height: image_pixels })
+
+        const card = ui.create()
+        card.style('alignItems', 'center')
+        card.style('padding', '12px')
+        card.style('backgroundColor', CARD_COLOR)
+        card.style('borderRadius', '20px')
+        card.style('border', '4px solid #000000')
+        ui.root.add(card)
+
+        const image = ui.create()
+        image.style('width', `${IMAGE_SIZE}px`)
+        image.style('height', `${IMAGE_SIZE}px`)
+        image.style('backgroundImage', src)
+        image.style('backgroundSize', '100% 100%')
+        card.add(image)
+
+        const label = ui.create()
+        label.style('fontFamily', font_name)
+        label.style('fontSize', '24px')
+        label.style('color', '#000000')
+        label.text(name)
+        card.add(label)
+
+        // Spin faster while hovered.
+        const shape = { scene, mesh, target, src, speed: 0.6 }
+        card.on('pointerover', () => (shape.speed = 4))
+        card.on('pointerout', () => (shape.speed = 0.6))
+        return shape
+      })
+
+      function onResize() {
+        const width = canvas.clientWidth
+        const height = canvas.clientHeight
+        canvas.width = Math.max(1, Math.round(width * window.devicePixelRatio))
+        canvas.height = Math.max(1, Math.round(height * window.devicePixelRatio))
+        ui.setViewport(width, height)
+        ui.setDevicePixelRatio(window.devicePixelRatio)
+      }
+      window.addEventListener('resize', onResize)
+      onResize()
+
+      let last_time = performance.now()
+      requestAnimationFrame(function render(time) {
+        const dt = (time - last_time) / 1000
+        last_time = time
+
+        // Render each shape into its texture and copy it into its image.
+        for (const { scene, mesh, target, src, speed } of shapes) {
+          mesh.rotation.x += dt * speed * 0.5
+          mesh.rotation.y += dt * speed
+          renderer.setRenderTarget(target)
+          renderer.render(scene, camera)
+          resources.copyTextureToImage(src, { texture: renderer.backend.get(target.texture).texture })
+        }
+        renderer.setRenderTarget(null)
+
+        ui.update()
+        ui.draw({ load_op: 'clear' })
+
+        requestAnimationFrame(render)
+      })
+    </script>
+  </body>
+</html>

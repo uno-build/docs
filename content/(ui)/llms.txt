@@ -73,6 +73,7 @@ requestAnimationFrame(function render() {
 - To animate every frame, move nodes with `translate` and resize them with `scale` instead of `left`/`top`, `width`, or `fontSize`: they move and scale the painted node and its subtree without triggering layout, and hit testing follows them.
 - Text needs a registered font. Generate an MTSDF atlas with `npx @uno.build/fonts Font.ttf` (printable ASCII by default; pass `-chars` for other characters), then call `resources.registerFont(name, { image, data })`. Without `fontFamily`, the first registered font is used. Text nodes cannot have children.
 - Register images before use: `resources.registerImage(key, { image })`, with an `ImageBitmap` or another `GPUCopyExternalImageSource`. `backgroundImage` and `<Image src>` take that key and never fetch. Duplicate image or font keys throw.
+- To show a texture rendered every frame (a 3D scene), reserve the image with `resources.registerImage(key, { width, height })` and no `image`, then call `resources.copyTextureToImage(key, { texture, origin })` after each render. The texture must belong to `resources.device`, have `COPY_SRC` usage, use `rgba8unorm` or `rgba8unorm-srgb`, and hold sRGB-encoded straight-alpha colors; it needs no `ui.update()`.
 - `ui.setViewport(width, height)` takes logical CSS pixels, while `canvas.width` and `canvas.height` are device pixels; also call `ui.setDevicePixelRatio()`. `rem` uses `ui.setRootSize()` (default `16`), and `vw`/`vh` use the viewport.
 - `node.layout` (`x`, `y`, `width`, `height`, `top`, `left`, `padding`, `border`, ...) is filled by `ui.update()` once the node is attached under `ui.root`. Scroll metrics (`scrollHeight`, `clientHeight`, ...) refresh the same way. `node.scrollTop` and `node.scrollLeft` are writable and applied by `ui.update()`.
 - `parent.add(child, before_node = null)` only accepts a detached node from the same UI; call `child.detach()` before moving it. `parent.remove(child)` and `node.destroy()` destroy the subtree and its listeners; a destroyed node cannot be reused.
@@ -216,6 +217,10 @@ requestAnimationFrame(function render() {
 - [UI](https://uno.build/docs/llms.mdx/docs/api/ui/content.md): properties, methods, creation options, and draw options
 - [UIWorldSpace](https://uno.build/docs/llms.mdx/docs/api/ui-world-space/content.md): world-space factories, options, and per-engine types
 - [Node](https://uno.build/docs/llms.mdx/docs/api/node/content.md): tree operations, styles, text, layout, scrolling, and listeners
+
+## Advanced
+
+- [Render to Image](https://uno.build/docs/llms.mdx/docs/advanced/render-to-image/content.md): showing a texture rendered every frame, such as a 3D scene, as an image
 
 ## Components
 
