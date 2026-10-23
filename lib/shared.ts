@@ -4,21 +4,12 @@ import { withBasePath } from './base-path.mjs'
 export const appName = 'uno'
 export const docsRoute = '/'
 export const docsImageRoute = '/og/docs'
-export const docsContentRoute = '/llms.mdx/docs'
 
 // fill this with your actual GitHub info, for example:
 export const gitConfig = {
   user: 'uno',
   repo: 'ui',
   branch: 'main',
-}
-
-const getContentUrl = createGetUrl(docsContentRoute)
-
-export function getPageMarkdownUrl(page: { slugs: string[]; locale?: string }) {
-  const segments = [...page.slugs, 'content.md']
-
-  return { segments, url: withBasePath(getContentUrl(segments, page.locale)) }
 }
 
 const getImageUrl = createGetUrl(docsImageRoute)
