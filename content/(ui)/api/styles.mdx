@@ -24,6 +24,7 @@ node.style('padding', 12) // Throws an error
 | Color             | Hex only: `#RGB`, `#RGBA`, `#RRGGBB`, or `#RRGGBBAA`       |
 | Number            | A number encoded as a string, for example `'1'` or `'0.5'` |
 | Integer           | An integer encoded as a string                             |
+| Angle             | `deg` only, for example `'45deg'` or `'-90deg'`            |
 
 In WebGPU, `rem` uses the value set by `ui.setRootSize()` (`16` by default), while `vw` and `vh` use the last values supplied to `ui.setViewport()`.
 
@@ -31,7 +32,7 @@ CSS-wide keywords other than `unset`, CSS functions such as `calc()` and `var()`
 
 ## Numeric values
 
-`node.style()` accepts a number for the longhands in the `NumberStyleName` type. Lengths read it as `px`; `opacity`, `zIndex`, `flexGrow`, `flexShrink`, `aspectRatio`, `lineHeight`, `scaleX`, and `scaleY` read it as is. `node.style('width', 200)` stores the same value as `node.style('width', '200px')` and applies the same range checks, but skips string parsing, so prefer numbers for values that change every frame. Percentages, `rem`, `vw`, `vh`, `auto`, `unset`, shorthands, colors, and keywords still need a string, and framework `style` props keep string values.
+`node.style()` accepts a number for the longhands in the `NumberStyleName` type. Lengths read it as `px` and `rotate` as `deg`; `opacity`, `zIndex`, `flexGrow`, `flexShrink`, `aspectRatio`, `lineHeight`, `scaleX`, and `scaleY` read it as is. `node.style('width', 200)` stores the same value as `node.style('width', '200px')` and applies the same range checks, but skips string parsing, so prefer numbers for values that change every frame. Percentages, `rem`, `vw`, `vh`, `auto`, `unset`, shorthands, colors, and keywords still need a string, and framework `style` props keep string values.
 
 ## Resetting styles with `unset`
 
@@ -127,6 +128,7 @@ function Example({ dimmed }: { dimmed: boolean }) {
 | `translateY`              | `painting`    | Signed `px` length                                                                                                                               |
 | `scaleX`                  | `painting`    | Non-negative number                                                                                                                              |
 | `scaleY`                  | `painting`    | Non-negative number                                                                                                                              |
+| `rotate`                  | `painting`    | Signed `deg` angle; positive turns clockwise                                                                                                     |
 | `zIndex`                  | `painting`    | Integer                                                                                                                                          |
 | `pointerEvents`           | `painting`    | `all`, `none`                                                                                                                                    |
 | `color`                   | `text`        | Hex color                                                                                                                                        |
@@ -153,7 +155,7 @@ function Example({ dimmed }: { dimmed: boolean }) {
 
 `pointerEvents: 'none'` removes a node from WebGPU hit testing.
 
-`translate` and `scale` move and scale what a node and its subtree paint without changing layout. As with the CSS individual transform properties, the origin is the center of the box and the scale applies before the translation. Hit testing follows the transformed box. To animate every frame, prefer them over `left`, `top`, or `fontSize`: they do not trigger layout. To change a single axis, set `translateX`, `translateY`, `scaleX`, or `scaleY`; they have no CSS equivalent and the DOM renderer composes them into `translate` and `scale`.
+`translate`, `scale`, and `rotate` move, scale, and turn what a node and its subtree paint without changing layout. As with the CSS individual transform properties, the origin is the center of the box: the scale applies first, then the rotation, then the translation. `rotate` only turns in the plane of the screen; the CSS axis forms such as `rotate: x 45deg` are not supported. Hit testing follows the transformed box. To animate every frame, prefer them over `left`, `top`, or `fontSize`: they do not trigger layout. To change a single axis, set `translateX`, `translateY`, `scaleX`, or `scaleY`; they have no CSS equivalent and the DOM renderer composes them into `translate` and `scale`.
 
 A UI created with `yoga: false` only reads the box styles listed in [Layout without Yoga](./ui.mdx#layout-without-yoga) and ignores the other `yoga-layout` styles.
 
@@ -165,7 +167,8 @@ Longhands are also public style names. For example, `backgroundSizeWidth`, `back
 
 - **Opacity:** WebGPU multiplies ancestor opacity into each drawable separately. Overlapping elements can therefore look different from CSS, which composites the subtree before applying group opacity.
 - **Overflow:** `overflow: 'hidden'` and `overflow: 'scroll'` clip children to a rectangle. `borderRadius` does not round this clip, so children can remain visible in the rounded corners.
-- **Transforms:** in WebGPU, `translate` and `scale` do not extend the scrollable overflow (`scrollWidth`, `scrollHeight`). With a non-uniform `scale`, shadow blur and spread and the text stroke width use the smaller factor. Box shadow offsets, blur, and spread are rounded to whole pixels, so an animated `scale` moves them in 1 px steps.
+- **Transforms:** in WebGPU, `translate`, `scale`, and `rotate` do not extend the scrollable overflow (`scrollWidth`, `scrollHeight`). With a non-uniform `scale`, shadow blur and spread and the text stroke width use the smaller factor. Box shadow offsets, blur, and spread are rounded to whole pixels, so an animated `scale` moves them in 1 px steps.
+- **Rotation:** WebGPU ignores `overflow: 'hidden'` and `overflow: 'scroll'` on a rotated node and inside its subtree, so their children are not clipped; a scroll container still scrolls. Clips from ancestors above the rotation still apply. The DOM renderer clips rotated subtrees, as CSS does. Under a non-uniform `scale` above a rotation, WebGPU places every descendant exactly but draws each box as a rotated rectangle, without the skew that CSS shows.
 
 ## Images and `objectFit`
 

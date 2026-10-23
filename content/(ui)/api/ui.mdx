@@ -69,7 +69,7 @@ ui.root.add(label)
 - **No scrolling.** `overflow` clips, but nothing scrolls: `scrollWidth`, `scrollHeight`, `clientWidth` and `clientHeight` stay `0`, and wheel and scroll events do not move content. Pointer, click and focus events work.
 - **The root** fills the viewport and ignores its insets: call `setViewport()` before `update()`.
 
-To center text in a box, use `textAlign: 'center'` and a `lineHeight` equal to the box height. Move things every frame with `translate` and `scale`, which only repaint. `left` and `top` are layout changes: moving a subtree with them places its glyphs again.
+To center text in a box, use `textAlign: 'center'` and a `lineHeight` equal to the box height. Move things every frame with `translate`, `scale`, and `rotate`, which only repaint. `left` and `top` are layout changes: moving a subtree with them places its glyphs again.
 
 ## Draw options
 
