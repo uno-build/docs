@@ -3,6 +3,8 @@
   "version": "0.0.28",
   "private": true,
   "scripts": {
+    "copy-docs": "npm run download-docs -- ../ui",
+    "download-docs": "node scripts/download-docs.mjs",
     "build": "next build",
     "start": "next start",
     "dev": "next dev",

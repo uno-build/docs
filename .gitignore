@@ -3,6 +3,7 @@
 
 # generated content
 .source
+/content/(ui)/
 
 # test & build
 /coverage
